@@ -11,7 +11,8 @@ class EventUnregisterController extends Page_Controller {
 	);
 
 	public static $allowed_actions = array(
-		'UnregisterForm'
+		'UnregisterForm',
+		'afterunregistration'
 	);
 
 	protected $parent;
@@ -77,10 +78,20 @@ class EventUnregisterController extends Page_Controller {
 			return $this->redirectBack();
 		}
 
-		foreach ($regos as $rego) $rego->delete();
+		foreach ($regos as $rego) {
+			$rego->delete();
+		}
 
+		return $this->redirect($this->Link('afterunregistration'));
+	}
+
+	/**
+	 * @return array
+	 */
+	public function afterunregistration() {
 		return array(
-			'Title' => _t('EventManagement.REGCANCELED', 'Registration Canceled')
+			'Title'   => $this->time->Event()->AfterUnregTitle,
+			'Content' => $this->time->Event()->obj('AfterUnregContent')
 		);
 	}
 

@@ -17,7 +17,9 @@ class RegisterableEvent extends CalendarEvent {
 		'RequireLoggedIn'     => 'Boolean',
 		'OneRegPerMember'     => 'Boolean',
 		'AfterRegTitle'       => 'Varchar(255)',
-		'AfterRegContent'     => 'HTMLText'
+		'AfterRegContent'     => 'HTMLText',
+		'AfterUnregTitle'     => 'Varchar(255)',
+		'AfterUnregContent'   => 'HTMLText'
 	);
 
 	public static $has_many = array(
@@ -29,7 +31,9 @@ class RegisterableEvent extends CalendarEvent {
 		'AfterRegTitle'       => 'Thanks For Registering',
 		'AfterRegContent'     => '<p>Thanks for registering! We look forward to seeing you.</p>',
 		'AfterConfirmTitle'   => 'Registration Confirmed',
-		'AfterConfirmContent' => '<p>Thanks! Your registration has been confirmed</p>'
+		'AfterConfirmContent' => '<p>Thanks! Your registration has been confirmed</p>',
+		'AfterUnregTitle'     => 'Registration Canceled',
+		'AfterUnregContent'   => '<p>Your registration has been canceled.</p>'
 	);
 
 	public function getCMSFields() {
@@ -58,6 +62,11 @@ class RegisterableEvent extends CalendarEvent {
 		$fields->addFieldsToTab('Root.Content.AfterRegistration', array(
 			new TextField('AfterRegTitle', $this->fieldLabel('AfterRegTitle')),
 			new HtmlEditorField('AfterRegContent', $this->fieldLabel('AfterRegContent'))
+		));
+
+		$fields->addFieldsToTab('Root.Content.AfterUnregistration', array(
+			new TextField('AfterUnregTitle', $this->fieldLabel('AfterUnregTitle')),
+			new HtmlEditorField('AfterUnregContent', $this->fieldLabel('AfterUnregContent'))
 		));
 
 		// Only show the places column if multiple places are enabled.
@@ -111,7 +120,9 @@ class RegisterableEvent extends CalendarEvent {
 			'RequireLoggedIn' => _t('EventManagement.REQUIREDLOGGEDIN', 'Require users to be logged in to register?'),
 			'OneRegPerMember' => _t('EventMangement.LIMITMEMBERSTOSINGLEREG', 'Limit members to a single registration?'),
 			'AfterRegTitle' => _t('EventManagement.AFTERREGTITLE', 'After registration title'),
-			'AfterRegContent' => _t('EventManagement.AFTERREGCONTENT', 'After registration content')
+			'AfterRegContent' => _t('EventManagement.AFTERREGCONTENT', 'After registration content'),
+			'AfterUnregTitle' => _t('EventManagement.AFTERUNREGTITLE', 'After un-registration title'),
+			'AfterUnregContent' => _t('EventManagement.AFTERUNREGCONTENT', 'After un-registration content')
 		));
 	}
 
