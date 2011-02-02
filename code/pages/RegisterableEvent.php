@@ -41,7 +41,7 @@ class RegisterableEvent extends CalendarEvent {
 			new HeaderField('MultiplePlacesHeader', $this->fieldLabel('MultiplePlacesHeader')),
 			new CheckboxField('MultiplePlaces', $this->fieldLabel('MultiplePlaces')),
 			new NumericField('MaxPlaces', $this->fieldLabel('MaxPlaces')),
-			new HeaderField('MemberSettingsHeader', $this->fieldLabel('MembersHeader')),
+			new HeaderField('MemberSettingsHeader', $this->fieldLabel('MemberSettingsHeader')),
 			new CheckboxField('RequireLoggedIn', $this->fieldLabel('RequireLoggedIn')),
 			new CheckboxField('OneRegPerMember', $this->fieldLabel('OneRegPerMember'))
 		));
