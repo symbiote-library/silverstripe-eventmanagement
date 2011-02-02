@@ -74,12 +74,12 @@ class RegisterableDateTime extends CalendarDateTime {
 
 		if ($this->Event()->MultiplePlaces) {
 			$taken = DB::query(sprintf(
-				'SELECT SUM("Places") FROM "EventRegistration" WHERE "TimeID" = %d',
+				'SELECT SUM("Places") FROM "EventRegistration" WHERE "TimeID" = %d AND "Confirmed" = 1',
 				$this->ID
 			));
 		} else {
 			$taken = DB::query(sprintf(
-				'SELECT COUNT(*) FROM "EventRegistration" WHERE "TimeID" = %d',
+				'SELECT COUNT(*) FROM "EventRegistration" WHERE "TimeID" = %d AND "Confirmed" = 1',
 				$this->ID
 			));
 		}

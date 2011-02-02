@@ -7,9 +7,11 @@
 class EventRegistration extends DataObject {
 
 	public static $db = array(
-		'Name'   => 'Varchar(255)',
-		'Email'  => 'Varchar(255)',
-		'Places' => 'Int'
+		'Name'      => 'Varchar(255)',
+		'Email'     => 'Varchar(255)',
+		'Places'    => 'Int',
+		'Confirmed' => 'Boolean',
+		'Token'     => 'Varchar(48)'
 	);
 
 	public static $has_one = array(
@@ -67,6 +69,15 @@ class EventRegistration extends DataObject {
 		}
 
 		return $result;
+	}
+
+	protected function onBeforeWrite() {
+		if (!$this->isInDB()) {
+			$generator = new RandomGenerator();
+			$this->Token = $generator->generateHash('sha1');
+		}
+
+		parent::onBeforeWrite();
 	}
 
 	/**

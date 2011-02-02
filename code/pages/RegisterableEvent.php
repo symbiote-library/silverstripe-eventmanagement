@@ -7,6 +7,7 @@
 class RegisterableEvent extends CalendarEvent {
 
 	public static $db = array(
+		'RegEmailConfirm' => 'Boolean',
 		'LimitedPlaces'   => 'Boolean',
 		'NumPlaces'       => 'Int',
 		'MultiplePlaces'  => 'Boolean',
@@ -35,6 +36,8 @@ class RegisterableEvent extends CalendarEvent {
 		$fields = parent::getCMSFields();
 
 		$fields->addFieldsToTab('Root.Content.Registration', array(
+			new HeaderField('EmailConfirmationHeader', $this->fieldLabel('EmailConfirmationHeader')),
+			new CheckboxField('RegEmailConfirm', $this->fieldLabel('RegEmailConfirm')),
 			new HeaderField('LimitedPlacesHeader', $this->fieldLabel('LimitedPlacesHeader')),
 			new CheckboxField('LimitedPlaces', $this->fieldLabel('LimitedPlaces')),
 			new NumericField('NumPlaces', $this->fieldLabel('NumPlaces')),
@@ -56,7 +59,7 @@ class RegisterableEvent extends CalendarEvent {
 		if (!$this->MultiplePlaces) unset($regFields['Places']);
 
 		$registrations = new ComplexTableField(
-			$this, 'Registrations', 'EventRegistration', $regFields
+			$this, 'Registrations', 'EventRegistration', $regFields, null, '"Confirmed" = 1'
 		);
 		$registrations->setPermissions(array('show', 'print', 'export'));
 
@@ -66,12 +69,30 @@ class RegisterableEvent extends CalendarEvent {
 			$registrations
 		));
 
+		if ($this->RegEmailConfirm) {
+			$count = DB::query(sprintf(
+				'SELECT COUNT(*) FROM "EventRegistration" WHERE "EventID" = %d AND "Confirmed" = 0',
+				$this->ID
+			));
+
+			$unconfirmed = _t(
+				'EventManagement.NUMUNCONFIRMEDREG',
+				'There are %d unconfirmed registrations.');
+
+			$fields->addFieldToTab('Root.Registrations', new LiteralField(
+				'UnconfirmedRegistrations', sprintf("<p>$unconfirmed</p>", $count->value())
+			));
+		}
+
 		return $fields;
 	}
 
 	public function fieldLabels() {
 		return array_merge(parent::fieldLabels(), array(
 			'Registrations' => _t('EventManagement.REGISTATIONS', 'Registrations'),
+			'EmailConfirmationHeader' => _t('EventManagement.EMAILCONF', 'Email Confirmation'),
+			'RegEmailConfirm' => _t('EventManagement.REQEMAILCONFIRM', 'Require email confirmation
+				to complete registration?'),
 			'LimitedPlacesHeader' => _t('EventManagement.LIMPLACES', 'Limited Places'),
 			'LimitedPlaces' => _t('EventManagement.HASLIMPLACES', 'This event has limited places?'),
 			'NumPlaces' => _t('EventManagement.NUMPLACESAVAILABLE', 'Number of places available'),
@@ -115,8 +136,7 @@ class RegisterableEvent_Controller extends CalendarEvent_Controller {
 			$this->httpError(404, 'The requested event time could not be found.');
 		}
 
-		$request->shift(2);
-		$request->shiftAllParams();
+		$request->shift(1);
 		$request->shiftAllParams();
 
 		return new EventRegistrationController($this, $time->First());

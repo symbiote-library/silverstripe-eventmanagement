@@ -7,10 +7,15 @@
  */
 class EventRegistrationController extends Page_Controller {
 
+	public static $url_handlers = array(
+		'' => 'index'
+	);
+
 	public static $allowed_actions = array(
 		'index',
 		'RegisterForm',
-		'afterregistration'
+		'afterregistration',
+		'confirm'
 	);
 
 	protected $parent;
@@ -73,10 +78,11 @@ class EventRegistrationController extends Page_Controller {
 			_t('EventManagement.REGISTERFOR', 'Register For %s'), $this->time->EventTitle()
 		);
 
-		return array(
+		$controller = $this->customise(array(
 			'Title' => $title,
 			'Form'  => $this->RegisterForm()
-		);
+		));
+		return $this->getViewer('index')->process($controller);
 	}
 
 	/**
@@ -112,11 +118,35 @@ class EventRegistrationController extends Page_Controller {
 		$registration->TimeID   = $this->time->ID;
 		$registration->MemberID = Member::currentUserID();
 
+		if (!$this->time->Event()->RegEmailConfirm) {
+			$registration->Confirmed = true;
+		}
+
 		try {
 			$registration->write();
 		} catch (ValidationException $e) {
 			$form->sessionMessage($e->getResult()->message(), 'bad');
 			return $this->redirectBack();
+		}
+
+		if ($this->time->Event()->RegEmailConfirm) {
+			$email = new Email();
+
+			$email->setTo($registration->Email);
+			$email->setSubject(sprintf(
+				_t('EventManagement.CONFIRMREGFOR', 'Confirm Registration For %s (%s)'),
+				$this->time->Event()->Title, SiteConfig::current_site_config()->Title));
+
+			$email->setTemplate('EventRegistrationConfirmationEmail');
+			$email->populateTemplate(array(
+				'Registration' => $registration,
+				'Time'         => $this->time,
+				'SiteConfig'   => SiteConfig::current_site_config(),
+				'ConfirmLink'  => Director::absoluteURL(Controller::join_links(
+					$this->Link(), 'confirm', $registration->ID, '?token=' . $registration->Token))
+			));
+
+			$email->send();
 		}
 
 		return $this->redirect($this->Link('afterregistration'));
@@ -131,6 +161,29 @@ class EventRegistrationController extends Page_Controller {
 		return array(
 			'Title'   => $this->time->Event()->AfterRegTitle,
 			'Content' => $this->time->Event()->AfterRegContent
+		);
+	}
+
+	/**
+	 * Handles the user clicking on the confirm link in a confirmation email.
+	 */
+	public function confirm($request) {
+		$id    = $request->param('ID');
+		$token = $request->getVar('token');
+
+		if (!$rego = DataObject::get_by_id('EventRegistration', $id)) {
+			return $this->httpError(404);
+		}
+
+		if ($rego->Confirmed || $rego->Token != $token) {
+			return $this->httpError(403);
+		}
+
+		$rego->Confirmed = true;
+		$rego->write();
+
+		return array(
+			'Title' => 'Registration Confirmed'
 		);
 	}
 
