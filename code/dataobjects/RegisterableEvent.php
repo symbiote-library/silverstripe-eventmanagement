@@ -36,16 +36,19 @@ class RegisterableEvent extends CalendarEvent {
 		$registrations = new ComplexTableField(
 			$this, 'Registrations', 'EventRegistration', $regFields
 		);
-		$registrations = $registrations->performReadonlyTransformation();
 
 		$fields->addFieldToTab('Root', new Tab('Registrations'), 'Behaviour');
-		$fields->addFieldToTab('Root.Registrations', $registrations);
+		$fields->addFieldsToTab('Root.Registrations', array(
+			new HeaderField('RegistrationsHeader', $this->fieldLabel('Registrations')),
+			$registrations->performReadonlyTransformation()
+		));
 
 		return $fields;
 	}
 
 	public function fieldLabels() {
 		return array_merge(parent::fieldLabels(), array(
+			'Registrations' => _t('EventManagement.REGISTATIONS', 'Registrations'),
 			'MultiplePlacesHeader' => _t('EventManagement.MULTIPLACES', 'Multiple Places'),
 			'MultiplePlaces' => _t('EventManagement.ALLOWMULTIPLACES', 'Allow atendees to register for multiple places?'),
 			'MaxPlaces' => _t('EventManagement.MAXPLACES', 'Maximum places selectable (0 for any number)')
