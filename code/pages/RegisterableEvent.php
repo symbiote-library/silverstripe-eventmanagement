@@ -7,6 +7,8 @@
 class RegisterableEvent extends CalendarEvent {
 
 	public static $db = array(
+		'LimitedPlaces'  => 'Boolean',
+		'NumPlaces'      => 'Int',
 		'MultiplePlaces' => 'Boolean',
 		'MaxPlaces'      => 'Int'
 	);
@@ -24,6 +26,9 @@ class RegisterableEvent extends CalendarEvent {
 		$fields = parent::getCMSFields();
 
 		$fields->addFieldsToTab('Root.Content.Registration', array(
+			new HeaderField('LimitedPlacesHeader', $this->fieldLabel('LimitedPlacesHeader')),
+			new CheckboxField('LimitedPlaces', $this->fieldLabel('LimitedPlaces')),
+			new NumericField('NumPlaces', $this->fieldLabel('NumPlaces')),
 			new HeaderField('MultiplePlacesHeader', $this->fieldLabel('MultiplePlacesHeader')),
 			new CheckboxField('MultiplePlaces', $this->fieldLabel('MultiplePlaces')),
 			new NumericField('MaxPlaces', $this->fieldLabel('MaxPlaces'))
@@ -50,6 +55,9 @@ class RegisterableEvent extends CalendarEvent {
 	public function fieldLabels() {
 		return array_merge(parent::fieldLabels(), array(
 			'Registrations' => _t('EventManagement.REGISTATIONS', 'Registrations'),
+			'LimitedPlacesHeader' => _t('EventManagement.LIMPLACES', 'Limited Places'),
+			'LimitedPlaces' => _t('EventManagement.HASLIMPLACES', 'This event has limited places?'),
+			'NumPlaces' => _t('EventManagement.NUMPLACESAVAILABLE', 'Number of places available'),
 			'MultiplePlacesHeader' => _t('EventManagement.MULTIPLACES', 'Multiple Places'),
 			'MultiplePlaces' => _t('EventManagement.ALLOWMULTIPLACES', 'Allow atendees to register for multiple places?'),
 			'MaxPlaces' => _t('EventManagement.MAXPLACES', 'Maximum places selectable (0 for any number)')

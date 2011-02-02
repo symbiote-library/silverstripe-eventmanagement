@@ -43,6 +43,10 @@ class EventRegistrationController extends Page_Controller {
 	 * @return string
 	 */
 	public function index() {
+		if ($this->time->Event()->LimitedPlaces && !$this->time->getRemainingPlaces()){
+			return $this->httpError(404, 'There are no more places available.');
+		}
+
 		$title = sprintf(
 			_t('EventManagement.REGISTERFOR', 'Register For %s'), $this->time->EventTitle()
 		);

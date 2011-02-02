@@ -26,6 +26,13 @@ class RegisterableDateTime extends CalendarDateTime {
 			new EmailField('Email', _t('EventManagement.EMAILADDR', 'Email address'))
 		);
 
+		if ($this->Event()->LimitedPlaces) {
+			$entity    = _t('EventManagement.NPLACESREMAINING', 'There are currently %d places remaining.');
+			$remaining = '<p id="PlacesRemaining">' . sprintf($entity, $this->getRemainingPlaces()) . '</p>';
+
+			$fields->insertBefore(new LiteralField('PlacesRemaining', $remaining), 'Name');
+		}
+
 		if ($this->Event()->MultiplePlaces) {
 			$title = _t('EventManagement.NUMPLACES', 'Number of places');
 
@@ -57,6 +64,27 @@ class RegisterableDateTime extends CalendarDateTime {
 		$this->extend('updateRegistrationValidator', $validator);
 
 		return $validator;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getRemainingPlaces() {
+		$avail = $this->Event()->NumPlaces;
+
+		if ($this->Event()->MultiplePlaces) {
+			$taken = DB::query(sprintf(
+				'SELECT SUM("Places") FROM "EventRegistration" WHERE "TimeID" = %d',
+				$this->ID
+			));
+		} else {
+			$taken = DB::query(sprintf(
+				'SELECT COUNT(*) FROM "EventRegistration" WHERE "TimeID" = %d',
+				$this->ID
+			));
+		}
+
+		return $avail - $taken->value();
 	}
 
 }
