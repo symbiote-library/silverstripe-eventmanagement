@@ -99,7 +99,7 @@ class EventRegistrationController extends Page_Controller {
 	 * @param  string $action
 	 * @return string
 	 */
-	public function Link($action) {
+	public function Link($action = null) {
 		return Controller::join_links(
 			$this->parent->Link(), 'register', $this->time->ID, $action
 		);
