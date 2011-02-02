@@ -37,6 +37,14 @@ class RegisterableDateTime extends CalendarDateTime {
 			}
 		}
 
+		if ($member = Member::currentUser()) {
+			$fields->dataFieldByName('Name')->setValue($member->getName());
+			$fields->makeFieldReadonly('Name');
+
+			$fields->dataFieldByName('Email')->setValue($member->Email);
+			$fields->makeFieldReadonly('Email');
+		}
+
 		$this->extend('updateRegistrationFields', $fields);
 		return $fields;
 	}

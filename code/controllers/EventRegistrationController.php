@@ -74,6 +74,12 @@ class EventRegistrationController extends Page_Controller {
 	 */
 	public function doRegister($data, $form) {
 		$registration = new EventRegistration();
+
+		if ($member = Member::currentUser()) {
+			$registration->Name  = $member->getName();
+			$registration->Email = $member->Email;
+		}
+
 		$form->saveInto($registration);
 
 		$registration->EventID  = $this->time->EventID;
