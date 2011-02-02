@@ -138,9 +138,24 @@ class RegisterableEvent extends CalendarEvent {
 class RegisterableEvent_Controller extends CalendarEvent_Controller {
 
 	public static $allowed_actions = array(
+		'datetime',
 		'register',
 		'unregister'
 	);
+
+	/**
+	 * Allows a user to view the details about an individual event date/time.
+	 */
+	public function datetime($request) {
+		if (!$time = $this->getTimeById($request->param('ID'))) {
+			$this->httpError(404, 'The requested event time could not be found.');
+		}
+
+		return array(
+			'Title'    => $time->EventTitle(),
+			'DateTime' => $time
+		);
+	}
 
 	/**
 	 * Returns the controller allowing a person to register for an event.

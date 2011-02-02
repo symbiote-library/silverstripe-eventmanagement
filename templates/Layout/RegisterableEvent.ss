@@ -1,5 +1,5 @@
 <% require css(event_calendar/css/calendar.css) %>
-<% require css(eventmanagement/css/RegisterableEvent.css) %>
+<% require themedCSS(RegisterableEvent) %>
 <% require javascript(event_calendar/javascript/calendar_core.js) %>
 
 <div id="primaryContent" class="clearfix">
@@ -45,17 +45,25 @@
 					<a href="$UnregisterLink" class="unregister"><% _t('UNREGISTER','Un-Register') %></a>
 				</div>
 				
-				<h4><a href="$ICSLink" title="Add to Calendar">$_Dates</a></h4>
-				<% if StartTime %>
-					<ul id="times">
-						<li>$_Times</li>
-					</ul>
-				<% end_if %>
+				<div class="details">
+					<h4><a href="$DetailsLink">$_Dates</a></h4>
+					<% if StartTime %>
+						<ul id="times">
+							<li>$_Times</li>
+						</ul>
+					<% end_if %>
+				</div>
+				
+				<ul class="utility">
+					<li><a class="btn add" href="$ICSLink"><% _t('ADDTOCAL', 'Add to Calendar') %></a></li>
+				</ul>
 			<% end_control %>
 			
-			$Content
-			$Form
-			$PageComments
+			<div class="clear">
+				$Content
+				$Form
+				$PageComments
+			</div>
 		</div>
 	</div>
 </div>
