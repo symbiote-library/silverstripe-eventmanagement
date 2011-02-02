@@ -28,6 +28,32 @@ class EventRegistration extends DataObject {
 	);
 
 	/**
+	 * @return ValidationResult
+	 */
+	public function validate() {
+		$result = new ValidationResult();
+
+		$isMulti   = $this->Event()->MultiplePlaces;
+		$maxPlaces = $this->Event()->MaxPlaces;
+
+		if ($isMulti) {
+			if (!$this->Places > 0) {
+				$result->error(_t(
+					'EventRegistration.MUSTSELECTPLACES',
+					'You must enter a number of places to register for.'));
+			}
+
+			if ($this->Places > $maxPlaces) {
+				$result->error(sprintf(_t(
+					'EventRegistration.TOOMANYPLACES',
+					'You cannot select more than %d places.'), $maxPlaces));
+			}
+		}
+
+		return $result;
+	}
+
+	/**
 	 * @return string
 	 */
 	public function DatesSummary() {

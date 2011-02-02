@@ -79,7 +79,13 @@ class EventRegistrationController extends Page_Controller {
 		$registration->EventID  = $this->time->EventID;
 		$registration->TimeID   = $this->time->ID;
 		$registration->MemberID = Member::currentUserID();
-		$registration->write();
+
+		try {
+			$registration->write();
+		} catch (ValidationException $e) {
+			$form->sessionMessage($e->getResult()->message(), 'bad');
+			return $this->redirectBack();
+		}
 
 		return $this->redirect($this->Link('afterregistration'));
 	}
