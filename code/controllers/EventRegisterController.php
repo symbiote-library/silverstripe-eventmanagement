@@ -59,21 +59,6 @@ class EventRegisterController extends Page_Controller {
 			);
 		}
 
-		if ($event->RequireLoggedIn && $event->OneRegPerMember) {
-			$existing = $event->Registrations('"MemberID" = ' . Member::currentUserID());
-
-			if ($existing && count($existing)) {
-				$message = _t
-					('EventManagement.ALREADYREGDFOREVENT',
-					'You have already registered for this event.');
-
-				return array(
-					'Title'   => _t('EventManagement.ALREADYREGD', 'Already Registered'),
-					'Content' => "<p>$message</p>"
-				);
-			}
-		}
-
 		$title = sprintf(
 			_t('EventManagement.REGISTERFOR', 'Register For %s'), $this->time->EventTitle()
 		);

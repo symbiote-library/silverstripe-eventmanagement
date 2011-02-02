@@ -20,7 +20,6 @@ class RegisterableEvent extends CalendarEvent {
 		'MultiplePlaces'        => 'Boolean',
 		'MaxPlaces'             => 'Int',
 		'RequireLoggedIn'       => 'Boolean',
-		'OneRegPerMember'       => 'Boolean',
 		'AfterRegTitle'         => 'Varchar(255)',
 		'AfterRegContent'       => 'HTMLText',
 		'AfterUnregTitle'       => 'Varchar(255)',
@@ -66,8 +65,7 @@ class RegisterableEvent extends CalendarEvent {
 			new CheckboxField('MultiplePlaces', $this->fieldLabel('MultiplePlaces')),
 			new NumericField('MaxPlaces', $this->fieldLabel('MaxPlaces')),
 			new HeaderField('MemberSettingsHeader', $this->fieldLabel('MemberSettingsHeader')),
-			new CheckboxField('RequireLoggedIn', $this->fieldLabel('RequireLoggedIn')),
-			new CheckboxField('OneRegPerMember', $this->fieldLabel('OneRegPerMember'))
+			new CheckboxField('RequireLoggedIn', $this->fieldLabel('RequireLoggedIn'))
 		));
 
 		$fields->addFieldsToTab('Root.Content.AfterRegistration', array(
@@ -133,7 +131,6 @@ class RegisterableEvent extends CalendarEvent {
 			'MaxPlaces' => _t('EventManagement.MAXPLACES', 'Maximum places selectable (0 for any number)'),
 			'MemberSettingsHeader' => _t('EventManagement.MEMBERSETTINGS', 'Member Settings'),
 			'RequireLoggedIn' => _t('EventManagement.REQUIREDLOGGEDIN', 'Require users to be logged in to register?'),
-			'OneRegPerMember' => _t('EventMangement.LIMITMEMBERSTOSINGLEREG', 'Limit members to a single registration?'),
 			'AfterRegTitle' => _t('EventManagement.AFTERREGTITLE', 'After registration title'),
 			'AfterRegContent' => _t('EventManagement.AFTERREGCONTENT', 'After registration content'),
 			'AfterUnregTitle' => _t('EventManagement.AFTERUNREGTITLE', 'After un-registration title'),
