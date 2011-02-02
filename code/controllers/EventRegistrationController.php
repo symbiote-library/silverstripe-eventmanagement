@@ -44,7 +44,7 @@ class EventRegistrationController extends Page_Controller {
 	 */
 	public function index() {
 		$title = sprintf(
-			_t('EventManager.REGISTERFOR', 'Register For %s'), $this->time->EventTitle()
+			_t('EventManagement.REGISTERFOR', 'Register For %s'), $this->time->EventTitle()
 		);
 
 		return array(
@@ -91,7 +91,7 @@ class EventRegistrationController extends Page_Controller {
 	 */
 	public function afterregistration() {
 		return array(
-			'Title' => _t('EventManager.THANKSREGISTERING', 'Thanks For Registering!')
+			'Title' => _t('EventManagement.THANKSREGISTERING', 'Thanks For Registering!')
 		);
 	}
 

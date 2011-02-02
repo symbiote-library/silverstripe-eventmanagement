@@ -30,8 +30,8 @@ class EventRegistration extends DataObject {
 	 */
 	public function getRegistrationFields() {
 		$fields = new FieldSet(
-			new TextField('Name', _t('EventManager.YOURNAME', 'Your Name')),
-			new EmailField('Email', _t('EventManager.EMAILADDR', 'Email Address'))
+			new TextField('Name', _t('EventManagement.YOURNAME', 'Your Name')),
+			new EmailField('Email', _t('EventManagement.EMAILADDR', 'Email Address'))
 		);
 
 		$this->extend('updateRegistrationFields', $fields);
