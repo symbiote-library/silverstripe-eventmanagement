@@ -43,8 +43,13 @@ class EventRegistrationController extends Page_Controller {
 	 * @return string
 	 */
 	public function index() {
-		if ($this->time->Event()->LimitedPlaces && !$this->time->getRemainingPlaces()){
-			return $this->httpError(404, 'There are no more places available.');
+		if ($this->time->Event()->LimitedPlaces && ($this->time->getRemainingPlaces() < 1)) {
+			$message = _t('EventManagement.NOPLACES', 'This event has no more places available.');
+
+			return array(
+				'Title'   => _t('EventManagement.EVENTISFULL', 'This Event Is Full'),
+				'Content' => "<p>$message</p>"
+			);
 		}
 
 		$title = sprintf(
