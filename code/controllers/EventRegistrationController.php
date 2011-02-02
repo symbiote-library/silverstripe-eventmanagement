@@ -160,7 +160,7 @@ class EventRegistrationController extends Page_Controller {
 	public function afterregistration() {
 		return array(
 			'Title'   => $this->time->Event()->AfterRegTitle,
-			'Content' => $this->time->Event()->AfterRegContent
+			'Content' => $this->time->Event()->obj('AfterRegContent')
 		);
 	}
 
