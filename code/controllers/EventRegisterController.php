@@ -163,8 +163,15 @@ class EventRegisterController extends Page_Controller {
 			return $this->httpError(403);
 		}
 
-		$rego->Confirmed = true;
-		$rego->write();
+		try {
+			$rego->Confirmed = true;
+			$rego->write();
+		} catch (ValidationException $e) {
+			return array(
+				'Title'   => _t('EventManagement.COULDNTCONFIRMREG', 'Could Not Confirm Registration'),
+				'Content' => '<p>' . $e->getResult()->message() . '</p>'
+			);
+		}
 
 		return array(
 			'Title'   => $this->time->Event()->AfterConfirmTitle,
