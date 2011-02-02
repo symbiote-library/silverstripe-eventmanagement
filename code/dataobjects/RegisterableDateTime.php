@@ -6,6 +6,11 @@
  */
 class RegisterableDateTime extends CalendarDateTime {
 
+	public static $db = array(
+		'LimitedPlaces' => 'Boolean',
+		'NumPlaces'     => 'Int'
+	);
+
 	public static $has_many = array(
 		'Registrations' => 'EventRegistration'
 	);
@@ -66,11 +71,32 @@ class RegisterableDateTime extends CalendarDateTime {
 		return $validator;
 	}
 
+	public function extendTable() {
+		$this->addTableTitles(array(
+			'RemainingPlaces' => _t('EventManager.PLACESREMAINING', 'Places Remaining')
+		));
+
+		$this->addPopupFields(array(
+			new HeaderField('LimitedPlacesHeader',
+				_t('EventManagement.LIMPLACES', 'Limited Places')),
+			new CheckboxField('LimitedPlaces',
+				_t('EventManagement.HASLIMPLACES', 'Does this event has limited places?')),
+			new NumericField('NumPlaces',
+				_t('EventManagement.NUMPLACESAVAILABLE', 'Number of places available')),
+		));
+	}
+
+	public function getRequirementsForPopup() {
+		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
+		Requirements::javascript(THIRDPARTY_DIR . '/jquery-livequery/jquery.livequery.js');
+		Requirements::javascript('eventmanagement/javascript/RegisterableDateTimeCms.js');
+	}
+
 	/**
 	 * @return int
 	 */
 	public function getRemainingPlaces() {
-		$avail = $this->Event()->NumPlaces;
+		$avail = $this->NumPlaces;
 
 		if ($this->Event()->MultiplePlaces) {
 			$taken = DB::query(sprintf(

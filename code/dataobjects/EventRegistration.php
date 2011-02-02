@@ -35,7 +35,7 @@ class EventRegistration extends DataObject {
 	public function validate() {
 		$result = new ValidationResult();
 
-		$isLimited = $this->Event()->LimitedPlaces;
+		$isLimited = $this->Time()->LimitedPlaces;
 		$isMulti   = $this->Event()->MultiplePlaces;
 		$maxPlaces = $this->Event()->MaxPlaces;
 
@@ -54,7 +54,7 @@ class EventRegistration extends DataObject {
 		}
 
 		if ($isLimited && $isMulti) {
-			if (($this->Time()->getRemainingPlaces() - $this->Places) < 1) {
+			if (($this->Time()->getRemainingPlaces() - $this->Places) < 0) {
 				$result->error(sprintf(_t(
 					'EventRegistration.NOTENOUGHPLACES',
 					'There are only %d places remaining, please select a lower number of places.'

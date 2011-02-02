@@ -48,8 +48,7 @@ class EventRegisterController extends Page_Controller {
 	 * @return string
 	 */
 	public function index() {
-		$event = $this->time->Event();
-		if ($event->LimitedPlaces && ($this->time->getRemainingPlaces() < 1)) {
+		if ($this->time->LimitedPlaces && ($this->time->getRemainingPlaces() < 1)) {
 			$message = _t('EventManagement.NOPLACES', 'This event has no more places available.');
 
 			$controller = $this->customise(array(
