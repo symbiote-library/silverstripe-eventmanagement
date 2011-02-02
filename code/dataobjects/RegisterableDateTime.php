@@ -73,7 +73,7 @@ class RegisterableDateTime extends CalendarDateTime {
 
 	public function extendTable() {
 		$this->addTableTitles(array(
-			'RemainingPlaces' => _t('EventManager.PLACESREMAINING', 'Places Remaining')
+			'RemainingPlacesNice' => _t('EventManager.PLACESREMAINING', 'Places Remaining')
 		));
 
 		$this->addPopupFields(array(
@@ -111,6 +111,17 @@ class RegisterableDateTime extends CalendarDateTime {
 		}
 
 		return $avail - $taken->value();
+	}
+
+	/**
+	 * @return string
+	 */
+	public function RemainingPlacesNice() {
+		if ($this->LimitedPlaces) {
+			return $this->getRemainingPlaces();
+		} else {
+			return _t('EventManagement.NOTLIMITED', '(Not limited)');
+		}
 	}
 
 	/**
