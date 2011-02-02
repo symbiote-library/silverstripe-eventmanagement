@@ -7,8 +7,23 @@
 class RegisterableEvent extends CalendarEvent {
 
 	public static $has_many = array(
-		'DateTimes' => 'RegisterableDateTime'
+		'DateTimes'     => 'RegisterableDateTime',
+		'Registrations' => 'EventRegistration'
 	);
+
+	public function getCMSFields() {
+		$fields = parent::getCMSFields();
+
+		$registrations = new ComplexTableField(
+			$this, 'Registrations', 'EventRegistration'
+		);
+		$registrations = $registrations->performReadonlyTransformation();
+
+		$fields->addFieldToTab('Root', new Tab('Registrations'), 'Behaviour');
+		$fields->addFieldToTab('Root.Registrations', $registrations);
+
+		return $fields;
+	}
 
 }
 

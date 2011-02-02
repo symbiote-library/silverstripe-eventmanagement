@@ -17,6 +17,14 @@ class EventRegistration extends DataObject {
 		'Member' => 'Member'
 	);
 
+	public static $summary_fields = array(
+		'Name'         => 'Name',
+		'Email'        => 'Email',
+		'Event.Title'  => 'Event',
+		'DatesSummary' => 'Date(s)',
+		'TimesSummary' => 'Time(s)'
+	);
+
 	/**
 	 * @return FieldSet
 	 */
@@ -38,6 +46,20 @@ class EventRegistration extends DataObject {
 		$this->extend('updateRegistrationValidator', $validator);
 
 		return $validator;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function DatesSummary() {
+		return $this->Time()->_Dates();
+	}
+
+	/**
+	 * @return string
+	 */
+	public function TimesSummary() {
+		return $this->Time()->_Times();
 	}
 
 }
