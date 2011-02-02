@@ -36,11 +36,12 @@ class RegisterableEvent extends CalendarEvent {
 		$registrations = new ComplexTableField(
 			$this, 'Registrations', 'EventRegistration', $regFields
 		);
+		$registrations->setPermissions(array('show', 'print', 'export'));
 
 		$fields->addFieldToTab('Root', new Tab('Registrations'), 'Behaviour');
 		$fields->addFieldsToTab('Root.Registrations', array(
 			new HeaderField('RegistrationsHeader', $this->fieldLabel('Registrations')),
-			$registrations->performReadonlyTransformation()
+			$registrations
 		));
 
 		return $fields;
