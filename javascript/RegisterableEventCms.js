@@ -14,4 +14,12 @@
 	$("#Form_EditForm_MultiplePlaces").livequery(function() {
 		$("#MaxPlaces").toggle($(this).is(":checked"));
 	});
+
+	$("#Form_EditForm_RequireLoggedIn").live("click", function() {
+		$("#OneRegPerMember").toggle($(this).is(":checked"));
+	});
+
+	$("#Form_EditForm_RequireLoggedIn").livequery(function() {
+		$("#OneRegPerMember").toggle($(this).is(":checked"));
+	});
 })(jQuery);

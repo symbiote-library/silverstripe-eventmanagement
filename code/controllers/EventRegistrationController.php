@@ -30,26 +30,43 @@ class EventRegistrationController extends Page_Controller {
 	}
 
 	public function init() {
+		parent::init();
+
 		if (!$this->time->canRegister()) {
 			return Security::permissionFailure($this, array(
 				'default' => 'You do not have permission to register for this event'
 			));
 		}
-
-		parent::init();
 	}
 
 	/**
 	 * @return string
 	 */
 	public function index() {
-		if ($this->time->Event()->LimitedPlaces && ($this->time->getRemainingPlaces() < 1)) {
+		$event = $this->time->Event();
+
+		if ($event->LimitedPlaces && ($this->time->getRemainingPlaces() < 1)) {
 			$message = _t('EventManagement.NOPLACES', 'This event has no more places available.');
 
 			return array(
 				'Title'   => _t('EventManagement.EVENTISFULL', 'This Event Is Full'),
 				'Content' => "<p>$message</p>"
 			);
+		}
+
+		if ($event->RequireLoggedIn && $event->OneRegPerMember) {
+			$existing = $event->Registrations('"MemberID" = ' . Member::currentUserID());
+
+			if ($existing && count($existing)) {
+				$message = _t
+					('EventManagement.ALREADYREGDFOREVENT',
+					'You have already registered for this event.');
+
+				return array(
+					'Title'   => _t('EventManagement.ALREADYREGD', 'Already Registered'),
+					'Content' => "<p>$message</p>"
+				);
+			}
 		}
 
 		$title = sprintf(

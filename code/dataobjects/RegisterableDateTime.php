@@ -14,7 +14,7 @@ class RegisterableDateTime extends CalendarDateTime {
 	 * @return bool
 	 */
 	public function canRegister() {
-		return true;
+		return !$this->Event()->RequireLoggedIn || Member::currentUserID();
 	}
 
 	/**
