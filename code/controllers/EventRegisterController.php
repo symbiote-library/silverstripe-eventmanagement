@@ -39,7 +39,13 @@ class EventRegisterController extends Page_Controller {
 
 		if (!$this->time->canRegister()) {
 			return Security::permissionFailure($this, array(
-				'default' => 'You do not have permission to register for this event'
+				'default' => 'You do not have permission to register for this event.'
+			));
+		}
+
+		if ($this->time->Event()->RequireLoggedIn && !Member::currentUserID()) {
+			return Security::permissionFailure($this, array(
+				'default' => 'Please log in to register for this event.'
 			));
 		}
 	}

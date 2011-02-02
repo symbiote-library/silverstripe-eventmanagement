@@ -23,10 +23,6 @@ class RegisterableDateTime extends CalendarDateTime {
 			return false;
 		}
 
-		if ($this->Event()->RequireLoggedIn && !Member::currentUserID()) {
-			return false;
-		}
-
 		return true;
 	}
 
