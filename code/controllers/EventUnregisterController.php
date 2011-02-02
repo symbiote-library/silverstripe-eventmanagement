@@ -12,7 +12,8 @@ class EventUnregisterController extends Page_Controller {
 
 	public static $allowed_actions = array(
 		'UnregisterForm',
-		'afterunregistration'
+		'afterunregistration',
+		'confirm'
 	);
 
 	protected $parent;
@@ -78,8 +79,29 @@ class EventUnregisterController extends Page_Controller {
 			return $this->redirectBack();
 		}
 
-		foreach ($regos as $rego) {
-			$rego->delete();
+		if ($this->time->Event()->UnRegEmailConfirm) {
+			$addr         = $data['Email'];
+			$email        = new Email();
+			$registration = $regos->First();
+
+			$email->setTo($addr);
+			$email->setSubject(sprintf(
+				_t('EventManagement.CONFIRMUNREGFOR', 'Confirm Un-Registration For %s (%s)'),
+				$this->time->Event()->Title, SiteConfig::current_site_config()->Title));
+
+			$email->setTemplate('EventUnregistrationConfirmationEmail');
+			$email->populateTemplate(array(
+				'Registration' => $registration,
+				'Time'         => $this->time,
+				'SiteConfig'   => SiteConfig::current_site_config(),
+				'ConfirmLink'  => Director::absoluteURL(Controller::join_links(
+					$this->Link(), 'confirm',
+					'?email=' . urlencode($addr), '?token=' . $registration->Token))
+			));
+
+			$email->send();
+		} else {
+			foreach ($regos as $rego) $rego->delete();
 		}
 
 		return $this->redirect($this->Link('afterunregistration'));
@@ -92,6 +114,37 @@ class EventUnregisterController extends Page_Controller {
 		return array(
 			'Title'   => $this->time->Event()->AfterUnregTitle,
 			'Content' => $this->time->Event()->obj('AfterUnregContent')
+		);
+	}
+
+	/**
+	 * @return array
+	 */
+	public function confirm($request) {
+		$email = $request->getVar('email');
+		$token = $request->getVar('token');
+
+		// Attempt to get at least one registration with the email and token,
+		// and if we do then delete all the other ones as well.
+		$first = DataObject::get_one('EventRegistration', sprintf(
+			'"Email" = \'%s\' AND "Token" = \'%s\'',
+			Convert::raw2sql($email), Convert::raw2sql($token)
+		));
+
+		if (!$first) {
+			return $this->httpError(404);
+		}
+
+		// Now delete all registrations with the same email.
+		$regos = DataObject::get('EventRegistration', sprintf(
+			'"Email" = \'%s\'', Convert::raw2sql($email)
+		));
+
+		foreach ($regos as $rego) $rego->delete();
+
+		return array(
+			'Title'   => $this->time->Event()->AfterConfUnregTitle,
+			'Content' => $this->time->Event()->obj('AfterConfUnregContent')
 		);
 	}
 

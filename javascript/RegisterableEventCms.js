@@ -7,6 +7,14 @@
 		$("#AfterConfirmTitle, #AfterConfirmContent").toggle($(this).is(":checked"));
 	});
 
+	$("#Form_EditForm_UnRegEmailConfirm").live("click", function() {
+		$("#AfterConfUnregTitle, #AfterConfUnregContent").toggle($(this).is(":checked"));
+	});
+
+	$("#Form_EditForm_UnRegEmailConfirm").livequery(function() {
+		$("#AfterConfUnregTitle, #AfterConfUnregContent").toggle($(this).is(":checked"));
+	});
+	
 	$("#Form_EditForm_LimitedPlaces").live("click", function() {
 		$("#NumPlaces").toggle($(this).is(":checked"));
 	});

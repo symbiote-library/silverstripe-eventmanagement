@@ -7,19 +7,23 @@
 class RegisterableEvent extends CalendarEvent {
 
 	public static $db = array(
-		'RegEmailConfirm'     => 'Boolean',
-		'AfterConfirmTitle'   => 'Varchar(255)',
-		'AfterConfirmContent' => 'HTMLText',
-		'LimitedPlaces'       => 'Boolean',
-		'NumPlaces'           => 'Int',
-		'MultiplePlaces'      => 'Boolean',
-		'MaxPlaces'           => 'Int',
-		'RequireLoggedIn'     => 'Boolean',
-		'OneRegPerMember'     => 'Boolean',
-		'AfterRegTitle'       => 'Varchar(255)',
-		'AfterRegContent'     => 'HTMLText',
-		'AfterUnregTitle'     => 'Varchar(255)',
-		'AfterUnregContent'   => 'HTMLText'
+		'RegEmailConfirm'       => 'Boolean',
+		'AfterConfirmTitle'     => 'Varchar(255)',
+		'AfterConfirmContent'   => 'HTMLText',
+		'UnRegEmailConfirm'     => 'Boolean',
+		'AfterConfUnregTitle'   => 'Varchar(255)',
+		'AfterConfUnregContent' => 'HTMLText',
+		'AfterConfirmContent'   => 'HTMLText',
+		'LimitedPlaces'         => 'Boolean',
+		'NumPlaces'             => 'Int',
+		'MultiplePlaces'        => 'Boolean',
+		'MaxPlaces'             => 'Int',
+		'RequireLoggedIn'       => 'Boolean',
+		'OneRegPerMember'       => 'Boolean',
+		'AfterRegTitle'         => 'Varchar(255)',
+		'AfterRegContent'       => 'HTMLText',
+		'AfterUnregTitle'       => 'Varchar(255)',
+		'AfterUnregContent'     => 'HTMLText'
 	);
 
 	public static $has_many = array(
@@ -28,12 +32,14 @@ class RegisterableEvent extends CalendarEvent {
 	);
 
 	public static $defaults = array(
-		'AfterRegTitle'       => 'Thanks For Registering',
-		'AfterRegContent'     => '<p>Thanks for registering! We look forward to seeing you.</p>',
-		'AfterConfirmTitle'   => 'Registration Confirmed',
-		'AfterConfirmContent' => '<p>Thanks! Your registration has been confirmed</p>',
-		'AfterUnregTitle'     => 'Registration Canceled',
-		'AfterUnregContent'   => '<p>Your registration has been canceled.</p>'
+		'AfterRegTitle'         => 'Thanks For Registering',
+		'AfterRegContent'       => '<p>Thanks for registering! We look forward to seeing you.</p>',
+		'AfterConfirmTitle'     => 'Registration Confirmed',
+		'AfterConfirmContent'   => '<p>Thanks! Your registration has been confirmed</p>',
+		'AfterUnregTitle'       => 'Registration Canceled',
+		'AfterUnregContent'     => '<p>Your registration has been canceled.</p>',
+		'AfterConfUnregTitle'   => 'Un-Registration Confirmed',
+		'AfterConfUnregContent' => '<p>Your registration has been canceled.</p>',
 	);
 
 	public function getCMSFields() {
@@ -48,6 +54,9 @@ class RegisterableEvent extends CalendarEvent {
 			new CheckboxField('RegEmailConfirm', $this->fieldLabel('RegEmailConfirm')),
 			new TextField('AfterConfirmTitle', $this->fieldLabel('AfterConfirmTitle')),
 			new HtmlEditorField('AfterConfirmContent', $this->fieldLabel('AfterConfirmContent'), 5),
+			new CheckboxField('UnRegEmailConfirm', $this->fieldLabel('UnRegEmailConfirm')),
+			new TextField('AfterConfUnregTitle', $this->fieldLabel('AfterConfUnregTitle')),
+			new HtmlEditorField('AfterConfUnregContent', $this->fieldLabel('AfterConfUnregContent'), 5),
 			new HeaderField('LimitedPlacesHeader', $this->fieldLabel('LimitedPlacesHeader')),
 			new CheckboxField('LimitedPlaces', $this->fieldLabel('LimitedPlaces')),
 			new NumericField('NumPlaces', $this->fieldLabel('NumPlaces')),
@@ -110,6 +119,9 @@ class RegisterableEvent extends CalendarEvent {
 				to complete registration?'),
 			'AfterConfirmTitle' => _t('EventManagement.AFTERCONFIRMTITLE', 'After confirmation title'),
 			'AfterConfirmContent' => _t('EventManagement.AFTERCONFIRMCONTENT', 'After confirmation content'),
+			'UnRegEmailConfirm' => _t('EventManagement.REQEMAILUNREGCONFIRM', 'Require email confirmation to un-register?'),
+			'AfterConfUnregTitle' => _t('EventManagement.AFTERUNREGCONFTITLE', 'After un-registration confirmation title'),
+			'AfterConfUnregContent' => _t('EventManagement.AFTERUNREGCONFCONTENT', 'After un-registration confirmation content'),
 			'LimitedPlacesHeader' => _t('EventManagement.LIMPLACES', 'Limited Places'),
 			'LimitedPlaces' => _t('EventManagement.HASLIMPLACES', 'This event has limited places?'),
 			'NumPlaces' => _t('EventManagement.NUMPLACESAVAILABLE', 'Number of places available'),
