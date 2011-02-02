@@ -7,6 +7,7 @@
 class RegisterableEvent extends CalendarEvent {
 
 	public static $db = array(
+		'OneRegPerEmail'        => 'Boolean',
 		'RegEmailConfirm'       => 'Boolean',
 		'AfterConfirmTitle'     => 'Varchar(255)',
 		'AfterConfirmContent'   => 'HTMLText',
@@ -50,7 +51,8 @@ class RegisterableEvent extends CalendarEvent {
 		$fields = parent::getCMSFields();
 
 		$fields->addFieldsToTab('Root.Content.Registration', array(
-			new HeaderField('EmailConfirmationHeader', $this->fieldLabel('EmailConfirmationHeader')),
+			new HeaderField('EmailSettingsHeader', $this->fieldLabel('EmailSettingsHeader')),
+			new CheckboxField('OneRegPerEmail', $this->fieldLabel('OneRegPerEmail')),
 			new CheckboxField('RegEmailConfirm', $this->fieldLabel('RegEmailConfirm')),
 			new TextField('AfterConfirmTitle', $this->fieldLabel('AfterConfirmTitle')),
 			new HtmlEditorField('AfterConfirmContent', $this->fieldLabel('AfterConfirmContent'), 5),
@@ -114,7 +116,8 @@ class RegisterableEvent extends CalendarEvent {
 	public function fieldLabels() {
 		return array_merge(parent::fieldLabels(), array(
 			'Registrations' => _t('EventManagement.REGISTATIONS', 'Registrations'),
-			'EmailConfirmationHeader' => _t('EventManagement.EMAILCONF', 'Email Confirmation'),
+			'EmailSettingsHeader' => _t('EventManagement.EMAILSETTINGS', 'Email Settings'),
+			'OneRegPerEmail' => _t('EventManagement.ONEREGPEREMAIL', 'Limit to one registration per email address?'),
 			'RegEmailConfirm' => _t('EventManagement.REQEMAILCONFIRM', 'Require email confirmation
 				to complete registration?'),
 			'AfterConfirmTitle' => _t('EventManagement.AFTERCONFIRMTITLE', 'After confirmation title'),

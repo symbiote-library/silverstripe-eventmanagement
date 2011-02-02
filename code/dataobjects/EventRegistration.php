@@ -39,6 +39,20 @@ class EventRegistration extends DataObject {
 		$isMulti   = $this->Event()->MultiplePlaces;
 		$maxPlaces = $this->Event()->MaxPlaces;
 
+		if ($this->Event()->OneRegPerEmail) {
+			$idFilter = $this->isInDB() ? "\"EventRegistration\".\"ID\" <> {$this->ID}" : '';
+
+			$existing = DataObject::get_one('EventRegistration', sprintf(
+				'"Email" = \'%s\' %s', $this->Email, $idFilter
+			));
+
+			if ($existing) {
+				$result->error(_t(
+					'EventManagement.REGWITHEMAILALREADYEXISTS',
+					'A registration using that email address already exists.'));
+			}
+		}
+
 		if ($isLimited && $isMulti) {
 			if (($this->Time()->getRemainingPlaces() - $this->Places) < 1) {
 				$result->error(sprintf(_t(
