@@ -29,8 +29,12 @@ class RegisterableEvent extends CalendarEvent {
 			new NumericField('MaxPlaces', $this->fieldLabel('MaxPlaces'))
 		));
 
+		// Only show the places column if multiple places are enabled.
+		$regFields = singleton('EventRegistration')->summaryFields();
+		if (!$this->MultiplePlaces) unset($regFields['Places']);
+
 		$registrations = new ComplexTableField(
-			$this, 'Registrations', 'EventRegistration'
+			$this, 'Registrations', 'EventRegistration', $regFields
 		);
 		$registrations = $registrations->performReadonlyTransformation();
 
