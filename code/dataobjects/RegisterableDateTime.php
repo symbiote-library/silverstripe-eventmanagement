@@ -21,14 +21,23 @@ class RegisterableDateTime extends CalendarDateTime {
 	 * @return FieldSet
 	 */
 	public function getRegistrationFields() {
-		return singleton('EventRegistration')->getRegistrationFields();
+		$fields = new FieldSet(
+			new TextField('Name', _t('EventManagement.YOURNAME', 'Your Name')),
+			new EmailField('Email', _t('EventManagement.EMAILADDR', 'Email Address'))
+		);
+
+		$this->extend('updateRegistrationFields', $fields);
+		return $fields;
 	}
 
 	/**
 	 * @return Validator
 	 */
 	public function getRegistrationValidator() {
-		return singleton('EventRegistration')->getRegistrationValidator();
+		$validator = new RequiredFields('Name', 'Email');
+		$this->extend('updateRegistrationValidator', $validator);
+
+		return $validator;
 	}
 
 }

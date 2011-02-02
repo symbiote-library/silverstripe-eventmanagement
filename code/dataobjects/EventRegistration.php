@@ -26,29 +26,6 @@ class EventRegistration extends DataObject {
 	);
 
 	/**
-	 * @return FieldSet
-	 */
-	public function getRegistrationFields() {
-		$fields = new FieldSet(
-			new TextField('Name', _t('EventManagement.YOURNAME', 'Your Name')),
-			new EmailField('Email', _t('EventManagement.EMAILADDR', 'Email Address'))
-		);
-
-		$this->extend('updateRegistrationFields', $fields);
-		return $fields;
-	}
-
-	/**
-	 * @return Validator
-	 */
-	public function getRegistrationValidator() {
-		$validator = new RequiredFields('Name', 'Email');
-		$this->extend('updateRegistrationValidator', $validator);
-
-		return $validator;
-	}
-
-	/**
 	 * @return string
 	 */
 	public function DatesSummary() {
