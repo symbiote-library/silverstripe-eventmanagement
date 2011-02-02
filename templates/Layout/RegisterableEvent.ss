@@ -36,7 +36,7 @@
 			
 			<h3 class="summary">$Title</h3>
 			<% control CurrentDate %>
-				<div class="registration-links">
+				<div class="registration-links right">
 					<% if CanRegister %>
 						<a href="$RegisterLink" class="register"><% _t('REGISTER','Register') %></a>
 					<% else %>

@@ -1,3 +1,4 @@
 .clear { clear: both; }
-.registration-links { float: right; }
-.registration-links a { background: #222; color: #FFF; padding: 4px; margin-left: 5px; }
+.registration-links a { background: #222; color: #FFF; padding: 4px; line-height: 25px; }
+.registration-links.right { float: right; }
+.registration-links.right a { margin-left: 5px; }

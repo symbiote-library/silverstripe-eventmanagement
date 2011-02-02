@@ -2,7 +2,7 @@
 <div id="content" class="typography">
 	<% control DateTime %>
 		<h2>$EventTitle</h2>
-		<div class="registration-links">
+		<div class="registration-links right">
 			<% if CanRegister %>
 				<a href="$RegisterLink" class="register"><% _t('REGISTER','Register') %></a>
 			<% else %>
