@@ -13,6 +13,7 @@ class EventRegistration extends DataObject {
 
 	public static $has_one = array(
 		'Time'   => 'RegisterableDateTime',
+		'Event'  => 'RegisterableEvent',
 		'Member' => 'Member'
 	);
 

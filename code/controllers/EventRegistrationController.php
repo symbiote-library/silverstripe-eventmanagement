@@ -76,6 +76,7 @@ class EventRegistrationController extends Page_Controller {
 		$registration = new EventRegistration();
 		$form->saveInto($registration);
 
+		$registration->EventID  = $this->time->EventID;
 		$registration->TimeID   = $this->time->ID;
 		$registration->MemberID = Member::currentUserID();
 		$registration->write();
