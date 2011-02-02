@@ -131,7 +131,7 @@ class RegisterableEvent_Controller extends CalendarEvent_Controller {
 	 * Returns the controller allowing a person to register for an event.
 	 *
 	 * @param  SS_HTTPRequest $request
-	 * @return EventRegistrationController
+	 * @return EventRegisterController
 	 */
 	public function register($request) {
 		if (!$time = $this->getTimeById($request->param('ID'))) {
@@ -141,7 +141,7 @@ class RegisterableEvent_Controller extends CalendarEvent_Controller {
 		$request->shift(1);
 		$request->shiftAllParams();
 
-		return new EventRegistrationController($this, $time);
+		return new EventRegisterController($this, $time);
 	}
 
 	/**

@@ -5,7 +5,7 @@
  *
  * @package silverstripe-eventmanagement
  */
-class EventRegistrationController extends Page_Controller {
+class EventRegisterController extends Page_Controller {
 
 	public static $url_handlers = array(
 		'' => 'index'
