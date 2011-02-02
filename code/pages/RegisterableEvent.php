@@ -123,7 +123,8 @@ class RegisterableEvent extends CalendarEvent {
 class RegisterableEvent_Controller extends CalendarEvent_Controller {
 
 	public static $allowed_actions = array(
-		'register'
+		'register',
+		'unregister'
 	);
 
 	/**
@@ -133,21 +134,43 @@ class RegisterableEvent_Controller extends CalendarEvent_Controller {
 	 * @return EventRegistrationController
 	 */
 	public function register($request) {
-		$id = $request->param('ID');
-
-		$filter = sprintf(
-			'"CalendarDateTime"."ID" = %d AND "EventID" = %d', $id, $this->ID
-		);
-		$time = $this->DateTimes($filter, null, null, 1);
-
-		if (!count($time)) {
+		if (!$time = $this->getTimeById($request->param('ID'))) {
 			$this->httpError(404, 'The requested event time could not be found.');
 		}
 
 		$request->shift(1);
 		$request->shiftAllParams();
 
-		return new EventRegistrationController($this, $time->First());
+		return new EventRegistrationController($this, $time);
+	}
+
+	/**
+	 * Allows a person to remove their registration by entering their email
+	 * address.
+	 */
+	public function unregister($request) {
+		if (!$time = $this->getTimeById($request->param('ID'))) {
+			$this->httpError(404, 'The requested event time could not be found.');
+		}
+
+		$request->shift(1);
+		$request->shiftAllParams();
+
+		return new EventUnregisterController($this, $time);
+	}
+
+	/**
+	 * @param  int $id
+	 * @return RegisterableDateTime
+	 */
+	protected function getTimeById($id) {
+		$filter = sprintf(
+			'"CalendarDateTime"."ID" = %d AND "EventID" = %d', $id, $this->ID
+		);
+
+		if ($time = $this->DateTimes($filter, null, null, 1)) {
+			return $time->First();
+		}
 	}
 
 }
