@@ -7,15 +7,22 @@
 class RegisterableEvent extends CalendarEvent {
 
 	public static $db = array(
-		'LimitedPlaces'  => 'Boolean',
-		'NumPlaces'      => 'Int',
-		'MultiplePlaces' => 'Boolean',
-		'MaxPlaces'      => 'Int'
+		'LimitedPlaces'   => 'Boolean',
+		'NumPlaces'       => 'Int',
+		'MultiplePlaces'  => 'Boolean',
+		'MaxPlaces'       => 'Int',
+		'AfterRegTitle'   => 'Varchar(255)',
+		'AfterRegContent' => 'HTMLText'
 	);
 
 	public static $has_many = array(
 		'DateTimes'     => 'RegisterableDateTime',
 		'Registrations' => 'EventRegistration'
+	);
+
+	public static $defaults = array(
+		'AfterRegTitle'   => 'Thanks For Registering',
+		'AfterRegContent' => '<p>Thanks for registering! We look forward to seeing you.</p>'
 	);
 
 	public function getCMSFields() {
@@ -32,6 +39,11 @@ class RegisterableEvent extends CalendarEvent {
 			new HeaderField('MultiplePlacesHeader', $this->fieldLabel('MultiplePlacesHeader')),
 			new CheckboxField('MultiplePlaces', $this->fieldLabel('MultiplePlaces')),
 			new NumericField('MaxPlaces', $this->fieldLabel('MaxPlaces'))
+		));
+
+		$fields->addFieldsToTab('Root.Content.AfterRegistration', array(
+			new TextField('AfterRegTitle', $this->fieldLabel('AfterRegTitle')),
+			new HtmlEditorField('AfterRegContent', $this->fieldLabel('AfterRegContent'))
 		));
 
 		// Only show the places column if multiple places are enabled.
@@ -60,7 +72,9 @@ class RegisterableEvent extends CalendarEvent {
 			'NumPlaces' => _t('EventManagement.NUMPLACESAVAILABLE', 'Number of places available'),
 			'MultiplePlacesHeader' => _t('EventManagement.MULTIPLACES', 'Multiple Places'),
 			'MultiplePlaces' => _t('EventManagement.ALLOWMULTIPLACES', 'Allow atendees to register for multiple places?'),
-			'MaxPlaces' => _t('EventManagement.MAXPLACES', 'Maximum places selectable (0 for any number)')
+			'MaxPlaces' => _t('EventManagement.MAXPLACES', 'Maximum places selectable (0 for any number)'),
+			'AfterRegTitle' => _t('EventManagement.AFTERREGTITLE', 'After registration title'),
+			'AfterRegContent' => _t('EventManagement.AFTERREGCONTENT', 'After registration content')
 		));
 	}
 

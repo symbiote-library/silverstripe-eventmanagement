@@ -107,7 +107,8 @@ class EventRegistrationController extends Page_Controller {
 	 */
 	public function afterregistration() {
 		return array(
-			'Title' => _t('EventManagement.THANKSREGISTERING', 'Thanks For Registering!')
+			'Title'   => $this->time->Event()->AfterRegTitle,
+			'Content' => $this->time->Event()->AfterRegContent
 		);
 	}
 
