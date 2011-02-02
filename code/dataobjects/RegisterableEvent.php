@@ -6,13 +6,28 @@
  */
 class RegisterableEvent extends CalendarEvent {
 
+	public static $db = array(
+		'MultiplePlaces' => 'Boolean',
+		'MaxPlaces'      => 'Int'
+	);
+
 	public static $has_many = array(
 		'DateTimes'     => 'RegisterableDateTime',
 		'Registrations' => 'EventRegistration'
 	);
 
 	public function getCMSFields() {
+		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
+		Requirements::javascript(THIRDPARTY_DIR . '/jquery-livequery/jquery.livequery.js');
+		Requirements::javascript('eventmanagement/javascript/RegisterableEventCms.js');
+
 		$fields = parent::getCMSFields();
+
+		$fields->addFieldsToTab('Root.Content.Registration', array(
+			new HeaderField('MultiplePlacesHeader', $this->fieldLabel('MultiplePlacesHeader')),
+			new CheckboxField('MultiplePlaces', $this->fieldLabel('MultiplePlaces')),
+			new NumericField('MaxPlaces', $this->fieldLabel('MaxPlaces'))
+		));
 
 		$registrations = new ComplexTableField(
 			$this, 'Registrations', 'EventRegistration'
@@ -23,6 +38,14 @@ class RegisterableEvent extends CalendarEvent {
 		$fields->addFieldToTab('Root.Registrations', $registrations);
 
 		return $fields;
+	}
+
+	public function fieldLabels() {
+		return array_merge(parent::fieldLabels(), array(
+			'MultiplePlacesHeader' => _t('EventManagement.MULTIPLACES', 'Multiple Places'),
+			'MultiplePlaces' => _t('EventManagement.ALLOWMULTIPLACES', 'Allow atendees to register for multiple places?'),
+			'MaxPlaces' => _t('EventManagement.MAXPLACES', 'Maximum places selectable (0 for any number)')
+		));
 	}
 
 }

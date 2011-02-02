@@ -7,8 +7,9 @@
 class EventRegistration extends DataObject {
 
 	public static $db = array(
-		'Name'  => 'Varchar(255)',
-		'Email' => 'Varchar(255)'
+		'Name'   => 'Varchar(255)',
+		'Email'  => 'Varchar(255)',
+		'Places' => 'Int'
 	);
 
 	public static $has_one = array(
@@ -21,6 +22,7 @@ class EventRegistration extends DataObject {
 		'Name'         => 'Name',
 		'Email'        => 'Email',
 		'Event.Title'  => 'Event',
+		'Places'       => 'Places',
 		'DatesSummary' => 'Date(s)',
 		'TimesSummary' => 'Time(s)'
 	);

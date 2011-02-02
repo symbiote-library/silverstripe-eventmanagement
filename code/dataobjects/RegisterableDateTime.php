@@ -22,9 +22,20 @@ class RegisterableDateTime extends CalendarDateTime {
 	 */
 	public function getRegistrationFields() {
 		$fields = new FieldSet(
-			new TextField('Name', _t('EventManagement.YOURNAME', 'Your Name')),
-			new EmailField('Email', _t('EventManagement.EMAILADDR', 'Email Address'))
+			new TextField('Name', _t('EventManagement.YOURNAME', 'Your name')),
+			new EmailField('Email', _t('EventManagement.EMAILADDR', 'Email address'))
 		);
+
+		if ($this->Event()->MultiplePlaces) {
+			$title = _t('EventManagement.NUMPLACES', 'Number of places');
+
+			if ($max = $this->Event()->MaxPlaces) {
+				$range = ArrayLib::valuekey(range(1, $max));
+				$fields->push(new DropdownField('Places', $title, $range, 1));
+			} else {
+				$fields->push(new NumericField('Places', $title, 1));
+			}
+		}
 
 		$this->extend('updateRegistrationFields', $fields);
 		return $fields;
