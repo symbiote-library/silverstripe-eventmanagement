@@ -183,7 +183,8 @@ class EventRegistrationController extends Page_Controller {
 		$rego->write();
 
 		return array(
-			'Title' => 'Registration Confirmed'
+			'Title'   => $this->time->Event()->AfterConfirmTitle,
+			'Content' => $this->time->Event()->obj('AfterConfirmContent')
 		);
 	}
 

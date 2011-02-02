@@ -7,15 +7,17 @@
 class RegisterableEvent extends CalendarEvent {
 
 	public static $db = array(
-		'RegEmailConfirm' => 'Boolean',
-		'LimitedPlaces'   => 'Boolean',
-		'NumPlaces'       => 'Int',
-		'MultiplePlaces'  => 'Boolean',
-		'MaxPlaces'       => 'Int',
-		'RequireLoggedIn' => 'Boolean',
-		'OneRegPerMember' => 'Boolean',
-		'AfterRegTitle'   => 'Varchar(255)',
-		'AfterRegContent' => 'HTMLText'
+		'RegEmailConfirm'     => 'Boolean',
+		'AfterConfirmTitle'   => 'Varchar(255)',
+		'AfterConfirmContent' => 'HTMLText',
+		'LimitedPlaces'       => 'Boolean',
+		'NumPlaces'           => 'Int',
+		'MultiplePlaces'      => 'Boolean',
+		'MaxPlaces'           => 'Int',
+		'RequireLoggedIn'     => 'Boolean',
+		'OneRegPerMember'     => 'Boolean',
+		'AfterRegTitle'       => 'Varchar(255)',
+		'AfterRegContent'     => 'HTMLText'
 	);
 
 	public static $has_many = array(
@@ -24,8 +26,10 @@ class RegisterableEvent extends CalendarEvent {
 	);
 
 	public static $defaults = array(
-		'AfterRegTitle'   => 'Thanks For Registering',
-		'AfterRegContent' => '<p>Thanks for registering! We look forward to seeing you.</p>'
+		'AfterRegTitle'       => 'Thanks For Registering',
+		'AfterRegContent'     => '<p>Thanks for registering! We look forward to seeing you.</p>',
+		'AfterConfirmTitle'   => 'Registration Confirmed',
+		'AfterConfirmContent' => '<p>Thanks! Your registration has been confirmed</p>'
 	);
 
 	public function getCMSFields() {
@@ -38,6 +42,8 @@ class RegisterableEvent extends CalendarEvent {
 		$fields->addFieldsToTab('Root.Content.Registration', array(
 			new HeaderField('EmailConfirmationHeader', $this->fieldLabel('EmailConfirmationHeader')),
 			new CheckboxField('RegEmailConfirm', $this->fieldLabel('RegEmailConfirm')),
+			new TextField('AfterConfirmTitle', $this->fieldLabel('AfterConfirmTitle')),
+			new HtmlEditorField('AfterConfirmContent', $this->fieldLabel('AfterConfirmContent'), 5),
 			new HeaderField('LimitedPlacesHeader', $this->fieldLabel('LimitedPlacesHeader')),
 			new CheckboxField('LimitedPlaces', $this->fieldLabel('LimitedPlaces')),
 			new NumericField('NumPlaces', $this->fieldLabel('NumPlaces')),
@@ -93,6 +99,8 @@ class RegisterableEvent extends CalendarEvent {
 			'EmailConfirmationHeader' => _t('EventManagement.EMAILCONF', 'Email Confirmation'),
 			'RegEmailConfirm' => _t('EventManagement.REQEMAILCONFIRM', 'Require email confirmation
 				to complete registration?'),
+			'AfterConfirmTitle' => _t('EventManagement.AFTERCONFIRMTITLE', 'After confirmation title'),
+			'AfterConfirmContent' => _t('EventManagement.AFTERCONFIRMCONTENT', 'After confirmation content'),
 			'LimitedPlacesHeader' => _t('EventManagement.LIMPLACES', 'Limited Places'),
 			'LimitedPlaces' => _t('EventManagement.HASLIMPLACES', 'This event has limited places?'),
 			'NumPlaces' => _t('EventManagement.NUMPLACESAVAILABLE', 'Number of places available'),
