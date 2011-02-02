@@ -19,7 +19,15 @@ class RegisterableDateTime extends CalendarDateTime {
 	 * @return bool
 	 */
 	public function canRegister() {
-		return !$this->Event()->RequireLoggedIn || Member::currentUserID();
+		if ($this->LimitedPlaces && !$this->getRemainingPlaces()) {
+			return false;
+		}
+
+		if ($this->Event()->RequireLoggedIn && !Member::currentUserID()) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
