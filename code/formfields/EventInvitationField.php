@@ -8,7 +8,9 @@ class EventInvitationField extends FormField {
 
 	public static $allowed_actions = array(
 		'invite',
-		'InviteForm'
+		'InviteForm',
+		'loadfromgroup',
+		'loadfromtime'
 	);
 
 	protected $table;
@@ -54,15 +56,44 @@ class EventInvitationField extends FormField {
 	 * @return Form
 	 */
 	public function InviteForm() {
+		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
+		Requirements::javascript(THIRDPARTY_DIR . '/jquery-metadata/jquery.metadata.js');
+		Requirements::javascript(SAPPHIRE_DIR . '/javascript/jquery_improvements.js');
+		Requirements::javascript('eventmanagement/javascript/EventInvitationField_invite.js');
+
 		if ($times = $this->form->getRecord()->DateTimes()) {
 			$times = $times->map('ID', 'Summary');
 		} else {
 			$times = array();
 		}
 
+		// Get past date times attached to the parent calendar, so we can get
+		// all registered members from them.
+		$past = DataObject::get('RegisterableDateTime', sprintf(
+			'"CalendarID" = %d AND "StartDate" < \'%s\'',
+			$this->form->getRecord()->CalendarID, date('Y-m-d')
+		));
+
+		if ($past) {
+			$pastTimes = array();
+
+			foreach ($past->groupBy('EventID') as $value) {
+				$pastTimes[$value->First()->EventTitle()] = $value->map('ID', 'Summary');
+			}
+		} else {
+			$pastTimes = array();
+		}
+
 		$fields = new Tab('Main',
 			new HeaderField('Select A Date/Time To Invite To'),
 			new DropdownField('TimeID', '', $times, null, null, true),
+			new HeaderField('AddPeopleHeader', 'Add People To Invite From'),
+			new SelectionGroup('AddPeople', array(
+				'From a member group' => $group = new DropdownField(
+					'GroupID', '', DataObject::get('Group')->map(), null, null, true),
+				'From a past event' => $time = new GroupedDropdownField(
+					'PastTimeID', '', $pastTimes, null, null, true)
+			)),
 			new HeaderField('EmailsToSendHeader', 'People To Send Invite To'),
 			$emails = new TableField('Emails', 'EventInvitation', array(
 				'Name'  => 'Name',
@@ -72,6 +103,10 @@ class EventInvitationField extends FormField {
 				'Email' => 'TextField'
 			))
 		);
+
+		$group->addExtraClass(sprintf("{ link: '%s' }", $this->Link('loadfromgroup')));
+		$time->addExtraClass(sprintf("{ link: '%s' }", $this->Link('loadfromtime')));
+
 		$emails->setCustomSourceItems(new DataObjectSet());
 
 		$fields    = new FieldSet(new TabSet('Root', $fields));
@@ -157,6 +192,52 @@ class EventInvitationField extends FormField {
 			'Result' => $sent
 		));
 		return $controller->renderWith('EventInvitationField_invite');
+	}
+
+	/**
+	 * Loads a list of names and emails from a group.
+	 */
+	public function loadfromgroup($request) {
+		$group = DataObject::get_by_id('Group', $request->getVar('GroupID'));
+
+		if (!$group) {
+			$this->httpError(404);
+		}
+
+		$result = array();
+		foreach ($group->Members() as $member) {
+			$result[] = array(
+				'name'  => $member->getName(),
+				'email' => $member->Email
+			);
+		}
+
+		$response = new SS_HTTPResponse(Convert::array2json($result));
+		$response->addHeader('Content-Type', 'application/json');
+		return $response;
+	}
+
+	/**
+	 * Loads a list of names and emails from a past event date time.
+	 */
+	public function loadfromtime($request) {
+		$time = DataObject::get_by_id('RegisterableDateTime', $request->getVar('PastTimeID'));
+
+		if (!$time) {
+			$this->httpError(404);
+		}
+
+		$result = array();
+		foreach ($time->Registrations() as $registration) {
+			$result[] = array(
+				'name'  => $registration->Name,
+				'email' => $registration->Email
+			);
+		}
+
+		$response = new SS_HTTPResponse(Convert::array2json($result));
+		$response->addHeader('Content-Type', 'application/json');
+		return $response;
 	}
 
 }

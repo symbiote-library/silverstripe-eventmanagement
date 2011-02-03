@@ -8,6 +8,8 @@
 			th { padding: 4px; }
 			a { color: #0074C6; }
 			a.addrow { font-size: 12px; }
+			.SelectionGroup { margin-bottom: 5px; overflow: auto; }
+			.loading { background: url(../../cms/images/network-save.gif) no-repeat; height: 16px; width: 16px; }
 			.Actions { margin-top: 10px; }
 			input.action { font-weight: bold; padding: 2px; cursor: pointer; }
 		</style>
