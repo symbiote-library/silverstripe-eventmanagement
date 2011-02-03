@@ -173,6 +173,24 @@ class RegisterableDateTime extends CalendarDateTime {
 	/**
 	 * @return string
 	 */
+	public function Summary() {
+		$date = implode(' ', CalendarUtil::getDateString($this->StartDate, $this->EndDate));
+
+		if ($this->is_all_day) {
+			return sprintf(_t('EventManagement.DATEALLDAY', '%s (all day)'), $date);
+		}
+
+		if (!$this->StartTime) return $date;
+
+		$time = $this->obj('StartTime')->Nice();
+		if ($this->EndTime) $time .= ' - ' . $this->obj('EndTime')->Nice();
+
+		return "$date $time";
+	}
+
+	/**
+	 * @return string
+	 */
 	public function RemainingPlacesNice() {
 		if ($this->LimitedPlaces) {
 			return $this->getRemainingPlaces();
