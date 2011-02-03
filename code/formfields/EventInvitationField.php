@@ -7,6 +7,7 @@
 class EventInvitationField extends FormField {
 
 	public static $allowed_actions = array(
+		'FieldHolder',
 		'invite',
 		'InviteForm',
 		'loadfromgroup',
@@ -37,7 +38,10 @@ class EventInvitationField extends FormField {
 			'href'  => $this->Link('invite')),
 			_t('EventManagement.INVITEPEOPLETOEVENT', 'Invite People To Event'));
 
-		return "<p>$link</p>" . $this->table->FieldHolder();
+		return $this->createTag(
+			'div',
+			array('id' => $this->id(), 'href' => $this->Link('FieldHolder')),
+			"<p>$link</p>" . $this->table->FieldHolder());
 	}
 
 	/**
