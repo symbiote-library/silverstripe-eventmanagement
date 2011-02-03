@@ -40,6 +40,7 @@ class RegisterableEvent extends CalendarEvent {
 		'AfterUnregContent'     => '<p>Your registration has been canceled.</p>',
 		'AfterConfUnregTitle'   => 'Un-Registration Confirmed',
 		'AfterConfUnregContent' => '<p>Your registration has been canceled.</p>',
+		'NotifyChangeFields'    => 'StartDate,EndDate,StartTime,EndTime'
 	);
 
 	public function getCMSFields() {
