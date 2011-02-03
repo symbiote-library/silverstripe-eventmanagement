@@ -110,6 +110,14 @@ class RegisterableEvent extends CalendarEvent {
 			));
 		}
 
+		// Add a tab allowing admins to invite people from, as well as view
+		// people who have been invited.
+		$fields->addFieldToTab('Root', new Tab('Invitations'), 'Behaviour');
+		$fields->addFieldsToTab('Root.Invitations', array(
+			new HeaderField('InvitationsHeader', $this->fieldLabel('InvitationsHeader')),
+			new EventInvitationField($this, 'Invitations')
+		));
+
 		return $fields;
 	}
 
@@ -136,7 +144,8 @@ class RegisterableEvent extends CalendarEvent {
 			'AfterRegTitle' => _t('EventManagement.AFTERREGTITLE', 'After registration title'),
 			'AfterRegContent' => _t('EventManagement.AFTERREGCONTENT', 'After registration content'),
 			'AfterUnregTitle' => _t('EventManagement.AFTERUNREGTITLE', 'After un-registration title'),
-			'AfterUnregContent' => _t('EventManagement.AFTERUNREGCONTENT', 'After un-registration content')
+			'AfterUnregContent' => _t('EventManagement.AFTERUNREGCONTENT', 'After un-registration content'),
+			'InvitationsHeader' => _t('EventManagement.EVENTINVITES', 'Event Invitations')
 		));
 	}
 

@@ -53,7 +53,7 @@ class EventRegisterController extends Page_Controller {
 	/**
 	 * @return string
 	 */
-	public function index() {
+	public function index($request) {
 		if ($this->time->LimitedPlaces && ($this->time->getRemainingPlaces() < 1)) {
 			$message = _t('EventManagement.NOPLACES', 'This event has no more places available.');
 
@@ -68,9 +68,17 @@ class EventRegisterController extends Page_Controller {
 			_t('EventManagement.REGISTERFOR', 'Register For %s'), $this->time->EventTitle()
 		);
 
+		$form = $this->RegisterForm();
+
+		$name  = $form->dataFieldByName('Name');
+		$email = $form->dataFieldByName('Email');
+
+		if (!$name->Value())  $name->setValue($request->getVar('name'));
+		if (!$email->Value()) $email->setValue($request->getVar('email'));
+
 		$controller = $this->customise(array(
 			'Title' => $title,
-			'Form'  => $this->RegisterForm()
+			'Form'  => $form
 		));
 		return $this->getViewer('index')->process($controller);
 	}
@@ -115,7 +123,8 @@ class EventRegisterController extends Page_Controller {
 		try {
 			$registration->write();
 		} catch (ValidationException $e) {
-			$form->sessionMessage($e->getResult()->message(), 'bad');
+			Session::set("FormInfo.{$form->FormName()}.data", $form->getData());
+			$form->addErrorMessage(null, $e->getResult()->message(), 'bad');
 			return $this->redirectBack();
 		}
 

@@ -35,7 +35,7 @@ class RegisterableDateTime extends CalendarDateTime {
 			new EmailField('Email', _t('EventManagement.EMAILADDR', 'Email address'))
 		);
 
-		if ($this->Event()->LimitedPlaces) {
+		if ($this->LimitedPlaces) {
 			$entity    = _t('EventManagement.NPLACESREMAINING', 'There are currently %d places remaining.');
 			$remaining = '<p id="PlacesRemaining">' . sprintf($entity, $this->getRemainingPlaces()) . '</p>';
 
