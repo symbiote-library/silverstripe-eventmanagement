@@ -15,6 +15,8 @@ class RegisterableEvent extends CalendarEvent {
 		'AfterConfUnregTitle'   => 'Varchar(255)',
 		'AfterConfUnregContent' => 'HTMLText',
 		'AfterConfirmContent'   => 'HTMLText',
+		'EmailNotifyChanges'    => 'Boolean',
+		'NotifyChangeFields'    => 'Text',
 		'MultiplePlaces'        => 'Boolean',
 		'MaxPlaces'             => 'Int',
 		'RequireLoggedIn'       => 'Boolean',
@@ -47,6 +49,8 @@ class RegisterableEvent extends CalendarEvent {
 
 		$fields = parent::getCMSFields();
 
+		$changeFields = singleton('RegisterableDateTime')->fieldLabels(false);
+
 		$fields->addFieldsToTab('Root.Content.Registration', array(
 			new HeaderField('EmailSettingsHeader', $this->fieldLabel('EmailSettingsHeader')),
 			new CheckboxField('OneRegPerEmail', $this->fieldLabel('OneRegPerEmail')),
@@ -56,6 +60,8 @@ class RegisterableEvent extends CalendarEvent {
 			new CheckboxField('UnRegEmailConfirm', $this->fieldLabel('UnRegEmailConfirm')),
 			new TextField('AfterConfUnregTitle', $this->fieldLabel('AfterConfUnregTitle')),
 			new HtmlEditorField('AfterConfUnregContent', $this->fieldLabel('AfterConfUnregContent'), 5),
+			new CheckboxField('EmailNotifyChanges', $this->fieldLabel('EmailNotifyChanges')),
+			new CheckboxSetField('NotifyChangeFields', $this->fieldLabel('NotifyChangeFields'), $changeFields),
 			new HeaderField('MultiplePlacesHeader', $this->fieldLabel('MultiplePlacesHeader')),
 			new CheckboxField('MultiplePlaces', $this->fieldLabel('MultiplePlaces')),
 			new NumericField('MaxPlaces', $this->fieldLabel('MaxPlaces')),
@@ -118,6 +124,9 @@ class RegisterableEvent extends CalendarEvent {
 			'UnRegEmailConfirm' => _t('EventManagement.REQEMAILUNREGCONFIRM', 'Require email confirmation to un-register?'),
 			'AfterConfUnregTitle' => _t('EventManagement.AFTERUNREGCONFTITLE', 'After un-registration confirmation title'),
 			'AfterConfUnregContent' => _t('EventManagement.AFTERUNREGCONFCONTENT', 'After un-registration confirmation content'),
+			'EmailNotifyChanges' => _t('EventManagement.EMAILNOTIFYCHANGES', 'Notify registered users of event changes
+				via email?'),
+			'NotifyChangeFields' => _t('EventManagement.NOTIFYWHENTHESECHANGE', 'Notify users when these fields change'),
 			'MultiplePlacesHeader' => _t('EventManagement.MULTIPLACES', 'Multiple Places'),
 			'MultiplePlaces' => _t('EventManagement.ALLOWMULTIPLACES', 'Allow atendees to register for multiple places?'),
 			'MaxPlaces' => _t('EventManagement.MAXPLACES', 'Maximum places selectable (0 for any number)'),

@@ -97,6 +97,59 @@ class RegisterableDateTime extends CalendarDateTime {
 	}
 
 	/**
+	 * Notifies the users of any changes made to the event.
+	 */
+	protected function onAfterWrite() {
+		parent::onAfterWrite();
+
+		$email   = $this->Event()->EmailNotifyChanges;
+		$changed = $this->getChangedFields();
+		$notify  = explode(',', $this->Event()->NotifyChangeFields);
+		$notify  = array_intersect_key($changed, array_flip($notify));
+
+		if (!$email || !$changed || !$notify) return;
+
+		$emails = DB::query(sprintf(
+			'SELECT "Email", "Name" FROM "EventRegistration" WHERE "TimeID" = %d GROUP BY "Email"',
+			$this->ID
+		));
+		if (!$emails = $emails->map()) return;
+
+		$changed = new DataObjectSet();
+		foreach ($notify as $field => $data) {
+			$changed->push(new ArrayData(array(
+				'Label'  => singleton('EventRegistration')->fieldLabel($field),
+				'Before' => $data['before'],
+				'After'  => $data['after']
+			)));
+		}
+
+		$email = new Email();
+		$email->setSubject(
+			sprintf('Event Details Changed For %s (%s)',
+			$this->EventTitle(),
+			SiteConfig::current_site_config()->Title));
+
+		$email->setTemplate('EventRegistrationChangeEmail');
+		$email->populateTemplate(array(
+			'Time'       => $this,
+			'SiteConfig' => SiteConfig::current_site_config(),
+			'Changed'    => $changed
+		));
+
+		// We need to send the email for each registration individually.
+		foreach ($emails as $address => $name) {
+			$_email = clone $email;
+			$_email->setTo($address);
+			$_email->populateTemplate(array(
+				'Name' => $name
+			));
+
+			$_email->send();
+		}
+	}
+
+	/**
 	 * @return int
 	 */
 	public function getRemainingPlaces() {

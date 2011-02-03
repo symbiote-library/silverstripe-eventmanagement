@@ -15,6 +15,14 @@
 		$("#AfterConfUnregTitle, #AfterConfUnregContent").toggle($(this).is(":checked"));
 	});
 
+	$("#Form_EditForm_EmailNotifyChanges").live("click", function() {
+		$("#NotifyChangeFields").toggle($(this).is(":checked"));
+	});
+
+	$("#Form_EditForm_EmailNotifyChanges").livequery(function() {
+		$("#NotifyChangeFields").toggle($(this).is(":checked"));
+	});
+	
 	$("#Form_EditForm_MultiplePlaces").live("click", function() {
 		$("#MaxPlaces").toggle($(this).is(":checked"));
 	});
