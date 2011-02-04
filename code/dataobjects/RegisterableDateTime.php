@@ -15,6 +15,20 @@ class RegisterableDateTime extends CalendarDateTime {
 		'Registrations' => 'EventRegistration'
 	);
 
+	public function getDateTimeCMSFields() {
+		$fields = parent::getDateTimeCMSFields();
+
+		$fields->removeByName('Registrations');
+		$fields->addFieldsToTab('Root.Registration', array(
+			new CheckboxField('LimitedPlaces',
+				_t('EventManagement.HASLIMPLACES', 'Does this event has limited places?')),
+			new NumericField('NumPlaces',
+				_t('EventManagement.NUMPLACESAVAILABLE', 'Number of places available')),
+		));
+
+		return $fields;
+	}
+
 	/**
 	 * @return bool
 	 */
@@ -78,15 +92,6 @@ class RegisterableDateTime extends CalendarDateTime {
 	public function extendTable() {
 		$this->addTableTitles(array(
 			'RemainingPlacesNice' => _t('EventManager.PLACESREMAINING', 'Places Remaining')
-		));
-
-		$this->addPopupFields(array(
-			new HeaderField('LimitedPlacesHeader',
-				_t('EventManagement.LIMPLACES', 'Limited Places')),
-			new CheckboxField('LimitedPlaces',
-				_t('EventManagement.HASLIMPLACES', 'Does this event has limited places?')),
-			new NumericField('NumPlaces',
-				_t('EventManagement.NUMPLACESAVAILABLE', 'Number of places available')),
 		));
 	}
 
