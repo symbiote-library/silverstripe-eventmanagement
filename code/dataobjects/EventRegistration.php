@@ -16,7 +16,7 @@ class EventRegistration extends DataObject {
 
 	public static $has_one = array(
 		'Time'   => 'RegisterableDateTime',
-		'Event'  => 'RegisterableEvent',
+		'Ticket' => 'EventTicket',
 		'Member' => 'Member'
 	);
 
@@ -28,62 +28,6 @@ class EventRegistration extends DataObject {
 		'DatesSummary' => 'Date(s)',
 		'TimesSummary' => 'Time(s)'
 	);
-
-	/**
-	 * @return ValidationResult
-	 */
-	public function validate() {
-		$result = new ValidationResult();
-
-		$isLimited = $this->Time()->LimitedPlaces;
-		$isMulti   = $this->Event()->MultiplePlaces;
-		$maxPlaces = $this->Event()->MaxPlaces;
-
-		if ($this->Event()->OneRegPerEmail) {
-			$idFilter = $this->isInDB() ? "\"EventRegistration\".\"ID\" <> {$this->ID}" : '';
-
-			$existing = DataObject::get_one('EventRegistration', sprintf(
-				'"Email" = \'%s\' %s', $this->Email, $idFilter
-			));
-
-			if ($existing) {
-				$result->error(_t(
-					'EventManagement.REGWITHEMAILALREADYEXISTS',
-					'A registration using that email address already exists.'));
-			}
-		}
-
-		if ($isLimited && $isMulti) {
-			if (($this->Time()->getRemainingPlaces() - $this->Places) < 0) {
-				$result->error(sprintf(_t(
-					'EventRegistration.NOTENOUGHPLACES',
-					'There are only %d places remaining, please select a lower number of places.'
-					), $this->Time()->getRemainingPlaces()));
-			}
-		} elseif ($isLimited) {
-			if (!$this->Time()->getRemainingPlaces()) {
-				$result->error(_t(
-					'EventRegistration.NOREMAININGPLACES',
-					'There are no remaining places for this event.'));
-			}
-		}
-
-		if ($isMulti) {
-			if (!$this->Places > 0) {
-				$result->error(_t(
-					'EventRegistration.MUSTSELECTPLACES',
-					'You must enter a number of places to register for.'));
-			}
-
-			if ($maxPlaces && $this->Places > $maxPlaces) {
-				$result->error(sprintf(_t(
-					'EventRegistration.TOOMANYPLACES',
-					'You cannot select more than %d places.'), $maxPlaces));
-			}
-		}
-
-		return $result;
-	}
 
 	protected function onBeforeWrite() {
 		if (!$this->isInDB()) {
