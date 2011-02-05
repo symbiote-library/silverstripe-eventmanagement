@@ -13,3 +13,7 @@
 		<dd>$After <% if Before %>(was $Before)<% end_if %></dd>
 	<% end_control %>
 </dl>
+
+<p>
+	To view further details for this event, please <a href="$DetailsLink">click here</a>
+</p>
