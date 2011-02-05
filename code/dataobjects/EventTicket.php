@@ -117,6 +117,64 @@ class EventTicket extends DataObject {
 	}
 
 	/**
+	 * Returns the number of tickets available for an event time.
+	 *
+	 * @param  RegisterableDateTime $time
+	 * @return array
+	 */
+	public function getAvailableForDateTime(RegisterableDateTime $time) {
+		if ($this->StartType == 'Date') {
+			$start = strtotime($this->StartDate);
+		} else {
+			$start = $time->getStartTimestamp();
+			$start = sfTime::subtract($start, $this->StartDays, sfTime::DAY);
+			$start = sfTime::subtract($start, $this->StartHours, sfTime::HOUR);
+			$start = sfTime::subtract($start, $this->StartMins, sfTime::MINUTE);
+		}
+
+		if ($start >= time()) {
+			return array(
+				'available'    => false,
+				'reason'       => 'Tickets are not yet available.',
+				'available_at' => $start);
+		}
+
+		if ($this->EndType == 'Date') {
+			$end = strtotime($this->EndType);
+		} else {
+			$end = $time->getStartTimestamp();
+			$end = sfTime::subtract($end, $this->EndDays, sfTime::DAY);
+			$end = sfTime::subtract($end, $this->EndHours, sfTime::HOUR);
+			$end = sfTime::subtract($end, $this->EndMins, sfTime::MINUTE);
+		}
+
+		if (time() >= $end) {
+			return array(
+				'available' => false,
+				'reason'    => 'Tickets are no longer available.');
+		}
+
+		if (!$quantity = $this->Available) {
+			return array('available' => true);
+		}
+
+		$booked = new SQLQuery();
+		$booked->select('SUM("Quantity")');
+		$booked->from('EventRegistration_Tickets');
+		$booked->leftJoin('EventRegistration', '"EventRegistration"."ID" = "EventRegistrationID"');
+		$booked->where('"EventRegistration"."TimeID"', $time->ID);
+		$booked = $booked->execute()->value();
+
+		if ($booked < $quantity) {
+			return array('available' => $quantity - $booked);
+		} else {
+			return array(
+				'available' => false,
+				'reason'    => 'All tickets have been booked.');
+		}
+	}
+
+	/**
 	 * @return string
 	 */
 	public function StartSummary() {
