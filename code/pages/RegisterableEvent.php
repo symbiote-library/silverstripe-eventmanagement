@@ -17,8 +17,6 @@ class RegisterableEvent extends CalendarEvent {
 		'AfterConfirmContent'   => 'HTMLText',
 		'EmailNotifyChanges'    => 'Boolean',
 		'NotifyChangeFields'    => 'Text',
-		'MultiplePlaces'        => 'Boolean',
-		'MaxPlaces'             => 'Int',
 		'RequireLoggedIn'       => 'Boolean',
 		'AfterRegTitle'         => 'Varchar(255)',
 		'AfterRegContent'       => 'HTMLText',
@@ -68,9 +66,6 @@ class RegisterableEvent extends CalendarEvent {
 			new HtmlEditorField('AfterConfUnregContent', $this->fieldLabel('AfterConfUnregContent'), 5),
 			new CheckboxField('EmailNotifyChanges', $this->fieldLabel('EmailNotifyChanges')),
 			new CheckboxSetField('NotifyChangeFields', $this->fieldLabel('NotifyChangeFields'), $changeFields),
-			new HeaderField('MultiplePlacesHeader', $this->fieldLabel('MultiplePlacesHeader')),
-			new CheckboxField('MultiplePlaces', $this->fieldLabel('MultiplePlaces')),
-			new NumericField('MaxPlaces', $this->fieldLabel('MaxPlaces')),
 			new HeaderField('MemberSettingsHeader', $this->fieldLabel('MemberSettingsHeader')),
 			new CheckboxField('RequireLoggedIn', $this->fieldLabel('RequireLoggedIn'))
 		));
@@ -87,7 +82,6 @@ class RegisterableEvent extends CalendarEvent {
 
 		// Only show the places column if multiple places are enabled.
 		$regFields = singleton('EventRegistration')->summaryFields();
-		if (!$this->MultiplePlaces) unset($regFields['Places']);
 
 		$registrations = new ComplexTableField(
 			$this, 'Registrations', 'EventRegistration', $regFields, null, '"Confirmed" = 1'
@@ -142,9 +136,6 @@ class RegisterableEvent extends CalendarEvent {
 			'EmailNotifyChanges' => _t('EventManagement.EMAILNOTIFYCHANGES', 'Notify registered users of event changes
 				via email?'),
 			'NotifyChangeFields' => _t('EventManagement.NOTIFYWHENTHESECHANGE', 'Notify users when these fields change'),
-			'MultiplePlacesHeader' => _t('EventManagement.MULTIPLACES', 'Multiple Places'),
-			'MultiplePlaces' => _t('EventManagement.ALLOWMULTIPLACES', 'Allow atendees to register for multiple places?'),
-			'MaxPlaces' => _t('EventManagement.MAXPLACES', 'Maximum places selectable (0 for any number)'),
 			'MemberSettingsHeader' => _t('EventManagement.MEMBERSETTINGS', 'Member Settings'),
 			'RequireLoggedIn' => _t('EventManagement.REQUIREDLOGGEDIN', 'Require users to be logged in to register?'),
 			'AfterRegTitle' => _t('EventManagement.AFTERREGTITLE', 'After registration title'),
