@@ -175,6 +175,26 @@ class EventTicket extends DataObject {
 	}
 
 	/**
+	 * Calculates the timestamp for when this ticket stops going on sale for an
+	 * event date time.
+	 *
+	 * @param  RegisterableDateTime $datetime
+	 * @return int
+	 */
+	public function getSaleEndForDateTime(RegisterableDateTime $datetime) {
+		if ($this->EndType == 'Date') {
+			return strtotime($this->EndDate);
+		}
+
+		$time = $datetime->getStartTimestamp();
+		$time = sfTime::subtract($time, $this->EndDays, sfTime::DAY);
+		$time = sfTime::subtract($time, $this->EndHours, sfTime::HOUR);
+		$time = sfTime::subtract($time, $this->EndMins, sfTime::MINUTE);
+
+		return $time;
+	}
+
+	/**
 	 * @return string
 	 */
 	public function StartSummary() {
