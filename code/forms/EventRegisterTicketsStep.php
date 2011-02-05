@@ -54,12 +54,18 @@ class EventRegisterTicketsStep extends MultiFormStep {
 		$datetime = $this->getForm()->getController()->getDateTime();
 
 		$fields = new FieldSet(
-			new EventRegistrationTicketsTableField('Tickets', $datetime),
-			new TextField('Name', 'Your name'),
-			new EmailField('Email', 'Email address')
+			new EventRegistrationTicketsTableField('Tickets', $datetime)
 		);
-		$this->extend('updateFields', $fields);
 
+		if ($member = Member::currentUser()) {
+			$fields->push(new ReadonlyField('Name', 'Your name', $member->getName()));
+			$fields->push(new ReadonlyField('Email', 'Email address', $member->Email));
+		} else {
+			$fields->push(new TextField('Name', 'Your name'));
+			$fields->push(new EmailField('Email', 'Email address'));
+		}
+
+		$this->extend('updateFields', $fields);
 		return $fields;
 	}
 
