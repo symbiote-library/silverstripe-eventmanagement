@@ -7,37 +7,46 @@
 class RegisterableDateTime extends CalendarDateTime {
 
 	public static $db = array(
-		'LimitedPlaces' => 'Boolean',
-		'NumPlaces'     => 'Int'
+		'Capacity' => 'Int'
 	);
 
 	public static $has_many = array(
 		'Registrations' => 'EventRegistration'
 	);
 
+	public static $many_many = array(
+		'Tickets' => 'EventTicket'
+	);
+
+	public static $many_many_extraFields = array(
+		'Tickets' => array('Available' => 'Int')
+	);
+
 	public function getDateTimeCMSFields() {
 		$fields = parent::getDateTimeCMSFields();
 
 		$fields->removeByName('Registrations');
+		$fields->removeByName('Tickets');
+
+		if (!$this->isInDB()) {
+			$fields->addFieldToTab('Root.Registration', new LiteralField(
+				'RegistrationNote', '<p>You can configure registration once ' .
+				'you save for the first time.</p>'
+			));
+			return $fields;
+		}
+
 		$fields->addFieldsToTab('Root.Registration', array(
-			new CheckboxField('LimitedPlaces',
-				_t('EventManagement.HASLIMPLACES', 'Does this event has limited places?')),
-			new NumericField('NumPlaces',
-				_t('EventManagement.NUMPLACESAVAILABLE', 'Number of places available')),
+			new ManyManyPickerField(
+				$this, 'Tickets', 'Available Tickets', array(
+					'ShowPickedInSearch' => false,
+					'ExtraFields'        => 'getCMSExtraFields',
+					'ExtraFilter'        => '"EventID" = ' . $this->EventID
+				)),
+			new NumericField('Capacity', 'Overall event capacity')
 		));
 
 		return $fields;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function canRegister() {
-		if ($this->LimitedPlaces && !$this->getRemainingPlaces()) {
-			return false;
-		}
-
-		return true;
 	}
 
 	/**
@@ -87,18 +96,6 @@ class RegisterableDateTime extends CalendarDateTime {
 		$this->extend('updateRegistrationValidator', $validator);
 
 		return $validator;
-	}
-
-	public function extendTable() {
-		$this->addTableTitles(array(
-			'RemainingPlacesNice' => _t('EventManager.PLACESREMAINING', 'Places Remaining')
-		));
-	}
-
-	public function getRequirementsForPopup() {
-		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
-		Requirements::javascript(THIRDPARTY_DIR . '/jquery-livequery/jquery.livequery.js');
-		Requirements::javascript('eventmanagement/javascript/RegisterableDateTimeCms.js');
 	}
 
 	/**
@@ -155,27 +152,6 @@ class RegisterableDateTime extends CalendarDateTime {
 	}
 
 	/**
-	 * @return int
-	 */
-	public function getRemainingPlaces() {
-		$avail = $this->NumPlaces;
-
-		if ($this->Event()->MultiplePlaces) {
-			$taken = DB::query(sprintf(
-				'SELECT SUM("Places") FROM "EventRegistration" WHERE "TimeID" = %d AND "Confirmed" = 1',
-				$this->ID
-			));
-		} else {
-			$taken = DB::query(sprintf(
-				'SELECT COUNT(*) FROM "EventRegistration" WHERE "TimeID" = %d AND "Confirmed" = 1',
-				$this->ID
-			));
-		}
-
-		return $avail - $taken->value();
-	}
-
-	/**
 	 * @return string
 	 */
 	public function Summary() {
@@ -191,17 +167,6 @@ class RegisterableDateTime extends CalendarDateTime {
 		if ($this->EndTime) $time .= ' - ' . $this->obj('EndTime')->Nice();
 
 		return "$date $time";
-	}
-
-	/**
-	 * @return string
-	 */
-	public function RemainingPlacesNice() {
-		if ($this->LimitedPlaces) {
-			return $this->getRemainingPlaces();
-		} else {
-			return _t('EventManagement.NOTLIMITED', '(Not limited)');
-		}
 	}
 
 	/**

@@ -40,6 +40,11 @@ class EventTicket extends DataObject {
 		'PriceSummary' => 'Price'
 	);
 
+	public static $searchable_fields = array(
+		'Title',
+		'Type'
+	);
+
 	public function getCMSFields() {
 		$fields = parent::getCMSFields();
 
@@ -90,6 +95,16 @@ class EventTicket extends DataObject {
 	}
 
 	/**
+	 * @return FieldSet
+	 */
+	public function getCMSExtraFields() {
+		return new FieldSet(
+			new ReadonlyField('Title', 'Title'),
+			new NumericField('Available', 'Tickets available')
+		);
+	}
+
+	/**
 	 * @return RequiredFields
 	 */
 	public function getValidator() {
@@ -124,6 +139,14 @@ class EventTicket extends DataObject {
 			case 'Free':  return 'Free';
 			case 'Price': return $this->obj('Price')->Nice();
 		}
+	}
+
+	/**
+	 * @return string
+	 */
+	public function Summary() {
+		$summary = "{$this->Title} ({$this->PriceSummary()})";
+		return $summary . ($this->Available ? " ($this->Available available)" : '');
 	}
 
 }
