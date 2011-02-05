@@ -154,69 +154,28 @@ class RegisterableEvent extends CalendarEvent {
 class RegisterableEvent_Controller extends CalendarEvent_Controller {
 
 	public static $allowed_actions = array(
-		'datetime',
-		'register',
-		'unregister'
+		'details'
 	);
 
 	/**
-	 * Allows a user to view the details about an individual event date/time.
-	 */
-	public function datetime($request) {
-		if (!$time = $this->getTimeById($request->param('ID'))) {
-			$this->httpError(404, 'The requested event time could not be found.');
-		}
-
-		return array(
-			'Title'    => $time->EventTitle(),
-			'DateTime' => $time
-		);
-	}
-
-	/**
-	 * Returns the controller allowing a person to register for an event.
+	 * Shows details for an individual event date time, as well as forms for
+	 * registering and unregistering.
 	 *
 	 * @param  SS_HTTPRequest $request
-	 * @return EventRegisterController
+	 * @return array
 	 */
-	public function register($request) {
-		if (!$time = $this->getTimeById($request->param('ID'))) {
-			$this->httpError(404, 'The requested event time could not be found.');
+	public function details($request) {
+		$id   = $request->param('ID');
+		$time = DataObject::get_by_id('RegisterableDateTime', $id);
+
+		if (!$time || $time->EventID != $this->ID) {
+			$this->httpError(404);
 		}
 
-		$request->shift(1);
+		$request->shift();
 		$request->shiftAllParams();
 
-		return new EventRegisterController($this, $time);
-	}
-
-	/**
-	 * Allows a person to remove their registration by entering their email
-	 * address.
-	 */
-	public function unregister($request) {
-		if (!$time = $this->getTimeById($request->param('ID'))) {
-			$this->httpError(404, 'The requested event time could not be found.');
-		}
-
-		$request->shift(1);
-		$request->shiftAllParams();
-
-		return new EventUnregisterController($this, $time);
-	}
-
-	/**
-	 * @param  int $id
-	 * @return RegisterableDateTime
-	 */
-	protected function getTimeById($id) {
-		$filter = sprintf(
-			'"CalendarDateTime"."ID" = %d AND "EventID" = %d', $id, $this->ID
-		);
-
-		if ($time = $this->DateTimes($filter, null, null, 1)) {
-			return $time->First();
-		}
+		return new EventTimeDetailsController($this, $time);
 	}
 
 }
