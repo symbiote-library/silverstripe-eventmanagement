@@ -49,6 +49,12 @@ class RegisterableDateTime extends CalendarDateTime {
 		return $fields;
 	}
 
+	public function getDateTimeTable($eventID) {
+		$table = parent::getDateTimeTable($eventID);
+		$table->setPopupSize(560, 650);
+		return $table;
+	}
+
 	/**
 	 * @return FieldSet
 	 */
