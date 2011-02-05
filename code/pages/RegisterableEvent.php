@@ -166,7 +166,7 @@ class RegisterableEvent_Controller extends CalendarEvent_Controller {
 	 */
 	public function details($request) {
 		$id   = $request->param('ID');
-		$time = DataObject::get_by_id('RegisterableDateTime', $id);
+		$time = DataObject::get_by_id('RegisterableDateTime', (int) $id);
 
 		if (!$time || $time->EventID != $this->ID) {
 			$this->httpError(404);
