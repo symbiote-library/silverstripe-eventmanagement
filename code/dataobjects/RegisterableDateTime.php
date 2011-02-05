@@ -41,7 +41,8 @@ class RegisterableDateTime extends CalendarDateTime {
 				$this, 'Tickets', 'Available Tickets', array(
 					'ShowPickedInSearch' => false,
 					'ExtraFields'        => 'getCMSExtraFields',
-					'ExtraFilter'        => '"EventID" = ' . $this->EventID
+					'ExtraFilter'        => '"EventID" = ' . $this->EventID,
+					'Sortable'           => true
 				)),
 			new NumericField('Capacity', 'Overall event capacity')
 		));
