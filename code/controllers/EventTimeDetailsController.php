@@ -11,6 +11,11 @@ class EventTimeDetailsController extends Page_Controller {
 		'' => 'index'
 	);
 
+	public static $allowed_actions = array(
+		'register',
+		'unregister'
+	);
+
 	protected $parent;
 	protected $time;
 
@@ -23,6 +28,13 @@ class EventTimeDetailsController extends Page_Controller {
 
 	public function index() {
 		return $this->getViewer('index')->process($this);
+	}
+
+	/**
+	 * @return EventRegisterController
+	 */
+	public function register() {
+		return new EventRegisterController($this, $this->time);
 	}
 
 	/**
@@ -44,6 +56,19 @@ class EventTimeDetailsController extends Page_Controller {
 	 */
 	public function Title() {
 		return $this->DateTime()->EventTitle();
+	}
+
+	/**
+	 * @return Form
+	 */
+	public function RegisterForm() {
+		$fields = new FieldSet(
+			new EventTicketsTableField()
+		);
+
+		return new Form($this, 'RegisterForm', $fields, new FieldSet(
+			new FormAction('continue', 'Continue')
+		));
 	}
 
 	/**
