@@ -37,9 +37,7 @@ class EventTicket extends DataObject {
 	public static $summary_fields = array(
 		'Title'        => 'Title',
 		'StartSummary' => 'Sales Start',
-		'EndSummary'   => 'Sales End',
-		'PriceSummary' => 'Price',
-		'Status'       => 'Status'
+		'PriceSummary' => 'Price'
 	);
 
 	public function getCMSFields() {
@@ -101,6 +99,31 @@ class EventTicket extends DataObject {
 	public function getRequirementsForPopup() {
 		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
 		Requirements::javascript('eventmanagement/javascript/EventTicketCms.js');
+	}
+
+	/**
+	 * @return string
+	 */
+	public function StartSummary() {
+		if ($this->StartType == 'Date') {
+			return $this->obj('StartDate')->Nice();
+		} else {
+			return sprintf(
+				'%d days, %d hours and %d minutes before event',
+				$this->StartDays,
+				$this->StartHours,
+				$this->StartMins);
+		}
+	}
+
+	/**
+	 * @return string
+	 */
+	public function PriceSummary() {
+		switch ($this->Type) {
+			case 'Free':  return 'Free';
+			case 'Price': return $this->obj('Price')->Nice();
+		}
 	}
 
 }
