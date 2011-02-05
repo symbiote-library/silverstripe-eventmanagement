@@ -1,8 +1,8 @@
 #event-details { padding-right: 270px; }
 #event-details h2 { margin-bottom: 0; }
-#event-details .event-details-date { color: #666; margin-bottom: 15px; }
+#event-details .event-details-date { color: #666; margin-bottom: 10px; }
 
 #event-sidebar { float: right; width: 250px; padding-left: 10px; }
-#event-sidebar .event-sidebar-item { border: 1px solid #CCC; border-radius: 3px; margin-bottom: 10px; }
-#event-sidebar .event-sidebar-item h3 { padding: 5px; margin: 0; border-bottom: 1px solid #CCC; background: #F4F4F4; }
-#event-sidebar .event-sidebar-item-content { padding: 5px; margin-top: 5px; }
+.event-sidebar-item { border: 1px solid #CCC; border-radius: 3px; margin-bottom: 10px; }
+.event-sidebar-item h3 { padding: 5px; margin: 0; border-bottom: 1px solid #CCC; background: #F4F4F4; border-radius: 3px 3px 0 0; }
+.event-sidebar-item-content { padding: 5px; margin-top: 5px; }
