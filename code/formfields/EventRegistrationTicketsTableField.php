@@ -14,7 +14,7 @@ class EventRegistrationTicketsTableField extends FormField {
 		parent::__construct($name, '', $value);
 	}
 
-	public function FieldHolder() {
+	public function Field() {
 		return $this->renderWith('EventRegistrationTicketsTableField');
 	}
 
