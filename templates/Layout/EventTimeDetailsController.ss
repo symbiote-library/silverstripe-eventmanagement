@@ -12,6 +12,11 @@
 		<div class="event-sidebar-item">
 			<h3>Un-register From Event</h3>
 			<div class="event-sidebar-item-content">
+				<p>
+					To cancel a registration to this event, please enter your
+					email address:
+				</p>
+				$UnregisterForm
 			</div>
 		</div>
 	</div>
@@ -21,7 +26,7 @@
 			<p class="event-details-date">$Summary</p>
 	
 			<h3>Register For Event</h3>
-	
+
 			<h3>Event Information</h3>
 			$Event.Content
 		<% end_control %>

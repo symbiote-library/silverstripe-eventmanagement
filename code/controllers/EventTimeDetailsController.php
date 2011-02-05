@@ -26,6 +26,13 @@ class EventTimeDetailsController extends Page_Controller {
 	}
 
 	/**
+	 * @return EventUnregisterController
+	 */
+	public function unregister() {
+		return new EventUnregisterController($this, $this->time);
+	}
+
+	/**
 	 * @return RegisterableDateTime
 	 */
 	public function DateTime() {
@@ -37,6 +44,20 @@ class EventTimeDetailsController extends Page_Controller {
 	 */
 	public function Title() {
 		return $this->DateTime()->EventTitle();
+	}
+
+	/**
+	 * @return Form
+	 */
+	public function UnregisterForm() {
+		return $this->unregister()->UnregisterForm();
+	}
+
+	/**
+	 * @return string
+	 */
+	public function Link() {
+		return Controller::join_links($this->parent->Link(), 'details', $this->time->ID);
 	}
 
 }

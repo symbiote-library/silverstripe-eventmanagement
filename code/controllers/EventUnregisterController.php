@@ -6,10 +6,6 @@
  */
 class EventUnregisterController extends Page_Controller {
 
-	public static $url_handlers = array(
-		'' => 'index'
-	);
-
 	public static $allowed_actions = array(
 		'UnregisterForm',
 		'afterunregistration',
@@ -30,22 +26,6 @@ class EventUnregisterController extends Page_Controller {
 		$this->time   = $time;
 
 		parent::__construct();
-	}
-
-	/**
-	 * @return string
-	 */
-	public function index() {
-		$title = sprintf(
-			_t('EventManagement.UNREGISTERFROM', 'Unregister From %s'),
-			$this->time->EventTitle()
-		);
-
-		$controller = $this->customise(array(
-			'Title' => $title,
-			'Form'  => $this->UnregisterForm()
-		));
-		return $this->getViewer('index')->process($controller);
 	}
 
 	/**
@@ -154,7 +134,7 @@ class EventUnregisterController extends Page_Controller {
 	 */
 	public function Link($action = null) {
 		return Controller::join_links(
-			$this->parent->Link(), 'unregister', $this->time->ID, $action
+			$this->parent->Link(), 'unregister', $action
 		);
 	}
 
