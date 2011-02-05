@@ -27,6 +27,7 @@ class RegisterableEvent extends CalendarEvent {
 	);
 
 	public static $has_many = array(
+		'Tickets'       => 'EventTicket',
 		'DateTimes'     => 'RegisterableDateTime',
 		'Registrations' => 'EventRegistration'
 	);
@@ -50,8 +51,12 @@ class RegisterableEvent extends CalendarEvent {
 
 		$fields = parent::getCMSFields();
 
-		$changeFields = singleton('RegisterableDateTime')->fieldLabels(false);
+		$fields->addFieldsToTab('Root.Content.Tickets', array(
+			new HeaderField('TicketTypesHeader', $this->fieldLabel('TicketTypesHeader')),
+			new ComplexTableField($this, 'Tickets', 'EventTicket')
+		));
 
+		$changeFields = singleton('RegisterableDateTime')->fieldLabels(false);
 		$fields->addFieldsToTab('Root.Content.Registration', array(
 			new HeaderField('EmailSettingsHeader', $this->fieldLabel('EmailSettingsHeader')),
 			new CheckboxField('OneRegPerEmail', $this->fieldLabel('OneRegPerEmail')),
@@ -123,6 +128,7 @@ class RegisterableEvent extends CalendarEvent {
 
 	public function fieldLabels() {
 		return array_merge(parent::fieldLabels(), array(
+			'TicketTypesHeader' => _t('EventManagement.TICKETTYPES', 'Ticket Types'),
 			'Registrations' => _t('EventManagement.REGISTATIONS', 'Registrations'),
 			'EmailSettingsHeader' => _t('EventManagement.EMAILSETTINGS', 'Email Settings'),
 			'OneRegPerEmail' => _t('EventManagement.ONEREGPEREMAIL', 'Limit to one registration per email address?'),
