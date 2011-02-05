@@ -81,7 +81,10 @@ class EventUnregisterController extends Page_Controller {
 
 			$email->send();
 		} else {
-			foreach ($regos as $rego) $rego->delete();
+			foreach ($regos as $rego) {
+				$rego->Status = 'Canceled';
+				$rego->write();
+			}
 		}
 
 		return $this->redirect($this->Link('afterunregistration'));
@@ -120,7 +123,10 @@ class EventUnregisterController extends Page_Controller {
 			'"Email" = \'%s\'', Convert::raw2sql($email)
 		));
 
-		foreach ($regos as $rego) $rego->delete();
+		foreach ($regos as $rego) {
+			$rego->Status = 'Canceled';
+			$rego->write();
+		}
 
 		return array(
 			'Title'   => $this->time->Event()->AfterConfUnregTitle,
