@@ -9,15 +9,21 @@ class EventRegistration extends DataObject {
 	public static $db = array(
 		'Name'      => 'Varchar(255)',
 		'Email'     => 'Varchar(255)',
-		'Places'    => 'Int',
 		'Confirmed' => 'Boolean',
 		'Token'     => 'Varchar(48)'
 	);
 
 	public static $has_one = array(
 		'Time'   => 'RegisterableDateTime',
-		'Ticket' => 'EventTicket',
 		'Member' => 'Member'
+	);
+
+	public static $many_many = array(
+		'Tickets' => 'EventTicket'
+	);
+
+	public static $many_many_extraFields = array(
+		'Tickets' => array('Quantity' => 'Int')
 	);
 
 	public static $summary_fields = array(
