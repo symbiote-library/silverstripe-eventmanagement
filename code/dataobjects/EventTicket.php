@@ -91,6 +91,13 @@ class EventTicket extends DataObject {
 		return $fields;
 	}
 
+	/**
+	 * @return RequiredFields
+	 */
+	public function getValidator() {
+		return new RequiredFields('Title', 'Type', 'StartType', 'EndType');
+	}
+
 	public function getRequirementsForPopup() {
 		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
 		Requirements::javascript('eventmanagement/javascript/EventTicketCms.js');
