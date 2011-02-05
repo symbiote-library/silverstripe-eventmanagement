@@ -143,6 +143,8 @@ class EventRegisterTicketsStep extends MultiFormStep {
 				'Tickets', 'Please select at least one ticket to purchase.', 'bad');
 			return false;
 		}
+
+		return true;
 	}
 
 }
