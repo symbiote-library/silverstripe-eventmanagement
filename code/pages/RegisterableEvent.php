@@ -84,7 +84,8 @@ class RegisterableEvent extends CalendarEvent {
 		$regFields = singleton('EventRegistration')->summaryFields();
 
 		$registrations = new ComplexTableField(
-			$this, 'Registrations', 'EventRegistration', $regFields, null, '"Confirmed" = 1'
+			$this, 'Registrations', 'EventRegistration', $regFields, null,
+			'"Status" = \'Valid\''
 		);
 		$registrations->setPermissions(array('show', 'print', 'export'));
 
@@ -96,7 +97,7 @@ class RegisterableEvent extends CalendarEvent {
 
 		if ($this->RegEmailConfirm) {
 			$count = DB::query(sprintf(
-				'SELECT COUNT(*) FROM "EventRegistration" WHERE "EventID" = %d AND "Confirmed" = 0',
+				'SELECT COUNT(*) FROM "EventRegistration" WHERE "EventID" = %d AND "Status" = \'Unconfirmed\'',
 				$this->ID
 			));
 

@@ -7,10 +7,10 @@
 class EventRegistration extends DataObject {
 
 	public static $db = array(
-		'Name'      => 'Varchar(255)',
-		'Email'     => 'Varchar(255)',
-		'Confirmed' => 'Boolean',
-		'Token'     => 'Varchar(48)'
+		'Name'   => 'Varchar(255)',
+		'Email'  => 'Varchar(255)',
+		'Status' => 'Enum("Unconfirmed, Valid, Canceled")',
+		'Token'  => 'Varchar(48)'
 	);
 
 	public static $has_one = array(
