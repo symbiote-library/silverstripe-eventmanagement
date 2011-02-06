@@ -29,6 +29,17 @@ class EventRegistrationTicketsTableField extends FormField {
 	}
 
 	/**
+	 * @param array|object $value
+	 */
+	public function setValue($value) {
+		if (is_object($value)) {
+			$value = $value->map('ID', 'Quantity');
+		}
+
+		parent::setValue($value);
+	}
+
+	/**
 	 * @param bool $bool
 	 */
 	public function setShowUnavailableTickets($bool) {
