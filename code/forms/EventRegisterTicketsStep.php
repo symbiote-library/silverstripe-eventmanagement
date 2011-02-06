@@ -81,6 +81,27 @@ class EventRegisterTicketsStep extends MultiFormStep {
 		$tickets  = $data['Tickets'];
 		$has      = false;
 
+		if ($datetime->Event()->OneRegPerEmail) {
+			if (Member::currentUserID()) {
+				$email = Member::currentUser()->Email;
+			} else {
+				$email = $data['Email'];
+			}
+
+			$existing = DataObject::get_one('EventRegistration', sprintf(
+				'"Email" = \'%s\' AND "Status" <> \'Canceled\' AND "TimeID" = %d',
+				Convert::raw2sql($email), $datetime->ID
+			));
+
+			if ($existing) {
+				$form->addErrorMessage(
+					'Email',
+					'A registration for this email address already exists',
+					'required');
+				return false;
+			}
+		}
+
 		// Validate each individual ticket.
 		foreach ($tickets as $id => $quantity) {
 			if (!$quantity) {
