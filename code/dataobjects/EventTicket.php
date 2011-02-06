@@ -167,7 +167,7 @@ class EventTicket extends DataObject {
 		}
 
 		if ($this->EndType == 'Date') {
-			$end = strtotime($this->EndType);
+			$end = strtotime($this->EndDate);
 		} else {
 			$end = $time->getStartTimestamp();
 			$end = sfTime::subtract($end, $this->EndDays, sfTime::DAY);
