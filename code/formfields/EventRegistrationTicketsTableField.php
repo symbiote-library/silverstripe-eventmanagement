@@ -93,11 +93,12 @@ class EventRegistrationTicketsTableField extends FormField {
 				}
 
 				$result->push(new ArrayData(array(
-					'Title'     => $ticket->Title,
-					'Available' => $avail === true ? 'Unlimited' : $avail,
-					'Price'     => $ticket->PriceSummary(),
-					'End'       => DBField::create('SS_Datetime', $endTime),
-					'Quantity'  => $field
+					'Title'       => $ticket->Title,
+					'Description' => $ticket->Description,
+					'Available'   => $avail === true ? 'Unlimited' : $avail,
+					'Price'       => $ticket->PriceSummary(),
+					'End'         => DBField::create('SS_Datetime', $endTime),
+					'Quantity'    => $field
 				)));
 			} elseif ($this->showUnavailableTickets) {
 				$availableAt = null;
@@ -108,6 +109,7 @@ class EventRegistrationTicketsTableField extends FormField {
 
 				$result->push(new ArrayData(array(
 					'Title'       => $ticket->Title,
+					'Description' => $ticket->Description,
 					'Available'   => false,
 					'Reason'      => $available['reason'],
 					'AvailableAt' => $availableAt

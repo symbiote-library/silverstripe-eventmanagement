@@ -14,6 +14,16 @@
 .event-tickets tbody td { padding: 5px; border-right: 2px solid #FFF; }
 .event-tickets tbody td.title { font-weight: bold; }
 
+.event-tickets .event-tickets-toggle-description {
+	background: url(../images/event-tickets-toogle-description.gif) no-repeat;
+	width: 16px; height: 16px; text-indent: 999px; overflow: hidden;
+	margin-left: 10px; display: block; float: right; }
+.event-tickets .event-tickets-toggle-description.open { background-position: 0 -16px; }
+.event-tickets .event-tickets-description {
+	background: #666 url(../images/event-tickets-description-bg.gif) no-repeat 25px top;
+	color: #FFF; display: none; }
+.event-tickets .event-tickets-description td { padding: 12px 8px 8px 8px; }
+
 .event-tickets tbody td.quantity { width: 50px; text-align: right; }
 .event-tickets tbody td.quantity input,
 .event-tickets tbody td.quantity select { width: 50px; padding: 1px; }
