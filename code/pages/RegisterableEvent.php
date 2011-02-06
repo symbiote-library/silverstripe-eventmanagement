@@ -80,19 +80,21 @@ class RegisterableEvent extends CalendarEvent {
 			new HtmlEditorField('AfterUnregContent', $this->fieldLabel('AfterUnregContent'))
 		));
 
-		// Only show the places column if multiple places are enabled.
-		$regFields = singleton('EventRegistration')->summaryFields();
-
 		$registrations = new ComplexTableField(
-			$this, 'Registrations', 'EventRegistration', $regFields, null,
-			'"Status" = \'Valid\''
+			$this, 'Registrations', 'EventRegistration', null, null, '"Status" = \'Valid\''
 		);
 		$registrations->setPermissions(array('show', 'print', 'export'));
+
+		$canceled = new ComplexTableField(
+			$this, 'Registations', 'EventRegistration', null, null, '"Status" = \'Canceled\''
+		);
+		$canceled->setPermissions(array('show', 'print', 'export'));
 
 		$fields->addFieldToTab('Root', new Tab('Registrations'), 'Behaviour');
 		$fields->addFieldsToTab('Root.Registrations', array(
 			new HeaderField('RegistrationsHeader', $this->fieldLabel('Registrations')),
-			$registrations
+			$registrations,
+			new ToggleCompositeField('CanceledRegistrations', 'Canceled Registrations', $canceled)
 		));
 
 		if ($this->RegEmailConfirm) {
