@@ -24,11 +24,11 @@
 		<% control DateTime %>
 			<h2>$EventTitle</h2>
 			<p class="event-details-date">$Summary</p>
-	
-			<h3>Register For Event</h3>
-
-			<h3>Event Information</h3>
-			$Event.Content
 		<% end_control %>
+	
+		<h3>Register For Event</h3>
+
+		<h3>Event Information</h3>
+		$DateTime.Event.Content
 	</div>
 </div>

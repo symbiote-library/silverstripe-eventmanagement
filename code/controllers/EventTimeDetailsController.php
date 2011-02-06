@@ -61,19 +61,6 @@ class EventTimeDetailsController extends Page_Controller {
 	/**
 	 * @return Form
 	 */
-	public function RegisterForm() {
-		$fields = new FieldSet(
-			new EventTicketsTableField()
-		);
-
-		return new Form($this, 'RegisterForm', $fields, new FieldSet(
-			new FormAction('continue', 'Continue')
-		));
-	}
-
-	/**
-	 * @return Form
-	 */
 	public function UnregisterForm() {
 		return $this->unregister()->UnregisterForm();
 	}
