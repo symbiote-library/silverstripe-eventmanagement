@@ -7,12 +7,10 @@
  */
 class EventRegisterPaymentStep extends MultiFormStep {
 
-	public static $has_one = array(
-		'Registration' => 'EventRegistration',
-		'Payment'      => 'Payment'
-	);
-
 	public static $is_final_step = true;
+
+	protected $registration;
+	protected $payment;
 
 	public function getTitle() {
 		return 'Payment';
@@ -92,10 +90,17 @@ class EventRegisterPaymentStep extends MultiFormStep {
 		$payment->PaidForID    = $registration->ID;
 		$payment->write();
 
-		$this->RegistrationID = $registration->ID;
-		$this->PaymentID      = $payment->ID;
+		$this->registration = $registration;
+		$this->payment      = $payment;
 
 		return true;
+	}
+
+	/**
+	 * @return EventRegistration
+	 */
+	public function getRegistration() {
+		return $this->registration;
 	}
 
 }
