@@ -163,7 +163,8 @@ class RegisterableEvent extends CalendarEvent {
 class RegisterableEvent_Controller extends CalendarEvent_Controller {
 
 	public static $allowed_actions = array(
-		'details'
+		'details',
+		'registration'
 	);
 
 	/**
@@ -185,6 +186,26 @@ class RegisterableEvent_Controller extends CalendarEvent_Controller {
 		$request->shiftAllParams();
 
 		return new EventTimeDetailsController($this, $time);
+	}
+
+	/**
+	 * Allows a user to view the details of their registration.
+	 *
+	 * @param  SS_HTTPRequest $request
+	 * @return EventRegistrationDetailsController
+	 */
+	public function registration($request) {
+		$id   = $request->param('ID');
+		$rego = DataObject::get_by_id('EventRegistration', (int) $id);
+
+		if (!$rego || $rego->Time()->EventID != $this->ID) {
+			$this->httpError(404);
+		}
+
+		$request->shift();
+		$request->shiftAllParams();
+
+		return new EventRegistrationDetailsController($this, $rego);
 	}
 
 }
