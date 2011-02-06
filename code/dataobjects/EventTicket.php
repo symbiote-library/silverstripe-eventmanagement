@@ -162,6 +162,7 @@ class EventTicket extends DataObject {
 		$booked->select('SUM("Quantity")');
 		$booked->from('EventRegistration_Tickets');
 		$booked->leftJoin('EventRegistration', '"EventRegistration"."ID" = "EventRegistrationID"');
+		$booked->where('"EventTicketID"', $this->ID);
 		$booked->where('"EventRegistration"."TimeID"', $time->ID);
 		$booked = $booked->execute()->value();
 
