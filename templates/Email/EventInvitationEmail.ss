@@ -2,9 +2,9 @@
 
 <p>To $Name,</p>
 <p>
-	You have been invited to attend $Time.EventTitle at $Time.Summary. If you
-	wish to attend this event, please <a href="$DetailsLink">click here</a> or
-	visit the link below to register:
+	You have been invited to attend $Time.EventTitle at $Time.Summary. To find
+	out further information this event, and to register to attend, please
+	<a href="$Link">click here</a> or visit the link below:
 </p>
 
-<p><a href="$DetailsLink">$DetailsLink</a></p>
+<p><a href="$Link">$Link</a></p>

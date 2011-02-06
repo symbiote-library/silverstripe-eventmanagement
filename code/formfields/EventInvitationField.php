@@ -139,7 +139,8 @@ class EventInvitationField extends FormField {
 		$invite->setTemplate('EventInvitationEmail');
 		$invite->populateTemplate(array(
 			'Time'       => $time,
-			'SiteConfig' => SiteConfig::current_site_config()
+			'SiteConfig' => SiteConfig::current_site_config(),
+			'Link'       => Director::absoluteURL($time->Link())
 		));
 
 		$count = count($emails['Name']);
@@ -181,8 +182,7 @@ class EventInvitationField extends FormField {
 			$_invite = clone $invite;
 			$_invite->setTo($email);
 			$_invite->populateTemplate(array(
-				'Name'         => $name,
-				'RegisterLink' => $invitation->RegisterLink()
+				'Name' => $name
 			));
 			$_invite->send();
 
