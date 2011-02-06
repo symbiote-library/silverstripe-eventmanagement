@@ -114,6 +114,7 @@ class EventTicket extends DataObject {
 	public function getRequirementsForPopup() {
 		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
 		Requirements::javascript('eventmanagement/javascript/EventTicketCms.js');
+		Requirements::css('eventmanagement/css/EventTicketCms.css');
 	}
 
 	/**

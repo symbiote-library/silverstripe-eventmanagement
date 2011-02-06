@@ -1,0 +1,15 @@
+#Price .fieldgroup input.text { width: 100px; }
+#Price .fieldgroup input.text { margin-right: 10px; }
+
+#StartType, #EndType { margin-top: 10px; }
+
+#StartDaysStartHoursStartMins .middleColumn,
+#EndDaysEndHoursEndMins .middleColumn { overflow: auto; line-height: 24px; }
+
+#StartDaysStartHoursStartMins label,
+#StartDaysStartHoursStartMins input,
+#EndDaysEndHoursEndMins label,
+#EndDaysEndHoursEndMins input { float: left; }
+
+#StartDaysStartHoursStartMins input,
+#EndDaysEndHoursEndMins input { margin: 0 10px 0 5px; width: 40px; }
