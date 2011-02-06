@@ -1,12 +1,11 @@
 <h1>Confirm Registration For $Time.EventTitle ($SiteConfig.Title)</h1>
 
-<p>To $Registration.Name,</p>
+<p>To $Name,</p>
 
 <p>
-	You have registered for $Time.EventTitle on $Time._Dates
-	<% if Time.StartTime %> $Time._Times<% end_if %>. In order to confirm your
-	attendance at this event, please <a href="$ConfirmLink">click here</a>, or
-	visit the link below:
+	You have registered for $Time.EventTitle at $Time.Summary. In order to
+	confirm your attendance at this event, please <a href="$ConfirmLink">click
+	here</a>, or visit the link below:
 </p>
 
 <p><a href="$ConfirmLink">$ConfirmLink</a></p>

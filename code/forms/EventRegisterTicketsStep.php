@@ -18,7 +18,7 @@ class EventRegisterTicketsStep extends MultiFormStep {
 		if ($this->getTotal()->getAmount() > 0) {
 			return 'EventRegisterPaymentStep';
 		} else {
-			return 'EventRegisterSummaryStep';
+			return 'EventRegisterFreeConfirmationStep';
 		}
 	}
 

@@ -12,8 +12,7 @@ class EventRegisterController extends Page_Controller {
 	);
 
 	public static $allowed_actions = array(
-		'Form',
-		'afterregistration',
+		'RegisterForm',
 		'confirm'
 	);
 
@@ -44,7 +43,42 @@ class EventRegisterController extends Page_Controller {
 	}
 
 	public function index() {
-		return $this->getViewer('index')->process($this);
+		$controller = $this->customise(array(
+			'Title' => 'Register For ' . $this->datetime->EventTitle(),
+			'Form'  => $this->RegisterForm()
+		));
+		return $this->getViewer('index')->process($controller);
+	}
+
+	/**
+	 * Handles a user clicking on a registration confirmation link in an email.
+	 */
+	public function confirm($request) {
+		$id    = $request->param('ID');
+		$token = $request->getVar('token');
+
+		if (!$rego = DataObject::get_by_id('EventRegistration', $id)) {
+			return $this->httpError(404);
+		}
+
+		if ($rego->Status != 'Unconfirmed' || $rego->Token != $token) {
+			return $this->httpError(403);
+		}
+
+		try {
+			$rego->Status = 'Valid';
+			$rego->write();
+		} catch (ValidationException $e) {
+			return array(
+				'Title'   => 'Could Not Confirm Registration',
+				'Content' => '<p>' . $e->getResult()->message() . '</p>'
+			);
+		}
+
+		return array(
+			'Title'   => $this->datetime->Event()->AfterConfirmTitle,
+			'Content' => $this->datetime->Event()->obj('AfterConfirmContent')
+		);
 	}
 
 	/**
@@ -57,15 +91,8 @@ class EventRegisterController extends Page_Controller {
 	/**
 	 * @return Form
 	 */
-	public function Form() {
-		return new EventRegisterForm($this, 'Form');
-	}
-
-	/**
-	 * @return string
-	 */
-	public function Title() {
-		return 'Register For ' . $this->datetime->EventTitle();
+	public function RegisterForm() {
+		return new EventRegisterForm($this, 'RegisterForm');
 	}
 
 	/**
