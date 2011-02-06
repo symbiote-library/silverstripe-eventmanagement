@@ -90,7 +90,7 @@ class EventRegisterTicketsStep extends MultiFormStep {
 				$form->addErrorMessage(
 					'Tickets',
 					'Please only enter numerical amounts for ticket quantities.',
-					'bad');
+					'required');
 				return false;
 			}
 
@@ -98,7 +98,7 @@ class EventRegisterTicketsStep extends MultiFormStep {
 
 			if (!$ticket = $ticket->First()) {
 				$form->addErrorMessage(
-					'Tickets', 'An invalid ticket ID was entered.', 'bad');
+					'Tickets', 'An invalid ticket ID was entered.', 'required');
 				return false;
 			}
 
@@ -109,7 +109,7 @@ class EventRegisterTicketsStep extends MultiFormStep {
 				$form->addErrorMessage(
 					'Tickets',
 					sprintf('%s is currently not available.', $ticket->Title),
-					'bad');
+					'required');
 				return false;
 			}
 
@@ -117,21 +117,21 @@ class EventRegisterTicketsStep extends MultiFormStep {
 				$form->addErrorMessage(
 					'Tickets',
 					sprintf('There are only %d of "%s" available.', $avail, $ticket->Title),
-					'bad');
+					'required');
 				return false;
 			}
 
 			if ($ticket->MinTickets && $quantity < $ticket->MinTickets) {
 				$form->addErrorMessage('Tickets',sprintf(
 					'You must purchase at least %d of "%s".',
-					$ticket->MinTickets, $ticket->Title), 'bad');
+					$ticket->MinTickets, $ticket->Title), 'required');
 				return false;
 			}
 
 			if ($ticket->MaxTickets && $quantity > $ticket->MaxTickets) {
 				$form->addErrorMessage('Tickets', sprintf(
 					'You can only purchase at most %d of "%s".',
-					$ticket->MaxTickets, $ticket->Title), 'bad');
+					$ticket->MaxTickets, $ticket->Title), 'required');
 				return false;
 			}
 
@@ -140,7 +140,7 @@ class EventRegisterTicketsStep extends MultiFormStep {
 
 		if (!$has) {
 			$form->addErrorMessage(
-				'Tickets', 'Please select at least one ticket to purchase.', 'bad');
+				'Tickets', 'Please select at least one ticket to purchase.', 'required');
 			return false;
 		}
 
