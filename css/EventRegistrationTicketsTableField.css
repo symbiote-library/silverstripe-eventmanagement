@@ -3,9 +3,15 @@
 .event-tickets thead { background: #222; border-radius: 3px; }
 .event-tickets thead th { color: #FFF; padding: 5px; border-right: 2px solid #FFF; }
 
+.event-tickets tfoot { border-bottom: 2px solid #222; border-top: 2px solid #222; }
+.event-tickets tfoot td { padding: 5px; font-weight: bold; }
+.event-tickets .event-tickets-total-label,
+.event-tickets .event-details-total { text-align: right; }
+
+.event-tickets tbody { border-bottom: 2px solid #222; }
 .event-tickets tbody td { border-bottom: 2px solid #FFF; }
 .event-tickets tbody tr.first td { border-top: 2px solid #FFF; }
-.event-tickets tbody tr.last td { border-bottom: 2px solid #222; }
+.event-tickets tbody tr.last td { border-bottom: none; }
 .event-tickets tbody tr.even { background: #F4F4F4; }
 .event-tickets tbody td { padding: 5px; border-right: 2px solid #FFF; }
 .event-tickets tbody td.title { font-weight: bold; }

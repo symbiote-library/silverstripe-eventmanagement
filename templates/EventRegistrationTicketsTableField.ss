@@ -10,10 +10,19 @@
 			<th>Quantity</th>
 		</tr>
 	</thead>
+	<% if IsReadonly && Total %>
+		<tfoot>
+			<tr>
+				<td colspan="3"></td>
+				<td class="event-tickets-total-label">Total</td>
+				<td class="event-details-total">$Total.Nice</td>
+			</tr>
+		</tfoot>
+	<% end_if %>
 	<tbody>
 		<% if Tickets %>
 			<% control Tickets %>
-				<tr class="$EvenOdd $FirstLast <% if Available %><% else %>event-tickets-unavailable<% end_if %>">
+				<tr class="$EvenOdd $FirstLast <% if Last %>last <% end_if %> <% if Available %><% else %>event-tickets-unavailable<% end_if %>">
 					<td class="title">$Title</td>
 					<% if Available %>
 						<td class="available">$Available</td>
