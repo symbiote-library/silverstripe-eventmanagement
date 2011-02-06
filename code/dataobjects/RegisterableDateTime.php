@@ -19,7 +19,7 @@ class RegisterableDateTime extends CalendarDateTime {
 	);
 
 	public static $many_many_extraFields = array(
-		'Tickets' => array('Available' => 'Int')
+		'Tickets' => array('Available' => 'Int', 'Sort' => 'Int')
 	);
 
 	public function getDateTimeCMSFields() {
