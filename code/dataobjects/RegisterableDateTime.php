@@ -25,6 +25,7 @@ class RegisterableDateTime extends CalendarDateTime {
 	public function getDateTimeCMSFields() {
 		$fields = parent::getDateTimeCMSFields();
 
+		$fields->removeByName('Capacity');
 		$fields->removeByName('Registrations');
 		$fields->removeByName('Tickets');
 
