@@ -54,6 +54,12 @@ class EventRegisterForm extends MultiForm {
 
 		$registration->write();
 		$this->session->delete();
+
+		return Director::redirect(Controller::join_links(
+			$datetime->Event()->Link(),
+			'registration',
+			$registration->ID,
+			'?token=' . $registration->Token));
 	}
 
 }
