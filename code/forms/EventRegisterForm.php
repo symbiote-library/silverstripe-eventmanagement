@@ -48,6 +48,10 @@ class EventRegisterForm extends MultiForm {
 		$registration->TimeID   = $datetime->ID;
 		$registration->MemberID = Member::currentUserID();
 
+		$total = $ticketsStep->getTotal();
+		$registration->Total->setCurrency($total->getCurrency());
+		$registration->Total->setAmount($total->getAmount());
+
 		foreach ($tickets['Tickets'] as $id => $quantity) {
 			$registration->Tickets()->add($id, array('Quantity' => $quantity));
 		}

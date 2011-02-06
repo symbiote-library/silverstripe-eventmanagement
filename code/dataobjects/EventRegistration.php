@@ -10,6 +10,7 @@ class EventRegistration extends DataObject {
 		'Name'   => 'Varchar(255)',
 		'Email'  => 'Varchar(255)',
 		'Status' => 'Enum("Unconfirmed, Valid, Canceled")',
+		'Total'  => 'Money',
 		'Token'  => 'Varchar(48)'
 	);
 
