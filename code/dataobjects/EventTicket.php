@@ -104,6 +104,32 @@ class EventTicket extends DataObject {
 		);
 	}
 
+	public function validate() {
+		$result = parent::validate();
+
+		if ($this->Type == 'Price' && !$this->Price->hasValue()) {
+			$result->error('You must enter a currency and price for fixed price tickets');
+		}
+
+		if ($this->StartType == 'Date') {
+			if (!$this->StartDate) $result->error('You must enter a start date');
+		} else {
+			if (!$this->StartDays && !$this->StartHours && !$this->StartMins) {
+				$result->error('You must enter a time before the event to start the ticket sales');
+			}
+		}
+
+		if ($this->EndType == 'Date') {
+			if (!$this->EndDate) $result->error('You must enter an end date');
+		} else {
+			if (!$this->EndDays && !$this->EndHours && !$this->EndMins) {
+				$result->error('You must enter a time before the event to end ticket sales');
+			}
+		}
+
+		return $result;
+	}
+
 	/**
 	 * @return RequiredFields
 	 */
