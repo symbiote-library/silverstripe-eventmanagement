@@ -57,6 +57,29 @@ class RegisterableDateTime extends CalendarDateTime {
 		return $table;
 	}
 
+	public function validate() {
+		$result   = parent::validate();
+		$currency = null;
+
+		foreach ($this->Tickets() as $ticket) {
+			if ($ticket->Type == 'Price') {
+				$ticketCurr = $ticket->Price->getCurrency();
+
+				if ($ticketCurr && $currency && $ticketCurr != $currency) {
+					$result->error(sprintf(
+						'You cannot attach tickets with different currencies '
+						. 'to one event. You have tickets in both "%s" and "%s".',
+						$currency, $ticketCurr));
+					return $result;
+				}
+
+				$currency = $ticketCurr;
+			}
+		}
+
+		return $result;
+	}
+
 	/**
 	 * Notifies the users of any changes made to the event.
 	 */
