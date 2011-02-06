@@ -10,6 +10,7 @@ class EventRegistrationTicketsTableField extends FormField {
 	protected $datetime;
 	protected $showUnavailableTickets = true;
 	protected $showUnselectedTickets = true;
+	protected $forceTotalRow;
 	protected $total;
 
 	public function __construct($name, $datetime, $value = array()) {
@@ -51,6 +52,13 @@ class EventRegistrationTicketsTableField extends FormField {
 	 */
 	public function setShowUnselectedTickets($bool) {
 		$this->showUnselectedTickets = $bool;
+	}
+
+	/**
+	 * @param bool $bool
+	 */
+	public function setForceTotalRow($bool) {
+		$this->forceTotalRow = $bool;
 	}
 
 	/**
@@ -129,6 +137,13 @@ class EventRegistrationTicketsTableField extends FormField {
 		}
 
 		return $result;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function ShowTotalRow() {
+		return $this->forceTotalRow || ($this->readonly && $this->Total() && $this->Total()->hasValue());
 	}
 
 	/**

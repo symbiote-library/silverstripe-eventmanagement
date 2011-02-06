@@ -12,12 +12,12 @@
 			<th>Quantity</th>
 		</tr>
 	</thead>
-	<% if IsReadonly && Total %>
+	<% if ShowTotalRow %>
 		<tfoot>
 			<tr>
 				<td colspan="3"></td>
 				<td>Total</td>
-				<td>$Total.Nice</td>
+				<td><% if Total %>$Total.Nice<% else %>Free<% end_if %></td>
 			</tr>
 		</tfoot>
 	<% else_if DateTime.Capacity %>
