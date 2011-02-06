@@ -98,17 +98,25 @@ class RegisterableEvent extends CalendarEvent {
 		));
 
 		if ($this->RegEmailConfirm) {
-			$count = DB::query(sprintf(
-				'SELECT COUNT(*) FROM "EventRegistration" WHERE "EventID" = %d AND "Status" = \'Unconfirmed\'',
-				$this->ID
-			));
+			$times = $this->DateAndTime();
+
+			if (!$times) {
+				$count = 0;
+			} else {
+				$count = DB::query(sprintf(
+					'SELECT COUNT(*) FROM "EventRegistration" WHERE '
+					. '"Status" = \'Unconfirmed\' AND "TimeID" IN (%s)',
+					implode(', ', $times->map('ID', 'ID'))
+				));
+				$count = $count->value();
+			}
 
 			$unconfirmed = _t(
 				'EventManagement.NUMUNCONFIRMEDREG',
 				'There are %d unconfirmed registrations.');
 
 			$fields->addFieldToTab('Root.Registrations', new LiteralField(
-				'UnconfirmedRegistrations', sprintf("<p>$unconfirmed</p>", $count->value())
+				'UnconfirmedRegistrations', sprintf("<p>$unconfirmed</p>", $count)
 			));
 		}
 
