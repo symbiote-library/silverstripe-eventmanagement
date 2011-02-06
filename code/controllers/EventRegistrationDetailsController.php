@@ -54,6 +54,23 @@ class EventRegistrationDetailsController extends Page_Controller {
 	}
 
 	/**
+	 * @return EventRegistrationTicketsTableField
+	 */
+	public function TicketsTable() {
+		$rego  = $this->registration;
+		$table = new EventRegistrationTicketsTableField('Tickets', $rego->Time());
+
+		$table->setReadonly(true);
+		$table->setShowUnavailableTickets(false);
+		$table->setShowUnselectedTickets(false);
+		$table->setForceTotalRow(true);
+		$table->setValue($rego->Tickets());
+		$table->setTotal($rego->Total);
+
+		return $table;
+	}
+
+	/**
 	 * @return string
 	 */
 	public function Link() {
