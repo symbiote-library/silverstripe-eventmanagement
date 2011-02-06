@@ -62,9 +62,10 @@ class EventRegistrationTicketsTableField extends FormField {
 	 * @return DataObjectSet
 	 */
 	public function Tickets() {
-		$result = new DataObjectSet();
+		$result  = new DataObjectSet();
+		$tickets = $this->datetime->Tickets('', '"RegisterableDateTime_Tickets"."Sort"');
 
-		foreach ($this->datetime->Tickets() as $ticket) {
+		foreach ($tickets as $ticket) {
 			$available = $ticket->getAvailableForDateTime($this->datetime);
 			$endTime   = $ticket->getSaleEndForDateTime($this->datetime);
 
