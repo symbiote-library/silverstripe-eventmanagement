@@ -37,7 +37,9 @@ class EventRegisterTicketsStep extends MultiFormStep {
 				$ticket = DataObject::get_by_id('EventTicket', $id);
 				$price  = $ticket->obj('Price');
 
-				if (!$price->hasValue()) continue;
+				if ($ticket->Type == 'Free' || !$quantity) {
+					continue;
+				}
 
 				$amount  += $price->getAmount() * $quantity;
 				$currency = $price->getCurrency();
