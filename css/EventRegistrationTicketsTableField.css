@@ -4,9 +4,7 @@
 .event-tickets thead th { color: #FFF; padding: 5px; border-right: 2px solid #FFF; }
 
 .event-tickets tfoot { border-bottom: 2px solid #222; border-top: 2px solid #222; }
-.event-tickets tfoot td { padding: 5px; font-weight: bold; }
-.event-tickets .event-tickets-total-label,
-.event-tickets .event-details-total { text-align: right; }
+.event-tickets tfoot td { padding: 5px; font-weight: bold; text-align: right; }
 
 .event-tickets tbody { border-bottom: 2px solid #222; }
 .event-tickets tbody td { border-bottom: 2px solid #FFF; }

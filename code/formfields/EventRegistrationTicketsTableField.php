@@ -124,4 +124,11 @@ class EventRegistrationTicketsTableField extends FormField {
 		return $this->total;
 	}
 
+	/**
+	 * @return RegisterableDateTime
+	 */
+	public function DateTime() {
+		return $this->datetime;
+	}
+
 }

@@ -44,7 +44,7 @@ class RegisterableDateTime extends CalendarDateTime {
 					'ExtraFilter'        => '"EventID" = ' . $this->EventID,
 					'Sortable'           => true
 				)),
-			new NumericField('Capacity', 'Overall event capacity')
+			new NumericField('Capacity', 'Overall event capacity (0 for unlimited)')
 		));
 
 		return $fields;

@@ -81,6 +81,7 @@ class EventRegisterTicketsStep extends MultiFormStep {
 		$tickets  = $data['Tickets'];
 		$has      = false;
 
+		// Validate each individual ticket.
 		foreach ($tickets as $id => $quantity) {
 			if (!$quantity) {
 				continue;
@@ -142,6 +143,24 @@ class EventRegisterTicketsStep extends MultiFormStep {
 			$form->addErrorMessage(
 				'Tickets', 'Please select at least one ticket to purchase.', 'required');
 			return false;
+		}
+
+		// Ensure that the total of tickets does not exceed the overall event
+		// capacity.
+		if ($datetime->Capacity) {
+			$avail   = $datetime->getRemainingCapacity();
+			$request = array_sum($tickets);
+
+			if ($request > $avail) {
+				$message = sprintf(
+					'The event only has %d overall places remaining, but you '
+					. 'have requested a total of %d places. Please select a '
+					. 'lower number.',
+					$avail, $request
+				);
+				$form->addErrorMessage('Tickets', $message, 'required');
+				return false;
+			}
 		}
 
 		return true;

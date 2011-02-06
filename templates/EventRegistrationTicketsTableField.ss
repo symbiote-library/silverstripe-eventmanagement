@@ -14,8 +14,16 @@
 		<tfoot>
 			<tr>
 				<td colspan="3"></td>
-				<td class="event-tickets-total-label">Total</td>
-				<td class="event-details-total">$Total.Nice</td>
+				<td>Total</td>
+				<td>$Total.Nice</td>
+			</tr>
+		</tfoot>
+	<% else_if DateTime.Capacity %>
+		<tfoot>
+			<tr>
+				<td colspan="3"></td>
+				<td>Remaining Places</td>
+				<td>$DateTime.RemainingCapacity</td>
 			</tr>
 		</tfoot>
 	<% end_if %>
