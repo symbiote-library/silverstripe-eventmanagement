@@ -23,6 +23,15 @@ interface EventRegistrationTicketGenerator {
 	public function getTicketFilenameFor(EventRegistration $registration);
 
 	/**
+	 * Returns the mime type that the generated ticket file for a registration
+	 * should have.
+	 *
+	 * @param  EventRegistration $registration
+	 * @return string
+	 */
+	public function getTicketMimeTypeFor(EventRegistration $registration);
+
+	/**
 	 * Generates a ticket file for a registration, and returns the path to the
 	 * ticket.
 	 *
