@@ -68,6 +68,8 @@ class EventRegisterController extends Page_Controller {
 		try {
 			$rego->Status = 'Valid';
 			$rego->write();
+
+			EventRegistrationDetailsEmail::factory($rego)->send();
 		} catch (ValidationException $e) {
 			return array(
 				'Title'   => 'Could Not Confirm Registration',

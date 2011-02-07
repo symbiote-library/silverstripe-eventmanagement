@@ -68,6 +68,11 @@ class EventRegisterForm extends MultiForm {
 		$registration->write();
 		$this->session->delete();
 
+		// If the registrations is already valid, then send a details email.
+		if ($registration->Status == 'Valid') {
+			EventRegistrationDetailsEmail::factory($registration)->send();
+		}
+
 		return Director::redirect(Controller::join_links(
 			$datetime->Event()->Link(),
 			'registration',
