@@ -3,7 +3,7 @@
 <p>To $Name,</p>
 
 <p>
-	You recently registered for $Time.EventTitle on $Time._Dates. Some of the
+	You recently registered for $Time.EventTitle on $Time.Summary. Some of the
 	details for the event have changed:
 </p>
 
@@ -15,5 +15,5 @@
 </dl>
 
 <p>
-	To view further details for this event, please <a href="$DetailsLink">click here</a>
+	To view further details for this event, please <a href="$Link">click here</a>
 </p>

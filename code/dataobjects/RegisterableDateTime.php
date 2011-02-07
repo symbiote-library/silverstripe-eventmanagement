@@ -94,7 +94,8 @@ class RegisterableDateTime extends CalendarDateTime {
 		if (!$email || !$changed || !$notify) return;
 
 		$emails = DB::query(sprintf(
-			'SELECT "Email", "Name" FROM "EventRegistration" WHERE "TimeID" = %d GROUP BY "Email"',
+			'SELECT "Email", "Name" FROM "EventRegistration" WHERE "TimeID" = %d '
+			. 'AND "Status" = \'Valid\' GROUP BY "Email"',
 			$this->ID
 		));
 		if (!$emails = $emails->map()) return;
@@ -118,7 +119,8 @@ class RegisterableDateTime extends CalendarDateTime {
 		$email->populateTemplate(array(
 			'Time'       => $this,
 			'SiteConfig' => SiteConfig::current_site_config(),
-			'Changed'    => $changed
+			'Changed'    => $changed,
+			'Link'       => $this->Link()
 		));
 
 		// We need to send the email for each registration individually.
