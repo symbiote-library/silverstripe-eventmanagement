@@ -29,6 +29,17 @@ class EventRegistrationDetailsEmail extends Email {
 			'SiteConfig'   => $siteconfig
 		));
 
+		if ($generator = $registration->Time()->Event()->TicketGenerator) {
+			$generator = new $generator();
+
+			$path = $generator->generateTicketFileFor($registration);
+			$name = $generator->getTicketFilenameFor($registration);
+
+			if ($path) {
+				$email->attachFile($path, $name);
+			}
+		}
+
 		return $email;
 	}
 
