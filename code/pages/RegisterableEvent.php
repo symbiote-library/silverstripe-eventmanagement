@@ -34,7 +34,7 @@ class RegisterableEvent extends CalendarEvent {
 	public static $defaults = array(
 		'AfterRegTitle'         => 'Thanks For Registering',
 		'AfterRegContent'       => '<p>Thanks for registering! We look forward to seeing you.</p>',
-		'EmailConfirmMessage'   => 'Important: You must check your emails and confirm your registration before is is valid.',
+		'EmailConfirmMessage'   => 'Important: You must check your emails and confirm your registration before it is valid.',
 		'AfterConfirmTitle'     => 'Registration Confirmed',
 		'AfterConfirmContent'   => '<p>Thanks! Your registration has been confirmed</p>',
 		'AfterUnregTitle'       => 'Registration Canceled',
