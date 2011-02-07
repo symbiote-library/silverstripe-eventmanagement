@@ -7,6 +7,7 @@
 class RegisterableEvent extends CalendarEvent {
 
 	public static $db = array(
+		'TicketGenerator'       => 'Varchar(255)',
 		'OneRegPerEmail'        => 'Boolean',
 		'RegEmailConfirm'       => 'Boolean',
 		'EmailConfirmMessage'   => 'Varchar(255)',
@@ -55,6 +56,23 @@ class RegisterableEvent extends CalendarEvent {
 			new HeaderField('TicketTypesHeader', $this->fieldLabel('TicketTypesHeader')),
 			new ComplexTableField($this, 'Tickets', 'EventTicket')
 		));
+
+		$generators = ClassInfo::implementorsOf('EventRegistrationTicketGenerator');
+		if ($generators) {
+			foreach ($generators as $generator) {
+				$instance = new $generator();
+				$generators[$generator] = $instance->getGeneratorTitle();
+			}
+
+			$fields->addFieldsToTab('Root.Content.Tickets', array(
+				new HeaderField('TicketGeneratorHeader', 'Ticket Generator'),
+				new LiteralField('TicketGeneratorNone', '<p>The ticket '
+					. 'generator is used to generate a ticket file for the '
+					. 'user to download and print to bring to the event.</p>'),
+				new DropdownField
+					('TicketGenerator', '', $generators, null, null, true)
+			));
+		}
 
 		$changeFields = singleton('RegisterableDateTime')->fieldLabels(false);
 		$fields->addFieldsToTab('Root.Content.Registration', array(
