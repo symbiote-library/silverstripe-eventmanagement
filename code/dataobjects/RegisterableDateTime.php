@@ -87,7 +87,7 @@ class RegisterableDateTime extends CalendarDateTime {
 		parent::onAfterWrite();
 
 		$email   = $this->Event()->EmailNotifyChanges;
-		$changed = $this->getChangedFields();
+		$changed = $this->getChangedFields(false, 2);
 		$notify  = explode(',', $this->Event()->NotifyChangeFields);
 		$notify  = array_intersect_key($changed, array_flip($notify));
 
