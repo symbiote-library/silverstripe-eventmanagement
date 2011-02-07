@@ -16,6 +16,10 @@
 </p>
 
 <p>
+	To view the details of your registration, please <a href="$RegLink">click here</a>.
+</p>
+
+<p>
 	If you did not register for this event, or believe this email was sent to
 	you in error, please ignore this email and no further action will be taken.
 </p>
