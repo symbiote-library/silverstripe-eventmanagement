@@ -83,7 +83,7 @@ class EventRegistration extends DataObject {
 	 */
 	public function Link() {
 		return Controller::join_links(
-			$this->Time()->Link(), 'registration', $this->ID, '?token=' . $this->Token
+			$this->Time()->Event()->Link(), 'registration', $this->ID, '?token=' . $this->Token
 		);
 	}
 
