@@ -92,6 +92,11 @@ class EventRegisterPaymentStep extends MultiFormStep {
 		$payment->PaidForID    = $registration->ID;
 		$payment->write();
 
+		Session::set(
+			"EventRegistration.{$registration->ID}.message",
+			strip_tags($payment->Message)
+		);
+
 		$this->registration = $registration;
 		$this->payment      = $payment;
 
