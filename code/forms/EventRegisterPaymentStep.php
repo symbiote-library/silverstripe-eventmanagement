@@ -61,6 +61,8 @@ class EventRegisterPaymentStep extends MultiFormStep {
 	}
 
 	public function validateStep($data, $form) {
+		Session::set("FormInfo.{$form->FormName()}.data", $form->getData());
+
 		$payment = $data['PaymentMethod'];
 		$tickets = $this->getForm()->getSavedStepByClass('EventRegisterTicketsStep');
 		$total   = $tickets->getTotal();

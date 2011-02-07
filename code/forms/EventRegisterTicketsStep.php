@@ -78,6 +78,8 @@ class EventRegisterTicketsStep extends MultiFormStep {
 	}
 
 	public function validateStep($data, Form $form) {
+		Session::set("FormInfo.{$form->FormName()}.data", $form->getData());
+
 		$datetime = $this->getForm()->getController()->getDateTime();
 		$data     = $form->getData();
 		$tickets  = $data['Tickets'];

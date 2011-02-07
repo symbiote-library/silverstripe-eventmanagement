@@ -10,6 +10,13 @@ class EventRegisterForm extends MultiForm {
 
 	public static $start_step = 'EventRegisterTicketsStep';
 
+	public function __construct($controller, $name) {
+		$this->controller = $controller;
+		$this->name       = $name;
+
+		parent::__construct($controller, $name);
+	}
+
 	/**
 	 * Handles validating the final step and writing the tickets data to the
 	 * registration object.
