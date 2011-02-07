@@ -30,8 +30,8 @@ class EventRegistration extends DataObject {
 	public static $summary_fields = array(
 		'Name'            => 'Name',
 		'Email'           => 'Email',
-		'Time.EventTitle' => 'Event',
-		'Time.Summary'    => 'Dates And Times'
+		'EventTitle'      => 'Event',
+		'DateTimeSummary' => 'Dates And Times'
 	);
 
 	protected function onBeforeWrite() {
@@ -46,15 +46,15 @@ class EventRegistration extends DataObject {
 	/**
 	 * @return string
 	 */
-	public function DatesSummary() {
-		return $this->Time()->_Dates();
+	public function EventTitle() {
+		return $this->Time()->EventTitle();
 	}
 
 	/**
 	 * @return string
 	 */
-	public function TimesSummary() {
-		return $this->Time()->_Times();
+	public function DateTimeSummary() {
+		return $this->Time()->Summary();
 	}
 
 }
