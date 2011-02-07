@@ -9,6 +9,7 @@ class RegisterableEvent extends CalendarEvent {
 	public static $db = array(
 		'OneRegPerEmail'        => 'Boolean',
 		'RegEmailConfirm'       => 'Boolean',
+		'EmailConfirmMessage'   => 'Varchar(255)',
 		'AfterConfirmTitle'     => 'Varchar(255)',
 		'AfterConfirmContent'   => 'HTMLText',
 		'UnRegEmailConfirm'     => 'Boolean',
@@ -33,6 +34,7 @@ class RegisterableEvent extends CalendarEvent {
 	public static $defaults = array(
 		'AfterRegTitle'         => 'Thanks For Registering',
 		'AfterRegContent'       => '<p>Thanks for registering! We look forward to seeing you.</p>',
+		'EmailConfirmMessage'   => 'Important: You must check your emails and confirm your registration before is is valid.',
 		'AfterConfirmTitle'     => 'Registration Confirmed',
 		'AfterConfirmContent'   => '<p>Thanks! Your registration has been confirmed</p>',
 		'AfterUnregTitle'       => 'Registration Canceled',
@@ -59,6 +61,7 @@ class RegisterableEvent extends CalendarEvent {
 			new HeaderField('EmailSettingsHeader', $this->fieldLabel('EmailSettingsHeader')),
 			new CheckboxField('OneRegPerEmail', $this->fieldLabel('OneRegPerEmail')),
 			new CheckboxField('RegEmailConfirm', $this->fieldLabel('RegEmailConfirm')),
+			new TextField('EmailConfirmMessage', $this->fieldLabel('EmailConfirmMessage')),
 			new TextField('AfterConfirmTitle', $this->fieldLabel('AfterConfirmTitle')),
 			new HtmlEditorField('AfterConfirmContent', $this->fieldLabel('AfterConfirmContent'), 5),
 			new CheckboxField('UnRegEmailConfirm', $this->fieldLabel('UnRegEmailConfirm')),
@@ -138,6 +141,7 @@ class RegisterableEvent extends CalendarEvent {
 			'EmailSettingsHeader' => _t('EventManagement.EMAILSETTINGS', 'Email Settings'),
 			'OneRegPerEmail' => _t('EventManagement.ONEREGPEREMAIL', 'Limit to one registration per email address?'),
 			'RegEmailConfirm' => _t('EventManagement.REQEMAILCONFIRM', 'Require email confirmation to complete free registrations?'),
+			'EmailConfirmMessage' => _t('EventManagement.EMAILCONFIRMINFOMSG', 'Email confirmation information message'),
 			'AfterConfirmTitle' => _t('EventManagement.AFTERCONFIRMTITLE', 'After confirmation title'),
 			'AfterConfirmContent' => _t('EventManagement.AFTERCONFIRMCONTENT', 'After confirmation content'),
 			'UnRegEmailConfirm' => _t('EventManagement.REQEMAILUNREGCONFIRM', 'Require email confirmation to un-register?'),

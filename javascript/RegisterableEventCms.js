@@ -1,10 +1,10 @@
 ;(function ($) {
 	$("#Form_EditForm_RegEmailConfirm").live("click", function() {
-		$("#AfterConfirmTitle, #AfterConfirmContent").toggle($(this).is(":checked"));
+		$("#EmailConfirmMessage, #AfterConfirmTitle, #AfterConfirmContent").toggle($(this).is(":checked"));
 	});
 
 	$("#Form_EditForm_RegEmailConfirm").livequery(function() {
-		$("#AfterConfirmTitle, #AfterConfirmContent").toggle($(this).is(":checked"));
+		$("#EmailConfirmMessage, #AfterConfirmTitle, #AfterConfirmContent").toggle($(this).is(":checked"));
 	});
 
 	$("#Form_EditForm_UnRegEmailConfirm").live("click", function() {
