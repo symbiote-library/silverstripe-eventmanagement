@@ -41,4 +41,9 @@
 	
 	<h3>Tickets</h3>
 	$TicketsTable.FieldHolder
+	
+	<% if HasTicketFile %>
+		<h3>Ticket File</h3>
+		<p><a href="$Link(ticketfile)">Download ticket file.</a></p>
+	<% end_if %>
 </div>

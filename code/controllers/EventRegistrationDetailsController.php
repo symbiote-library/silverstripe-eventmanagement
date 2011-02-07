@@ -11,6 +11,10 @@ class EventRegistrationDetailsController extends Page_Controller {
 		'' => 'index'
 	);
 
+	public static $allowed_actions = array(
+		'ticketfile'
+	);
+
 	protected $parent;
 	protected $registration;
 	protected $message;
@@ -42,6 +46,25 @@ class EventRegistrationDetailsController extends Page_Controller {
 
 	public function index() {
 		return $this->getViewer('index')->process($this);
+	}
+
+	public function ticketfile() {
+		if (!$this->HasTicketFile()) {
+			$this->httpError(404);
+		}
+
+		$generator = $this->registration->Time()->Event()->TicketGenerator;
+		$generator = new $generator();
+
+		$path = $generator->generateTicketFileFor($this->registration);
+		$path = Director::getAbsFile($path);
+		$name = $generator->getTicketFilenameFor($this->registration);
+
+		if (!$path || !file_exists($path)) {
+			$this->httpError(404, 'The ticket file could not be generated.');
+		}
+
+		return SS_HTTPRequest::send_file(file_get_contents($path), $name);
 	}
 
 	/**
@@ -83,11 +106,18 @@ class EventRegistrationDetailsController extends Page_Controller {
 	}
 
 	/**
+	 * @return bool
+	 */
+	public function HasTicketFile() {
+		return (bool) $this->registration->Time()->Event()->TicketGenerator;
+	}
+
+	/**
 	 * @return string
 	 */
-	public function Link() {
+	public function Link($action) {
 		return Controller::join_links(
-			$this->parent->Link(), 'registration', $this->registration->ID
+			$this->parent->Link(), 'registration', $this->registration->ID, $action
 		);
 	}
 
