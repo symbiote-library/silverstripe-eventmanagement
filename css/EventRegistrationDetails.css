@@ -1,5 +1,7 @@
 .message { padding: 5px; margin-bottom: 10px; font-weight: bold; border-radius: 3px; }
 #registration-unconfirmed { background: #FED0D0; border: 2px solid #FF7373; }
+#registration-message { margin-bottom: 5px; }
+#registration-message,
 #registration-canceled { background: #FFFFEA; border: 2px solid #F7F8B4; }
 
 #registration-details { line-height: 18px; margin-bottom: 20px; }

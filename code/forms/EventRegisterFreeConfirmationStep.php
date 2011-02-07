@@ -105,13 +105,17 @@ class EventRegisterFreeConfirmationStep extends MultiFormStep {
 			));
 
 			$email->send();
+
+			Session::set(
+				"EventRegistration.{$registration->ID}.message",
+				$datetime->Event()->EmailConfirmMessage
+			);
 		} else {
 			$registration->Status = 'Valid';
+			$registration->write();
 		}
 
-		$registration->write();
 		$this->registration = $registration;
-
 		return true;
 	}
 

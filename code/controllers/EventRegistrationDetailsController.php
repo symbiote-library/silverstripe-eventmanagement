@@ -13,6 +13,7 @@ class EventRegistrationDetailsController extends Page_Controller {
 
 	protected $parent;
 	protected $registration;
+	protected $message;
 
 	public function __construct($parent, $registration) {
 		$this->parent       = $parent;
@@ -33,6 +34,10 @@ class EventRegistrationDetailsController extends Page_Controller {
 		if (!$hasToken && !$hasMemb) {
 			return Security::permissionFailure($this);
 		}
+
+		$message = "EventRegistration.{$rego->ID}.message";
+		$this->message = Session::get($message);
+		Session::clear($message);
 	}
 
 	public function index() {
@@ -51,6 +56,13 @@ class EventRegistrationDetailsController extends Page_Controller {
 	 */
 	public function Title() {
 		return 'Registration Details for ' . $this->registration->Time()->EventTitle();
+	}
+
+	/**
+	 * @return string
+	 */
+	public function Message() {
+		return $this->message;
 	}
 
 	/**

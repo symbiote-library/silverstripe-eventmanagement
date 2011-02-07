@@ -3,6 +3,12 @@
 <div id="content" class="typography">
 	<h2>$Title</h2>
 	
+	<% if Message %>
+		<p id="registration-message" class="message">
+			$Message
+		</p>
+	<% end_if %>
+	
 	<% control Registration %>
 		<% if Status = Unconfirmed %>
 			<p id="registration-unconfirmed" class="message bad">
