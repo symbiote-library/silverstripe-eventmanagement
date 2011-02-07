@@ -118,7 +118,8 @@ class EventRegistrationDetailsController extends Page_Controller {
 	 */
 	public function Link($action) {
 		return Controller::join_links(
-			$this->parent->Link(), 'registration', $this->registration->ID, $action
+			$this->parent->Link(), 'registration', $this->registration->ID, $action,
+			'?token='. $this->registration->Token
 		);
 	}
 
