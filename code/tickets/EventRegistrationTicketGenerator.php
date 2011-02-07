@@ -35,6 +35,8 @@ interface EventRegistrationTicketGenerator {
 	 * Generates a ticket file for a registration, and returns the path to the
 	 * ticket.
 	 *
+	 * NOTE: The ticket generator is responsible for caching the result.
+	 *
 	 * @param  EventRegistration $registration
 	 * @return string The path to the generated file.
 	 */
