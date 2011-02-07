@@ -60,7 +60,9 @@ class EventRegisterForm extends MultiForm {
 		$registration->Total->setAmount($total->getAmount());
 
 		foreach ($tickets['Tickets'] as $id => $quantity) {
-			$registration->Tickets()->add($id, array('Quantity' => $quantity));
+			if ($quantity) {
+				$registration->Tickets()->add($id, array('Quantity' => $quantity));
+			}
 		}
 
 		$registration->write();
