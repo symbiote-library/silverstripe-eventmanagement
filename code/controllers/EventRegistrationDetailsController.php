@@ -49,7 +49,7 @@ class EventRegistrationDetailsController extends Page_Controller {
 	}
 
 	public function ticketfile() {
-		if (!$this->HasTicketFile()) {
+		if (!$this->HasTicketFile() || $this->registration->Status != 'Valid') {
 			$this->httpError(404);
 		}
 
