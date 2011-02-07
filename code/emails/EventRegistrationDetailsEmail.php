@@ -34,9 +34,10 @@ class EventRegistrationDetailsEmail extends Email {
 
 			$path = $generator->generateTicketFileFor($registration);
 			$name = $generator->getTicketFilenameFor($registration);
+			$mime = $generator->getTicketMimeTypeFor($registration);
 
 			if ($path) {
-				$email->attachFile($path, $name);
+				$email->attachFile($path, $name, $mime);
 			}
 		}
 

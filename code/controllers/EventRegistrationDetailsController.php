@@ -59,12 +59,13 @@ class EventRegistrationDetailsController extends Page_Controller {
 		$path = $generator->generateTicketFileFor($this->registration);
 		$path = Director::getAbsFile($path);
 		$name = $generator->getTicketFilenameFor($this->registration);
+		$mime = $generator->getTicketMimeTypeFor($this->registration);
 
 		if (!$path || !file_exists($path)) {
 			$this->httpError(404, 'The ticket file could not be generated.');
 		}
 
-		return SS_HTTPRequest::send_file(file_get_contents($path), $name);
+		return SS_HTTPRequest::send_file(file_get_contents($path), $name, $mime);
 	}
 
 	/**
