@@ -43,6 +43,27 @@ class EventRegistration extends DataObject {
 		parent::onBeforeWrite();
 	}
 
+	public function getCMSFields() {
+		$fields = parent::getCMSFields();
+
+		$fields->removeByName('Tickets');
+		$fields->removeByName('Total');
+		$fields->removeByName('Token');
+		$fields->removeByName('TimeID');
+
+		$fields->addFieldsToTab('Root.Tickets', array(
+			$tickets = new TableListField('Tickets', 'EventTicket', array(
+				'Title'        => 'Ticket Title',
+				'PriceSummary' => 'Price',
+				'Quantity'     => 'Quantity'
+			)),
+			new ReadonlyField('TotalNice', 'Total', $this->Total->Nice())
+		));
+		$tickets->setCustomSourceItems($this->Tickets());
+
+		return $fields;
+	}
+
 	/**
 	 * @return string
 	 */
