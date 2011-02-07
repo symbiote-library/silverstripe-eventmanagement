@@ -69,8 +69,8 @@ class RegisterableEvent extends CalendarEvent {
 				new LiteralField('TicketGeneratorNone', '<p>The ticket '
 					. 'generator is used to generate a ticket file for the '
 					. 'user to download and print to bring to the event.</p>'),
-				new DropdownField
-					('TicketGenerator', '', $generators, null, null, true)
+				new DropdownField(
+					'TicketGenerator', '', $generators, null, null, '(none)')
 			));
 		}
 
