@@ -15,11 +15,19 @@ interface EventRegistrationTicketGenerator {
 	public function getGeneratorTitle();
 
 	/**
+	 * Returns the file name the generated ticket file should have.
+	 *
+	 * @param  EventRegistration $registration
+	 * @return string
+	 */
+	public function getTicketFilenameFor(EventRegistration $registration);
+
+	/**
 	 * Generates a ticket file for a registration, and returns the path to the
 	 * ticket.
 	 *
 	 * @param  EventRegistration $registration
-	 * @return string The path
+	 * @return string The path to the generated file.
 	 */
 	public function generateTicketFileFor(EventRegistration $registration);
 
