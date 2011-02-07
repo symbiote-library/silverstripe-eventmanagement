@@ -46,6 +46,7 @@ class EventRegisterFreeConfirmationStep extends MultiFormStep {
 		$table->setReadonly(true);
 		$table->setShowUnavailableTickets(false);
 		$table->setShowUnselectedTickets(false);
+		$table->setForceTotalRow(true);
 		$table->setTotal($total);
 
 		return new FieldSet(
