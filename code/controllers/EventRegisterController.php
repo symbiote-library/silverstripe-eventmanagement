@@ -43,11 +43,21 @@ class EventRegisterController extends Page_Controller {
 	}
 
 	public function index() {
-		$controller = $this->customise(array(
-			'Title' => 'Register For ' . $this->datetime->EventTitle(),
-			'Form'  => $this->RegisterForm()
-		));
-		return $this->getViewer('index')->process($controller);
+		$datetime = $this->datetime;
+
+		if ($datetime->getRemainingCapacity()) {
+			$data = array(
+				'Title' => 'Register For ' . $datetime->EventTitle(),
+				'Form'  => $this->RegisterForm()
+			);
+		} else {
+			$data = array(
+				'Title'   => $datetime->EventTitle() . ' Is Full',
+				'Content' => '<p>There are no more places available at this event.</p>'
+			);
+		}
+
+		return $this->getViewer('index')->process($this->customise($data));
 	}
 
 	/**
