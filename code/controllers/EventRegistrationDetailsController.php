@@ -39,6 +39,15 @@ class EventRegistrationDetailsController extends Page_Controller {
 			return Security::permissionFailure($this);
 		}
 
+		// If the registration has passed the confirmation expiry date, then
+		// cancel it.
+		if ($time = $this->registration->ConfirmTimeLimit()) {
+			if ($time->InPast()) {
+				$this->registration->Status = 'Canceled';
+				$this->registration->write();
+			}
+		}
+
 		$message = "EventRegistration.{$rego->ID}.message";
 		$this->message = Session::get($message);
 		Session::clear($message);
