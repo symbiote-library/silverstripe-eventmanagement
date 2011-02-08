@@ -1,0 +1,25 @@
+RegisterableEvent:
+  event:
+    Title: Test Event
+    ConfirmTimeLimit: 21600
+
+RegisterableDateTime:
+  time:
+    Title: Test Time
+    StartDate: 2011-01-01
+    EndDate: 2011-01-01
+    Event: =>RegisterableEvent.event
+
+EventRegistration:
+  unconfirmed_1:
+    Name: First Registration
+    Status: Unconfirmed
+    Time: =>RegisterableDateTime.time
+  unconfirmed_2:
+    Name: Second Registration
+    Status: Unconfirmed
+    Time: =>RegisterableDateTime.time
+  confirmed:
+    Name: Third Registration
+    Status: Confirmed
+    Time: =>RegisterableDateTime.time
