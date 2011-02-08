@@ -32,7 +32,8 @@ class EventRegistration extends DataObject {
 		'Name'            => 'Name',
 		'Email'           => 'Email',
 		'EventTitle'      => 'Event',
-		'DateTimeSummary' => 'Dates And Times'
+		'DateTimeSummary' => 'Dates And Times',
+		'TotalQuantity'   => 'Places'
 	);
 
 	protected function onBeforeWrite() {
@@ -77,6 +78,13 @@ class EventRegistration extends DataObject {
 	 */
 	public function DateTimeSummary() {
 		return $this->Time()->Summary();
+	}
+
+	/**
+	 * @return int
+	 */
+	public function TotalQuantity() {
+		return array_sum($this->Tickets()->map('ID', 'Quantity'));
 	}
 
 	/**
