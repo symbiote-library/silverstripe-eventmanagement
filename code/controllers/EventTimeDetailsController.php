@@ -59,6 +59,15 @@ class EventTimeDetailsController extends Page_Controller {
 	}
 
 	/**
+	 * @return string
+	 */
+	public function ExtraSidebarContent() {
+		$content = '';
+		$this->extend('augmentSidebarContent', $content);
+		return $content;
+	}
+
+	/**
 	 * @return Form
 	 */
 	public function UnregisterForm() {

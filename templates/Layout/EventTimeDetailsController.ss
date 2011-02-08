@@ -9,6 +9,8 @@
 			</div>
 		</div>
 
+		$ExtraSidebarContent
+
 		<div class="event-sidebar-item">
 			<h3>Un-register From Event</h3>
 			<div class="event-sidebar-item-content">
