@@ -67,7 +67,7 @@
 		<% control Registration %>
 			<% if Status = Valid %>
 				<h3>Ticket File</h3>
-				<p><a href="$Link(ticketfile)">Download ticket file.</a></p>
+				<p><a href="$Top.Link(ticketfile)">Download ticket file.</a></p>
 			<% end_if %>
 		<% end_control %>
 	<% end_if %>
