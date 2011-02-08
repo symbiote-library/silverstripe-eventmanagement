@@ -1,10 +1,12 @@
 ;(function ($) {
 	$("#Form_EditForm_RegEmailConfirm").live("click", function() {
-		$("#EmailConfirmMessage, #AfterConfirmTitle, #AfterConfirmContent").toggle($(this).is(":checked"));
+		var sel = "#EmailConfirmMessage, #ConfirmTimeLimit, #AfterConfirmTitle, #AfterConfirmContent";
+		$(sel).toggle($(this).is(":checked"));
 	});
 
 	$("#Form_EditForm_RegEmailConfirm").livequery(function() {
-		$("#EmailConfirmMessage, #AfterConfirmTitle, #AfterConfirmContent").toggle($(this).is(":checked"));
+		var sel = "#EmailConfirmMessage, #ConfirmTimeLimit, #AfterConfirmTitle, #AfterConfirmContent";
+		$(sel).toggle($(this).is(":checked"));
 	});
 
 	$("#Form_EditForm_UnRegEmailConfirm").live("click", function() {
