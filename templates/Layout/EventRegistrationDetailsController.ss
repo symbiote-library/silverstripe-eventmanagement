@@ -42,6 +42,20 @@
 	<h3>Tickets</h3>
 	$TicketsTable.FieldHolder
 	
+	<% if Registration.Payment %>
+		<% control Registration.Payment %>
+			<h3>Payment Details</h3>
+			<dl id="payment-details">
+				<dt>Method:</dt>
+				<dd>$PaymentMethod</dd>
+				<dt>Amount:</dt>
+				<dd>$Amount.Nice</dd>
+				<dt>Status:</dt>
+				<dd>$Status</dd>
+			</dl>
+		<% end_control %>
+	<% end_if %>
+	
 	<% if HasTicketFile %>
 		<% control Registration %>
 			<% if Status = Valid %>
