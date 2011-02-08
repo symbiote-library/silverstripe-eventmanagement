@@ -85,7 +85,8 @@ class EventRegisterPaymentStep extends MultiFormStep {
 		// Write an empty registration object so we have an ID to reference the
 		// payment against. This will be populated in the form's finish() method.
 		$registration = new EventRegistration();
-		$registration->Status = 'Valid';
+		$registration->PaymentID = $payment->ID;
+		$registration->Status    = 'Valid';
 		$registration->write();
 
 		$payment->PaidForClass = 'EventRegistration';
