@@ -90,6 +90,7 @@ class EventRegisterPaymentStep extends MultiFormStep {
 
 		$payment->PaidForClass = 'EventRegistration';
 		$payment->PaidForID    = $registration->ID;
+		$payment->PaidBy       = Member::currentUserID();
 		$payment->write();
 
 		Session::set(
