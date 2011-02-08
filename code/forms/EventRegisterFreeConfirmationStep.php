@@ -73,6 +73,7 @@ class EventRegisterFreeConfirmationStep extends MultiFormStep {
 			$email   = new Email();
 			$config  = SiteConfig::current_site_config();
 
+			$registration->TimeID = $datetime->ID;
 			$registration->Status = 'Unconfirmed';
 			$registration->write();
 
@@ -104,6 +105,7 @@ class EventRegisterFreeConfirmationStep extends MultiFormStep {
 			$email->setTemplate('EventRegistrationConfirmationEmail');
 			$email->populateTemplate(array(
 				'Name'         => $details['Name'],
+				'Registration' => $registration,
 				'RegLink'      => $regLink,
 				'Time'         => $datetime,
 				'SiteConfig'   => $config,

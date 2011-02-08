@@ -88,6 +88,18 @@ class EventRegistration extends DataObject {
 	}
 
 	/**
+	 * @return SS_Datetime
+	 */
+	public function ConfirmTimeLimit() {
+		$unconfirmed = $this->Status == 'Unconfirmed';
+		$limit       = $this->Time()->Event()->ConfirmTimeLimit;
+
+		if ($unconfirmed && $limit) {
+			return DBField::create('SS_Datetime', strtotime($this->Created) + $limit);
+		}
+	}
+
+	/**
 	 * @return string
 	 */
 	public function Link() {

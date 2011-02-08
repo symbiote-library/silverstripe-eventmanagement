@@ -13,6 +13,10 @@
 <p>
 	<strong>Important:</strong> You must confirm your registration before it
 	is marked as valid.
+	<% if Registration.ConfirmTimeLimit %>
+		If you do not confirm your registration within
+		$Registration.ConfirmTimeLimit.TimeDiff, it will be canceled.
+	<% end_if %>
 </p>
 
 <p>

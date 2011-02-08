@@ -17,6 +17,13 @@
 				confirmation email and click on confirmation link contained in
 				it.
 			</p>
+			
+			<% if ConfirmTimeLimit %>
+				<p id="registration-unconfirmed-limit" class="message bad">
+					If you do not confirm your registration within
+					$ConfirmTimeLimit.TimeDiff, it will be canceled.
+				</p>
+			<% end_if %>
 		<% end_if %>
 		
 		<% if Status = Canceled %>
