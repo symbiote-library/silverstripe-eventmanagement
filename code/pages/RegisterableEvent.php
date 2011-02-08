@@ -104,11 +104,13 @@ class RegisterableEvent extends CalendarEvent {
 		$registrations = new ComplexTableField(
 			$this, 'Registrations', 'EventRegistration', null, null, '"Status" = \'Valid\''
 		);
+		$registrations->setTemplate('EventRegistrationComplexTableField');
 		$registrations->setPermissions(array('show', 'print', 'export'));
 
 		$canceled = new ComplexTableField(
 			$this, 'Registations', 'EventRegistration', null, null, '"Status" = \'Canceled\''
 		);
+		$canceled->setTemplate('EventRegistrationComplexTableField');
 		$canceled->setPermissions(array('show', 'print', 'export'));
 
 		$fields->addFieldToTab('Root', new Tab('Registrations'), 'Behaviour');
@@ -124,6 +126,7 @@ class RegisterableEvent extends CalendarEvent {
 				'"Status" = \'Unconfirmed\''
 			);
 			$unconfirmed->setPermissions(array('show', 'print', 'export'));
+			$unconfirmed->setTemplate('EventRegistrationComplexTableField');
 
 			$fields->addFieldToTab('Root.Registrations', new ToggleCompositeField(
 				'UnconfirmedRegistrations', 'Unconfirmed Registrations', $unconfirmed
