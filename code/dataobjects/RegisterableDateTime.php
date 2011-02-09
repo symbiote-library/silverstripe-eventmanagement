@@ -139,15 +139,21 @@ class RegisterableDateTime extends CalendarDateTime {
 	 * Returns the overall number of places remaining at this event, TRUE if
 	 * there are unlimited places or FALSE if they are all taken.
 	 *
+	 * @param  int $excludeId A registration ID to exclude from calculations.
 	 * @return int|bool
 	 */
-	public function getRemainingCapacity() {
+	public function getRemainingCapacity($excludeId = null) {
 		if (!$this->Capacity) return true;
 
 		$taken = new SQLQuery();
 		$taken->select('SUM("Quantity")');
 		$taken->from('EventRegistration_Tickets');
 		$taken->leftJoin('EventRegistration', '"EventRegistration"."ID" = "EventRegistrationID"');
+
+		if ($excludeId) {
+			$taken->where('"EventRegistration"."ID"', '<>', $excludeId);
+		}
+
 		$taken->where('"Status"', '<>', 'Canceled');
 		$taken->where('"EventRegistration"."TimeID"', $this->ID);
 		$taken = $taken->execute()->value();
