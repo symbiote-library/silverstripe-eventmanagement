@@ -48,7 +48,10 @@ class EventRegisterFormSession extends MultiFormSession {
 			return;
 		}
 
-		if (!$this->getRegistration()->isInDB()) {
+		$isInDb     = $this->getRegistration()->isInDB();
+		$hasTickets = (bool) count($this->getRegistration()->Tickets());
+
+		if ($isInDb || $hasTickets) {
 			$this->getRegistration()->write();
 		}
 
