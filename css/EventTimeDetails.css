@@ -2,6 +2,10 @@
 #event-details h2 { margin-bottom: 0; }
 #event-details .event-details-date { color: #666; margin-bottom: 10px; }
 
+#register { background: #F4F4F4; padding: 5px; border-radius: 5px; line-height: 24px; }
+#register a { background: #222; padding: 5px; border-radius: 3px; color: #FFF; text-decoration: none; box-shadow: 0 0 3px #CCC; }
+#register a:hover { text-decoration: underline; }
+
 #event-sidebar { float: right; width: 250px; padding-left: 10px; }
 #event-sidebar .event-sidebar-item { border: 1px solid #CCC; border-radius: 3px; margin-bottom: 10px; }
 #event-sidebar .event-sidebar-item h3 { padding: 5px; margin: 0; border-bottom: 1px solid #CCC;

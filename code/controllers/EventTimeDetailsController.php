@@ -68,17 +68,27 @@ class EventTimeDetailsController extends Page_Controller {
 	}
 
 	/**
-	 * @return Form
+	 * @return bool
 	 */
-	public function UnregisterForm() {
-		return $this->unregister()->UnregisterForm();
+	public function EventInFuture() {
+		return time() < $this->DateTime()->getStartTimestamp();
 	}
 
 	/**
+	 * @return bool
+	 */
+	public function EventIsFull() {
+		return !$this->DateTime()->getRemainingCapacity();
+	}
+
+	/**
+	 * @param  string $action
 	 * @return string
 	 */
-	public function Link() {
-		return Controller::join_links($this->parent->Link(), 'details', $this->time->ID);
+	public function Link($action = null) {
+		return Controller::join_links(
+			$this->parent->Link(), 'details', $this->time->ID, $action
+		);
 	}
 
 }

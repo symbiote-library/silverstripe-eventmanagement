@@ -27,8 +27,17 @@
 			<h2>$EventTitle</h2>
 			<p class="event-details-date">$Summary</p>
 		<% end_control %>
-	
-		<h3>Register For Event</h3>
+
+		<% if EventInFuture %>
+			<h3>Register For Event</h3>
+			<% if EventIsFull %>
+				<p>Sorry, this event is already full.</p>
+			<% else %>
+				<p id="register">
+					<a href="$Link(register)">Register for event &raquo;</a>
+				</p>
+			<% end_if %>
+		<% end_if %>
 
 		<h3>Event Information</h3>
 		$DateTime.Event.Content
