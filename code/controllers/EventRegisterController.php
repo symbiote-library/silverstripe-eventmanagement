@@ -71,8 +71,12 @@ class EventRegisterController extends Page_Controller {
 			return $this->httpError(404);
 		}
 
-		if ($rego->Status != 'Unconfirmed' || $rego->Token != $token) {
+		if ($rego->Token != $token) {
 			return $this->httpError(403);
+		}
+
+		if ($rego->Status != 'Unconfirmed') {
+			return $this->redirect($rego->Link());
 		}
 
 		try {
