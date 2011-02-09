@@ -17,6 +17,38 @@ class EventRegistrationPurgeTask extends BuildTask {
 	}
 
 	public function run($request) {
+		$this->purgeUnsubmittedRegistrations();
+		$this->purgeUnconfirmedRegistrations();
+	}
+
+	protected function purgeUnsubmittedRegistrations() {
+		$conn    = DB::getConn();
+		$created = $conn->formattedDatetimeClause('"EventRegistration"."Created"', '%U');
+
+		$items = DataObject::get(
+			'EventRegistration',
+			'"Status" = \'Unsubmitted\''
+			. " AND $created + \"Registerable\".\"RegistrationTimeLimit\" < " . time(),
+			null,
+			'INNER JOIN "CalendarDateTime" AS "DateTime" ON "TimeID" = "DateTime"."ID"'
+			. ' INNER JOIN "CalendarEvent" AS "Event" ON "DateTime"."EventID" = "Event"."ID"'
+			. ' INNER JOIN "RegisterableEvent" AS "Registerable" ON "Event"."ID" = "Registerable"."ID"'
+		);
+
+		if ($items) {
+			$count = count($items);
+
+			foreach ($items as $registration) {
+				$registration->delete();
+			}
+		} else {
+			$count = 0;
+		}
+
+		echo "$count unsubmitted registrations were permantently deleted.\n";
+	}
+
+	protected function purgeUnconfirmedRegistrations() {
 		$query = new SQLQuery();
 		$conn    = DB::getConn();
 

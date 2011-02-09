@@ -10,9 +10,63 @@ class EventRegistrationPurgeTaskTest extends SapphireTest {
 	public static $fixture_file = 'eventmanagement/tests/EventRegistrationPurgeTaskTest.yml';
 
 	/**
-	 * @covers EventRegistrationPurgeTask
+	 * @covers EventRegistrationPurgeTask::purgeUnsubmittedRegistrations
 	 */
-	public function testPurgeTaskCancelsSubscriptions() {
+	public function testPurgeTaskDeletesUnsubmittedRegistrations() {
+		$task         = new EventRegistrationPurgeTask();
+		$unsubmitted1 = $this->objFromFixture('EventRegistration', 'unsubmitted_1');
+		$unsubmitted2 = $this->objFromFixture('EventRegistration', 'unsubmitted_2');
+
+		$count  = 'SELECT COUNT(*) FROM "EventRegistration" WHERE "Status" = \'Unsubmitted\'';
+		$update = 'UPDATE "EventRegistration" SET "Created" = \'%s\' WHERE "ID" = %d';
+
+		ob_start();
+
+		$task->run(null);
+		$this->assertEquals(2, DB::query($count)->value());
+
+		// Update the first registration to be 10 minutes ago, it shouldn't get
+		// deleted.
+		DB::query(sprintf(
+			$update,
+			date('Y-m-d H:i:s', sfTime::subtract(time(), 15, sfTime::MINUTE)),
+			$unsubmitted1->ID));
+
+		$task->run(null);
+		$this->assertEquals(2, DB::query($count)->value());
+
+		// Now update it to 20 minutes ago, one should be deleted.
+		DB::query(sprintf(
+			$update,
+			date('Y-m-d H:i:s', sfTime::subtract(time(), 20, sfTime::MINUTE)),
+			$unsubmitted1->ID));
+
+		$task->run(null);
+		$this->assertEquals(1, DB::query($count)->value());
+
+		// Now push the second one way into the past.
+		$created = sfTime::subtract(time(), 1000, sfTime::DAY);
+		DB::query(sprintf(
+			$update,
+			date('Y-m-d H:i:s', $created),
+			$unsubmitted2->ID));
+
+		$task->run(null);
+		$this->assertEquals(0, DB::query($count)->value());
+
+		// Ensure the confirmed event is still there.
+		$confirmed = DB::query(
+			'SELECT COUNT(*) FROM "EventRegistration" WHERE "Status" = \'Confirmed\''
+		);
+		$this->assertEquals(1, $confirmed->value());
+
+		ob_end_clean();
+	}
+
+	/**
+	 * @covers EventRegistrationPurgeTask::purgeUnconfirmedRegistrations
+	 */
+	public function testPurgeTaskCancelsUnconfirmedRegistrations() {
 		$task         = new EventRegistrationPurgeTask();
 		$unconfirmed1 = $this->objFromFixture('EventRegistration', 'unconfirmed_1');
 		$unconfirmed2 = $this->objFromFixture('EventRegistration', 'unconfirmed_2');

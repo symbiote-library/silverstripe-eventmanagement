@@ -2,6 +2,7 @@ RegisterableEvent:
   event:
     Title: Test Event
     ConfirmTimeLimit: 21600
+    RegistrationTimeLimit: 900
 
 RegisterableDateTime:
   time:
@@ -22,4 +23,12 @@ EventRegistration:
   confirmed:
     Name: Third Registration
     Status: Confirmed
+    Time: =>RegisterableDateTime.time
+  unsubmitted_1:
+    Name: Fourth Registration
+    Status: Unsubmitted
+    Time: =>RegisterableDateTime.time
+  unsubmitted_2:
+    Name: Fifth Registration
+    Status: Unsubmitted
     Time: =>RegisterableDateTime.time
