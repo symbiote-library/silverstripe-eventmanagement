@@ -15,6 +15,24 @@ class EventRegisterForm extends MultiForm {
 		$this->name       = $name;
 
 		parent::__construct($controller, $name);
+
+		if ($this->getSession()->RegistrationID) {
+			$created = strtotime($this->getSession()->Registration()->Created);
+			$limit   = $this->controller->getDateTime()->Event()->RegistrationTimeLimit;
+			$expires = DBField::create('SS_Datetime', $created + $limit);
+
+			$message = _t('EventManagement.PLEASECOMPLETEREGWITHIN',
+				'Please complete your registration within %s. If you do not,'
+				. ' the places that are on hold for you will be released to'
+				. ' others.');
+
+			$field = new LiteralField('CompleteRegistrationWithin', sprintf(
+				"<p id=\"complete-registration-within\">$message</p>",
+				$expires->TimeDiff()
+			));
+
+			$this->fields->insertAfter($field, 'Tickets');
+		}
 	}
 
 	/**
