@@ -45,7 +45,12 @@ class EventRegisterController extends Page_Controller {
 	public function index() {
 		$datetime = $this->datetime;
 
-		if ($datetime->getRemainingCapacity()) {
+		if ($datetime->getStartTimestamp() < time()) {
+			$data = array(
+				'Title'   => $datetime->EventTitle() . ' Has Already Happened',
+				'Content' => '<p>You can no longer register for this event.</p>'
+			);
+		} elseif ($datetime->getRemainingCapacity()) {
 			$data = array(
 				'Title' => 'Register For ' . $datetime->EventTitle(),
 				'Form'  => $this->RegisterForm()
