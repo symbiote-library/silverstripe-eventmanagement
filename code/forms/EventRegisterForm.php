@@ -31,26 +31,16 @@ class EventRegisterForm extends MultiForm {
 		}
 	}
 
-	public function httpSubmission($request) {
-		$expires = $this->getExpiryDateTime();
+	/**
+	 * @return SS_Datetime
+	 */
+	public function getExpiryDateTime() {
+		if ($this->getSession()->RegistrationID) {
+			$created = strtotime($this->getSession()->Registration()->Created);
+			$limit   = $this->controller->getDateTime()->Event()->RegistrationTimeLimit;
 
-		// If the reservation has already expired, then delete the session and
-		// redirect back to the start page.
-		if ($expires && $expires->InPast()) {
-			$this->session->Registration()->delete();
-			$this->session->delete();
-
-			$message = _t('EventManagement.REGSESSIONEXPIRED', 'Your'
-				. ' registration expired before it was completed. Please'
-				. ' try ordering your tickets again.');
-			$this->sessionMessage($message, 'bad');
-
-			$response = new SS_HTTPResponse();
-			$response->redirect($this->controller->Link($this->name));
-			return $response;
+			if ($limit) return DBField::create('SS_Datetime', $created + $limit);
 		}
-
-		return parent::httpSubmission($request);
 	}
 
 	/**
@@ -132,18 +122,6 @@ class EventRegisterForm extends MultiForm {
 		if(!$this->session->Hash) {
 			$this->session->Hash = sha1($this->session->ID . '-' . microtime());
 			$this->session->write();
-		}
-	}
-
-	/**
-	 * @return SS_Datetime
-	 */
-	protected function getExpiryDateTime() {
-		if ($this->getSession()->RegistrationID) {
-			$created = strtotime($this->getSession()->Registration()->Created);
-			$limit   = $this->controller->getDateTime()->Event()->RegistrationTimeLimit;
-
-			if ($limit) return DBField::create('SS_Datetime', $created + $limit);
 		}
 	}
 

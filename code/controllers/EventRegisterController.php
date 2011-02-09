@@ -40,6 +40,21 @@ class EventRegisterController extends Page_Controller {
 				'default' => 'Please log in to register for this event.'
 			));
 		}
+
+		$form   = $this->RegisterForm();
+		$expiry = $this->RegisterForm()->getExpiryDateTime();
+
+		if ($expiry && $expiry->InPast()) {
+			$form->getSession()->Registration()->delete();
+			$form->getSession()->delete();
+
+			$message = _t('EventManagement.REGSESSIONEXPIRED', 'Your'
+				. ' registration expired before it was completed. Please'
+				. ' try ordering your tickets again.');
+			$form->sessionMessage($message, 'bad');
+
+			$this->redirect($this->Link());
+		}
 	}
 
 	public function index() {
