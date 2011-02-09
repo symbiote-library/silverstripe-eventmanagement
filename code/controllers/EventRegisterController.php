@@ -59,13 +59,20 @@ class EventRegisterController extends Page_Controller {
 
 	public function index() {
 		$datetime = $this->datetime;
+		$exclude  = null;
+
+		// If we have a current multiform ID, then exclude the linked
+		// registration from the capacity calculation.
+		if (isset($_GET['MultiFormSessionID'])) {
+			$exclude = $this->RegisterForm()->getSession()->RegistrationID;
+		}
 
 		if ($datetime->getStartTimestamp() < time()) {
 			$data = array(
 				'Title'   => $datetime->EventTitle() . ' Has Already Happened',
 				'Content' => '<p>You can no longer register for this event.</p>'
 			);
-		} elseif ($datetime->getRemainingCapacity()) {
+		} elseif ($datetime->getRemainingCapacity($exclude)) {
 			$data = array(
 				'Title' => 'Register For ' . $datetime->EventTitle(),
 				'Form'  => $this->RegisterForm()
