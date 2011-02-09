@@ -9,17 +9,8 @@ class EventRegisterFreeConfirmationStep extends MultiFormStep {
 
 	public static $is_final_step = true;
 
-	protected $registration;
-
 	public function getTitle() {
 		return 'Confirmation';
-	}
-
-	/**
-	 * @return EventRegistration
-	 */
-	public function getRegistration() {
-		return $this->registration;
 	}
 
 	/**
@@ -64,7 +55,7 @@ class EventRegisterFreeConfirmationStep extends MultiFormStep {
 		$form         = $this->getForm();
 		$datetime     = $form->getController()->getDateTime();
 		$confirmation = $datetime->Event()->RegEmailConfirm;
-		$registration = new EventRegistration();
+		$registration = $this->getForm()->getSession()->getRegistration();
 
 		// If we require email validation for free registrations, then send
 		// out the email and mark the registration. Otherwise immediately
@@ -123,7 +114,6 @@ class EventRegisterFreeConfirmationStep extends MultiFormStep {
 			$registration->write();
 		}
 
-		$this->registration = $registration;
 		return true;
 	}
 

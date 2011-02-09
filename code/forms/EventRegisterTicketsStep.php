@@ -188,6 +188,16 @@ class EventRegisterTicketsStep extends MultiFormStep {
 			}
 		}
 
+		// Finally add the tickets to the actual registration.
+		$registration = $this->form->getSession()->getRegistration();
+		$registration->Tickets()->removeAll();
+
+		foreach ($tickets as $id => $quantity) {
+			if ($quantity) {
+				$registration->Tickets()->add($id, array('Quantity' => $quantity));
+			}
+		}
+
 		return true;
 	}
 

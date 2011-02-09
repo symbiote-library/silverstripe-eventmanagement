@@ -34,7 +34,7 @@ class EventRegisterForm extends MultiForm {
 			return false;
 		}
 
-		$registration = $step->getRegistration();
+		$registration = $this->session->getRegistration();
 		$ticketsStep  = $this->getSavedStepByClass('EventRegisterTicketsStep');
 		$tickets      = $ticketsStep->loadData();
 
@@ -78,6 +78,25 @@ class EventRegisterForm extends MultiForm {
 			'registration',
 			$registration->ID,
 			'?token=' . $registration->Token));
+	}
+
+	protected function setSession() {
+		$this->session = $this->getCurrentSession();
+
+		// If there was no session found, create a new one instead
+		if(!$this->session) {
+			$this->session = new EventRegisterFormSession();
+			$this->session->setForm($this);
+			$this->session->write();
+		} else {
+			$this->session->setForm($this);
+		}
+
+		// Create encrypted identification to the session instance if it doesn't exist
+		if(!$this->session->Hash) {
+			$this->session->Hash = sha1($this->session->ID . '-' . microtime());
+			$this->session->write();
+		}
 	}
 
 }

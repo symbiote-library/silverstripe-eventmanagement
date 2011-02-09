@@ -9,9 +9,6 @@ class EventRegisterPaymentStep extends MultiFormStep {
 
 	public static $is_final_step = true;
 
-	protected $registration;
-	protected $payment;
-
 	public function getTitle() {
 		return 'Payment';
 	}
@@ -84,7 +81,7 @@ class EventRegisterPaymentStep extends MultiFormStep {
 
 		// Write an empty registration object so we have an ID to reference the
 		// payment against. This will be populated in the form's finish() method.
-		$registration = new EventRegistration();
+		$registration = $this->form->getSession()->getRegistration();
 		$registration->PaymentID = $payment->ID;
 		$registration->Status    = 'Valid';
 		$registration->write();
@@ -99,17 +96,7 @@ class EventRegisterPaymentStep extends MultiFormStep {
 			strip_tags($payment->Message)
 		);
 
-		$this->registration = $registration;
-		$this->payment      = $payment;
-
 		return true;
-	}
-
-	/**
-	 * @return EventRegistration
-	 */
-	public function getRegistration() {
-		return $this->registration;
 	}
 
 }
