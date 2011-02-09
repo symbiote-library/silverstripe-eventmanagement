@@ -9,6 +9,7 @@ class RegisterableEvent extends CalendarEvent {
 	public static $db = array(
 		'TicketGenerator'       => 'Varchar(255)',
 		'OneRegPerEmail'        => 'Boolean',
+		'RequireLoggedIn'       => 'Boolean',
 		'RegEmailConfirm'       => 'Boolean',
 		'EmailConfirmMessage'   => 'Varchar(255)',
 		'ConfirmTimeLimit'      => 'Int',
@@ -20,7 +21,6 @@ class RegisterableEvent extends CalendarEvent {
 		'AfterConfirmContent'   => 'HTMLText',
 		'EmailNotifyChanges'    => 'Boolean',
 		'NotifyChangeFields'    => 'Text',
-		'RequireLoggedIn'       => 'Boolean',
 		'AfterRegTitle'         => 'Varchar(255)',
 		'AfterRegContent'       => 'HTMLText',
 		'AfterUnregTitle'       => 'Varchar(255)',
@@ -78,8 +78,10 @@ class RegisterableEvent extends CalendarEvent {
 
 		$changeFields = singleton('RegisterableDateTime')->fieldLabels(false);
 		$fields->addFieldsToTab('Root.Content.Registration', array(
-			new HeaderField('EmailSettingsHeader', $this->fieldLabel('EmailSettingsHeader')),
+			new HeaderField('RegistrationSettingsHeader', $this->fieldLabel('RegistrationSettingsHeader')),
 			new CheckboxField('OneRegPerEmail', $this->fieldLabel('OneRegPerEmail')),
+			new CheckboxField('RequireLoggedIn', $this->fieldLabel('RequireLoggedIn')),
+			new HeaderField('EmailSettingsHeader', $this->fieldLabel('EmailSettingsHeader')),
 			new CheckboxField('RegEmailConfirm', $this->fieldLabel('RegEmailConfirm')),
 			new TextField('EmailConfirmMessage', $this->fieldLabel('EmailConfirmMessage')),
 			new NumericField('ConfirmTimeLimit', $this->fieldLabel('ConfirmTimeLimit')),
@@ -89,9 +91,7 @@ class RegisterableEvent extends CalendarEvent {
 			new TextField('AfterConfUnregTitle', $this->fieldLabel('AfterConfUnregTitle')),
 			new HtmlEditorField('AfterConfUnregContent', $this->fieldLabel('AfterConfUnregContent'), 5),
 			new CheckboxField('EmailNotifyChanges', $this->fieldLabel('EmailNotifyChanges')),
-			new CheckboxSetField('NotifyChangeFields', $this->fieldLabel('NotifyChangeFields'), $changeFields),
-			new HeaderField('MemberSettingsHeader', $this->fieldLabel('MemberSettingsHeader')),
-			new CheckboxField('RequireLoggedIn', $this->fieldLabel('RequireLoggedIn'))
+			new CheckboxSetField('NotifyChangeFields', $this->fieldLabel('NotifyChangeFields'), $changeFields)
 		));
 
 		$fields->addFieldsToTab('Root.Content.AfterRegistration', array(
@@ -151,6 +151,7 @@ class RegisterableEvent extends CalendarEvent {
 		return array_merge(parent::fieldLabels(), array(
 			'TicketTypesHeader' => _t('EventManagement.TICKETTYPES', 'Ticket Types'),
 			'Registrations' => _t('EventManagement.REGISTATIONS', 'Registrations'),
+			'RegistrationSettingsHeader' => _t('EventManagement.REGISTATIONSETTINGS', 'Registration Settings'),
 			'EmailSettingsHeader' => _t('EventManagement.EMAILSETTINGS', 'Email Settings'),
 			'OneRegPerEmail' => _t('EventManagement.ONEREGPEREMAIL', 'Limit to one registration per email address?'),
 			'RegEmailConfirm' => _t('EventManagement.REQEMAILCONFIRM',
@@ -165,7 +166,6 @@ class RegisterableEvent extends CalendarEvent {
 			'AfterConfUnregContent' => _t('EventManagement.AFTERUNREGCONFCONTENT', 'After un-registration confirmation content'),
 			'EmailNotifyChanges' => _t('EventManagement.EMAILNOTIFYCHANGES', 'Notify registered users of event changes via email?'),
 			'NotifyChangeFields' => _t('EventManagement.NOTIFYWHENTHESECHANGE', 'Notify users when these fields change'),
-			'MemberSettingsHeader' => _t('EventManagement.MEMBERSETTINGS', 'Member Settings'),
 			'RequireLoggedIn' => _t('EventManagement.REQUIREDLOGGEDIN', 'Require users to be logged in to register?'),
 			'AfterRegTitle' => _t('EventManagement.AFTERREGTITLE', 'After registration title'),
 			'AfterRegContent' => _t('EventManagement.AFTERREGCONTENT', 'After registration content'),
