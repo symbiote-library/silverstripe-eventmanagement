@@ -10,6 +10,7 @@ class RegisterableEvent extends CalendarEvent {
 		'TicketGenerator'       => 'Varchar(255)',
 		'OneRegPerEmail'        => 'Boolean',
 		'RequireLoggedIn'       => 'Boolean',
+		'RegistrationTimeLimit' => 'Int',
 		'RegEmailConfirm'       => 'Boolean',
 		'EmailConfirmMessage'   => 'Varchar(255)',
 		'ConfirmTimeLimit'      => 'Int',
@@ -34,6 +35,7 @@ class RegisterableEvent extends CalendarEvent {
 	);
 
 	public static $defaults = array(
+		'RegistrationTimeLimit' => 900,
 		'AfterRegTitle'         => 'Thanks For Registering',
 		'AfterRegContent'       => '<p>Thanks for registering! We look forward to seeing you.</p>',
 		'EmailConfirmMessage'   => 'Important: You must check your emails and confirm your registration before it is valid.',
@@ -81,6 +83,7 @@ class RegisterableEvent extends CalendarEvent {
 			new HeaderField('RegistrationSettingsHeader', $this->fieldLabel('RegistrationSettingsHeader')),
 			new CheckboxField('OneRegPerEmail', $this->fieldLabel('OneRegPerEmail')),
 			new CheckboxField('RequireLoggedIn', $this->fieldLabel('RequireLoggedIn')),
+			new NumericField('RegistrationTimeLimit', $this->fieldLabel('RegistrationTimeLimit')),
 			new HeaderField('EmailSettingsHeader', $this->fieldLabel('EmailSettingsHeader')),
 			new CheckboxField('RegEmailConfirm', $this->fieldLabel('RegEmailConfirm')),
 			new TextField('EmailConfirmMessage', $this->fieldLabel('EmailConfirmMessage')),
@@ -152,6 +155,8 @@ class RegisterableEvent extends CalendarEvent {
 			'TicketTypesHeader' => _t('EventManagement.TICKETTYPES', 'Ticket Types'),
 			'Registrations' => _t('EventManagement.REGISTATIONS', 'Registrations'),
 			'RegistrationSettingsHeader' => _t('EventManagement.REGISTATIONSETTINGS', 'Registration Settings'),
+			'RegistrationTimeLimit' => _t('EventManagement.REGTIMELIMIT',
+				'Time limit to complete registration within (in seconds, 0 to disable place holding during registration)'),
 			'EmailSettingsHeader' => _t('EventManagement.EMAILSETTINGS', 'Email Settings'),
 			'OneRegPerEmail' => _t('EventManagement.ONEREGPEREMAIL', 'Limit to one registration per email address?'),
 			'RegEmailConfirm' => _t('EventManagement.REQEMAILCONFIRM',
