@@ -17,15 +17,30 @@ class EventRegisterForm extends MultiForm {
 		parent::__construct($controller, $name);
 
 		if ($expires = $this->getExpiryDateTime()) {
+			Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
+			Requirements::add_i18n_javascript('eventmanagement/javascript/lang');
+			Requirements::javascript('eventmanagement/javascript/EventRegisterForm.js');
+
 			$message = _t('EventManagement.PLEASECOMPLETEREGWITHIN',
 				'Please complete your registration within %s. If you do not,'
 				. ' the places that are on hold for you will be released to'
-				. ' others.');
+				. ' others. You have %s remaining');
+
+			$remain = strtotime($expires->getValue()) - time();
+			$hours  = floor($remain / 3600);
+			$mins   = floor(($remain - $hours * 3600) / 60);
+			$secs   = $remain - $hours * 3600 - $mins * 60;
+
+			$remaining = sprintf(
+				'<span id="registration-countdown">%s:%s:%s</span>',
+				str_pad($hours, 2, '0', STR_PAD_LEFT),
+				str_pad($mins, 2, '0', STR_PAD_LEFT),
+				str_pad($secs, 2, '0', STR_PAD_LEFT)
+			);
 
 			$field = new LiteralField('CompleteRegistrationWithin', sprintf(
 				"<p id=\"complete-registration-within\">$message</p>",
-				$expires->TimeDiff()
-			));
+				$expires->TimeDiff(), $remaining));
 
 			$this->fields->insertAfter($field, 'Tickets');
 		}
