@@ -128,7 +128,7 @@ class EventRegisterTicketsStep extends MultiFormStep {
 				return false;
 			}
 
-			$avail = $ticket->getAvailableForDateTime($datetime);
+			$avail = $ticket->getAvailableForDateTime($datetime, $this->form->getSession()->RegistrationID);
 			$avail = $avail['available'];
 
 			if (!$avail) {

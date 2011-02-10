@@ -147,9 +147,10 @@ class EventTicket extends DataObject {
 	 * Returns the number of tickets available for an event time.
 	 *
 	 * @param  RegisterableDateTime $time
+	 * @param  int $excludeId A registration ID to exclude from calculations.
 	 * @return array
 	 */
-	public function getAvailableForDateTime(RegisterableDateTime $time) {
+	public function getAvailableForDateTime(RegisterableDateTime $time, $excludeId = null) {
 		if ($this->StartType == 'Date') {
 			$start = strtotime($this->StartDate);
 		} else {
@@ -189,9 +190,15 @@ class EventTicket extends DataObject {
 		$booked->select('SUM("Quantity")');
 		$booked->from('"EventRegistration_Tickets"');
 		$booked->leftJoin('EventRegistration', '"EventRegistration"."ID" = "EventRegistrationID"');
+
+		if ($excludeId) {
+			$booked->where('"EventRegistration"."ID"', '<>', $excludeId);
+		}
+
 		$booked->where('"Status"', '<>', 'Canceled');
 		$booked->where('"EventTicketID"', $this->ID);
 		$booked->where('"EventRegistration"."TimeID"', $time->ID);
+
 		$booked = $booked->execute()->value();
 
 		if ($booked < $quantity) {
