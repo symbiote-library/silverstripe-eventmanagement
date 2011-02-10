@@ -25,7 +25,7 @@
 			<tr>
 				<td colspan="3"></td>
 				<td>Remaining Places</td>
-				<td>$DateTime.RemainingCapacity</td>
+				<td>$RemainingCapacity</td>
 			</tr>
 		</tfoot>
 	<% end_if %>

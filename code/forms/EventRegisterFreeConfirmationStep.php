@@ -30,11 +30,13 @@ class EventRegisterFreeConfirmationStep extends MultiFormStep {
 
 	public function getFields() {
 		$datetime = $this->getForm()->getController()->getDateTime();
+		$session  = $this->getForm()->getSession();
 		$tickets  = $this->getForm()->getSavedStepByClass('EventRegisterTicketsStep');
 		$total    = $tickets->getTotal();
 
 		$table = new EventRegistrationTicketsTableField('Tickets', $datetime);
 		$table->setReadonly(true);
+		$table->setExcludedRegistrationId($session->RegistrationID);
 		$table->setShowUnavailableTickets(false);
 		$table->setShowUnselectedTickets(false);
 		$table->setForceTotalRow(true);

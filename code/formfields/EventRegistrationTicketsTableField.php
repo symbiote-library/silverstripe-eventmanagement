@@ -8,6 +8,7 @@
 class EventRegistrationTicketsTableField extends FormField {
 
 	protected $datetime;
+	protected $excludedRegistrationId;
 	protected $showUnavailableTickets = true;
 	protected $showUnselectedTickets = true;
 	protected $forceTotalRow;
@@ -38,6 +39,15 @@ class EventRegistrationTicketsTableField extends FormField {
 		}
 
 		parent::setValue($value);
+	}
+
+	/**
+	 * Sets a registration ID to exclude from any availibility calculations.
+	 *
+	 * @param int $id
+	 */
+	public function setExcludedRegistrationId($id) {
+		$this->excludedRegistrationId = $id;
 	}
 
 	/**
@@ -85,8 +95,10 @@ class EventRegistrationTicketsTableField extends FormField {
 		$tickets = $this->datetime->Tickets('', '"RegisterableDateTime_Tickets"."Sort"');
 
 		foreach ($tickets as $ticket) {
-			$available = $ticket->getAvailableForDateTime($this->datetime);
-			$endTime   = $ticket->getSaleEndForDateTime($this->datetime);
+			$available = $ticket->getAvailableForDateTime(
+				$this->datetime, $this->excludedRegistrationId
+			);
+			$endTime = $ticket->getSaleEndForDateTime($this->datetime);
 
 			if ($avail = $available['available']) {
 				$name = "{$this->name}[{$ticket->ID}]";
@@ -137,6 +149,13 @@ class EventRegistrationTicketsTableField extends FormField {
 		}
 
 		return $result;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function RemainingCapacity() {
+		return $this->datetime->getRemainingCapacity($this->excludedRegistrationId);
 	}
 
 	/**

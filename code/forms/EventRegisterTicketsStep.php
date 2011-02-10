@@ -54,10 +54,12 @@ class EventRegisterTicketsStep extends MultiFormStep {
 
 	public function getFields() {
 		$datetime = $this->getForm()->getController()->getDateTime();
+		$session  = $this->getForm()->getSession();
 
 		$fields = new FieldSet(
-			new EventRegistrationTicketsTableField('Tickets', $datetime)
+			$tickets = new EventRegistrationTicketsTableField('Tickets', $datetime)
 		);
+		$tickets->setExcludedRegistrationId($session->RegistrationID);
 
 		if ($member = Member::currentUser()) {
 			$fields->push(new ReadonlyField('Name', 'Your name', $member->getName()));
