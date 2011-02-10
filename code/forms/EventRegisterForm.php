@@ -121,6 +121,104 @@ class EventRegisterForm extends MultiForm {
 			'?token=' . $registration->Token));
 	}
 
+	/**
+	 * Validates that the tickets requested are available and valid.
+	 *
+	 * @param  array $tickets A map of ticket ID to quantity.
+	 * @param  Form  $form
+	 * @return bool
+	 */
+	public function validateTickets($tickets, $form) {
+		$datetime = $this->controller->getDateTime();
+		$session  = $this->getSession();
+
+		// First check we have at least one ticket.
+		if (!array_sum($tickets)) {
+			$form->addErrorMessage(
+				'Tickets',
+				'Please select at least one ticket to purchase.',
+				'required');
+			return false;
+		}
+
+		// Loop through each ticket and check that the data entered is valid
+		// and they are available.
+		foreach ($tickets as $id => $quantity) {
+			if (!$quantity) {
+				continue;
+			}
+
+			if (!ctype_digit($quantity)) {
+				$form->addErrorMessage(
+					'Tickets',
+					'Please only enter numerical amounts for ticket quantities.',
+					'required');
+				return false;
+			}
+
+			$ticket = $datetime->Tickets('"EventTicket"."ID" = ' . (int) $id);
+
+			if (!$ticket = $ticket->First()) {
+				$form->addErrorMessage(
+					'Tickets', 'An invalid ticket ID was entered.', 'required');
+				return false;
+			}
+
+			$avail = $ticket->getAvailableForDateTime($datetime, $session->RegistrationID);
+			$avail = $avail['available'];
+
+			if (!$avail) {
+				$form->addErrorMessage(
+					'Tickets',
+					sprintf('%s is currently not available.', $ticket->Title),
+					'required');
+				return false;
+			}
+
+			if (is_int($avail) && $avail < $quantity) {
+				$form->addErrorMessage(
+					'Tickets',
+					sprintf('There are only %d of "%s" available.', $avail, $ticket->Title),
+					'required');
+				return false;
+			}
+
+			if ($ticket->MinTickets && $quantity < $ticket->MinTickets) {
+				$form->addErrorMessage('Tickets',sprintf(
+					'You must purchase at least %d of "%s".',
+					$ticket->MinTickets, $ticket->Title), 'required');
+				return false;
+			}
+
+			if ($ticket->MaxTickets && $quantity > $ticket->MaxTickets) {
+				$form->addErrorMessage('Tickets', sprintf(
+					'You can only purchase at most %d of "%s".',
+					$ticket->MaxTickets, $ticket->Title), 'required');
+				return false;
+			}
+		}
+
+		// Then check the sum of the quantities does not exceed the overall
+		// event capacity.
+		if ($datetime->Capacity) {
+			$avail   = $datetime->getRemainingCapacity($session->RegistrationID);
+			$request = array_sum($tickets);
+
+			if ($request > $avail) {
+				$message = sprintf(
+					'The event only has %d overall places remaining, but you '
+					. 'have requested a total of %d places. Please select a '
+					. 'lower number.',
+					$avail, $request
+				);
+				$form->addErrorMessage('Tickets', $message, 'required');
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	protected function setSession() {
 		$this->session = $this->getCurrentSession();
 

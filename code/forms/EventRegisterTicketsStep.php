@@ -85,7 +85,6 @@ class EventRegisterTicketsStep extends MultiFormStep {
 		$datetime = $this->getForm()->getController()->getDateTime();
 		$session  = $this->getForm()->getSession();
 		$data     = $form->getData();
-		$tickets  = $data['Tickets'];
 		$has      = false;
 
 		if ($datetime->Event()->OneRegPerEmail) {
@@ -109,86 +108,9 @@ class EventRegisterTicketsStep extends MultiFormStep {
 			}
 		}
 
-		// Validate each individual ticket.
-		foreach ($tickets as $id => $quantity) {
-			if (!$quantity) {
-				continue;
-			}
-
-			if (!ctype_digit($quantity)) {
-				$form->addErrorMessage(
-					'Tickets',
-					'Please only enter numerical amounts for ticket quantities.',
-					'required');
-				return false;
-			}
-
-			$ticket = $datetime->Tickets('"EventTicket"."ID" = ' . (int) $id);
-
-			if (!$ticket = $ticket->First()) {
-				$form->addErrorMessage(
-					'Tickets', 'An invalid ticket ID was entered.', 'required');
-				return false;
-			}
-
-			$avail = $ticket->getAvailableForDateTime($datetime, $this->form->getSession()->RegistrationID);
-			$avail = $avail['available'];
-
-			if (!$avail) {
-				$form->addErrorMessage(
-					'Tickets',
-					sprintf('%s is currently not available.', $ticket->Title),
-					'required');
-				return false;
-			}
-
-			if (is_int($avail) && $avail < $quantity) {
-				$form->addErrorMessage(
-					'Tickets',
-					sprintf('There are only %d of "%s" available.', $avail, $ticket->Title),
-					'required');
-				return false;
-			}
-
-			if ($ticket->MinTickets && $quantity < $ticket->MinTickets) {
-				$form->addErrorMessage('Tickets',sprintf(
-					'You must purchase at least %d of "%s".',
-					$ticket->MinTickets, $ticket->Title), 'required');
-				return false;
-			}
-
-			if ($ticket->MaxTickets && $quantity > $ticket->MaxTickets) {
-				$form->addErrorMessage('Tickets', sprintf(
-					'You can only purchase at most %d of "%s".',
-					$ticket->MaxTickets, $ticket->Title), 'required');
-				return false;
-			}
-
-			$has = true;
-		}
-
-		if (!$has) {
-			$form->addErrorMessage(
-				'Tickets', 'Please select at least one ticket to purchase.', 'required');
+		// Ensure that the entered ticket data is valid.
+		if (!$this->form->validateTickets($data['Tickets'], $form)) {
 			return false;
-		}
-
-		// Ensure that the total of tickets does not exceed the overall event
-		// capacity.
-		if ($datetime->Capacity) {
-			$avail   = $datetime->getRemainingCapacity($session->RegistrationID);
-			$request = array_sum($tickets);
-
-			if ($request > $avail) {
-				$message = sprintf(
-					'The event only has %d overall places remaining, but you '
-					. 'have requested a total of %d places. Please select a '
-					. 'lower number.',
-					$avail, $request
-				);
-				$form->addErrorMessage('Tickets', $message, 'required');
-				return false;
-			}
 		}
 
 		// Finally add the tickets to the actual registration.
@@ -201,7 +123,7 @@ class EventRegisterTicketsStep extends MultiFormStep {
 
 		$registration->Tickets()->removeAll();
 
-		foreach ($tickets as $id => $quantity) {
+		foreach ($data['Tickets'] as $id => $quantity) {
 			if ($quantity) {
 				$registration->Tickets()->add($id, array('Quantity' => $quantity));
 			}
