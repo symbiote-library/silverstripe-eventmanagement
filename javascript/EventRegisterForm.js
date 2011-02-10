@@ -3,7 +3,7 @@
 
 	if ($countdown.length) {
 		var times = $countdown.text().match(/([0-9]{2}):([0-9]{2}):([0-9]{2})/);
-		var total = parseInt(times[1]) * 3600 + parseInt(times[2]) * 60 + parseInt(times[3]);
+		var total = parseInt(times[1], 10) * 3600 + parseInt(times[2], 10) * 60 + parseInt(times[3], 10);
 
 		// Handles updating the countdown timer showing the user how long they
 		// have left to complete the countdown, and reloads the page when the
