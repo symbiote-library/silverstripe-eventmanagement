@@ -83,6 +83,7 @@ class EventRegisterTicketsStep extends MultiFormStep {
 		Session::set("FormInfo.{$form->FormName()}.data", $form->getData());
 
 		$datetime = $this->getForm()->getController()->getDateTime();
+		$session  = $this->getForm()->getSession();
 		$data     = $form->getData();
 		$tickets  = $data['Tickets'];
 		$has      = false;
@@ -175,7 +176,7 @@ class EventRegisterTicketsStep extends MultiFormStep {
 		// Ensure that the total of tickets does not exceed the overall event
 		// capacity.
 		if ($datetime->Capacity) {
-			$avail   = $datetime->getRemainingCapacity();
+			$avail   = $datetime->getRemainingCapacity($session->RegistrationID);
 			$request = array_sum($tickets);
 
 			if ($request > $avail) {
