@@ -65,19 +65,25 @@ class EventRegisterForm extends MultiForm {
 	public function finish($data, $form) {
 		parent::finish($data, $form);
 
-		$step     = $this->getCurrentStep();
-		$datetime = $this->getController()->getDateTime();
+		$step         = $this->getCurrentStep();
+		$datetime     = $this->getController()->getDateTime();
+		$registration = $this->session->getRegistration();
+		$ticketsStep  = $this->getSavedStepByClass('EventRegisterTicketsStep');
+		$tickets      = $ticketsStep->loadData();
 
-		// First validate the final step.
-		if (!$step->validateStep($data, $form)) {
+		// Check that the requested tickets are still available.
+		if (!$this->validateTickets($tickets['Tickets'], $form)) {
 			Session::set("FormInfo.{$form->FormName()}.data", $form->getData());
 			Director::redirectBack();
 			return false;
 		}
 
-		$registration = $this->session->getRegistration();
-		$ticketsStep  = $this->getSavedStepByClass('EventRegisterTicketsStep');
-		$tickets      = $ticketsStep->loadData();
+		// Validate the final step.
+		if (!$step->validateStep($data, $form)) {
+			Session::set("FormInfo.{$form->FormName()}.data", $form->getData());
+			Director::redirectBack();
+			return false;
+		}
 
 		// Reload the first step fields into a form, then save it into the
 		// registration object.
