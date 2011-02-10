@@ -1,0 +1,23 @@
+RegisterableEvent:
+  event:
+    Title: Test Event
+    EmailNotifyChanges: true
+    NotifyChangeFields: StartDate,EndDate,StartTime
+
+RegisterableDateTime:
+  datetime:
+    StartDate: 2011-01-01
+    EndDate: 2011-01-01
+    Event: =>RegisterableEvent.event
+
+EventRegistration:
+  valid:
+    Name: Test User
+    Email: test@example.com
+    Status: Valid
+    Time: =>RegisterableDateTime.datetime
+  canceled:
+    Name: Canceled Use
+    Email: canceled@example.com
+    Status: Canceled
+    Time: =>RegisterableDateTime.datetime
