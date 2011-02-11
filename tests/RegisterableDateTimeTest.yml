@@ -21,3 +21,8 @@ EventRegistration:
     Email: canceled@example.com
     Status: Canceled
     Time: =>RegisterableDateTime.datetime
+
+EventTicket:
+  ticket:
+    Title: Test Ticket
+    Event: =>RegisterableEvent.event

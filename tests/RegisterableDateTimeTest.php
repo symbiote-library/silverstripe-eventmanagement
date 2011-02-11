@@ -10,7 +10,7 @@ class RegisterableDateTimeTest extends SapphireTest {
 	public static $fixture_file = 'eventmanagement/tests/RegisterableDateTimeTest.yml';
 
 	/**
-	 * @covers RegisterableDateTime::onBeforeWrite();
+	 * @covers RegisterableDateTime::onBeforeWrite()
 	 */
 	public function testEventDetailsChangedNotificationEmail() {
 		$event    = $this->objFromFixture('RegisterableEvent', 'event');
@@ -50,5 +50,36 @@ class RegisterableDateTimeTest extends SapphireTest {
 		$this->assertNull($this->findEmail('test@example.com'));
 		$this->assertNull($this->findEmail('canceled@example.com'));
 	}
+
+	/**
+	 * @covers RegisterableDateTime::getRemainingCapacity()
+	 */
+	public function testGetRemainingCapacity() {
+		$event    = $this->objFromFixture('RegisterableEvent', 'event');
+		$datetime = $this->objFromFixture('RegisterableDateTime', 'datetime');
+		$ticket   = $this->objFromFixture('EventTicket', 'ticket');
+
+		$datetime->Capacity = 0;
+		$datetime->write();
+		$this->assertEquals(true, $datetime->getRemainingCapacity());
+
+		$datetime->Capacity = 50;
+		$datetime->write();
+		$this->assertEquals(50, $datetime->getRemainingCapacity());
+
+		$rego = new EventRegistration();
+		$rego->TimeID = $datetime->ID;
+		$rego->write();
+		$rego->Tickets()->add($ticket, array('Quantity' => 49));
+
+		$this->assertEquals(1, $datetime->getRemainingCapacity());
+		$this->assertEquals(50, $datetime->getRemainingCapacity($rego->ID));
+
+		$rego->Tickets()->remove($ticket);
+		$rego->Tickets()->add($ticket, array('Quantity' => 50));
+		$this->assertFalse(!!$datetime->getRemainingCapacity());
+		$this->assertEquals(50, $datetime->getRemainingCapacity($rego->ID));
+	}
+
 
 }
