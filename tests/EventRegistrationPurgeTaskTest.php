@@ -82,7 +82,7 @@ class EventRegistrationPurgeTaskTest extends SapphireTest {
 		// Update the first task to be just shy of six hours less than the
 		// created date.
 		$created = strtotime($unconfirmed1->Created);
-		$created = sfTime::subtract($created, 5.95, sfTime::HOUR);
+		$created = sfTime::subtract($created, 5.5, sfTime::HOUR);
 		DB::query(sprintf($update, date('Y-m-d H:i:s', $created), $unconfirmed1->ID));
 
 		$task->run(null);
