@@ -98,4 +98,34 @@ class EventTicketTest extends SapphireTest {
 		$this->assertFalse($avail['available']);
 	}
 
+	/**
+	 * @covers EventTicket::getSaleEndForDateTime()
+	 */
+	public function testGetSaleEndForDateTime() {
+		$ticket = new EventTicket();
+		$time   = new RegisterableDateTime();
+		$now    = time();
+
+		$ticket->EndType = 'Date';
+		$ticket->EndDate = date('Y-m-d H:i:s', $now);
+		$this->assertEquals(
+			$now,
+			$ticket->getSaleEndForDateTime($time),
+			'The correct end time is returned with a fixed date.'
+		);
+
+		$ticket->EndType  = 'TimeBefore';
+		$ticket->EndDays  = 1;
+		$ticket->EndHours = 12;
+
+		$time->StartDate = date('Y-m-d', $now);
+		$time->StartTime = date('H:i:s', $now);
+
+		$this->assertEquals(
+			$now - 1.5 * 3600 * 24,
+			$ticket->getSaleEndForDateTime($time),
+			'The correct end time is returned with a relative end date.'
+		);
+	}
+
 }
