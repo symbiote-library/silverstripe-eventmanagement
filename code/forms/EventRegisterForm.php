@@ -154,7 +154,7 @@ class EventRegisterForm extends MultiForm {
 				continue;
 			}
 
-			if (!ctype_digit($quantity)) {
+			if (!is_int($quantity) && !ctype_digit($quantity)) {
 				$form->addErrorMessage(
 					'Tickets',
 					'Please only enter numerical amounts for ticket quantities.',
