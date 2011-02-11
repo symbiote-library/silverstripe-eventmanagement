@@ -1,0 +1,29 @@
+Member:
+  first:
+    FirstName: First
+    Surname: Member
+    Email: first@example.com
+  second:
+    FirstName: Second
+    Surname: Member
+    Email: second@example.com
+
+Group:
+  group:
+    Title: Group
+    Members: =>Member.first, =>Member.second
+
+RegisterableDateTime:
+  datetime:
+    StartDate: 2011-01-01
+    EndDate: 2011-01-01
+
+EventRegistration:
+  first:
+    Name: First Registration
+    Email: first@example.com
+    Time: =>RegisterableDateTime.datetime
+  second:
+    Name: Second Registration
+    Email: second@example.com
+    Time: =>RegisterableDateTime.datetime
