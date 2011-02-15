@@ -108,13 +108,21 @@ class RegisterableEvent extends CalendarEvent {
 		));
 
 		$registrations = new ComplexTableField(
-			$this, 'Registrations', 'EventRegistration', null, null, '"Status" = \'Valid\''
+			$this, 'Registrations', 'EventRegistration',
+			null, null,
+			'"Status" = \'Valid\' AND "Time"."EventID" = ' . $this->ID,
+			null,
+			'INNER JOIN "CalendarDateTime" AS "Time" ON "Time"."ID" = "TimeID"'
 		);
 		$registrations->setTemplate('EventRegistrationComplexTableField');
 		$registrations->setPermissions(array('show', 'print', 'export'));
 
 		$canceled = new ComplexTableField(
-			$this, 'Registations', 'EventRegistration', null, null, '"Status" = \'Canceled\''
+			$this, 'Registations', 'EventRegistration',
+			null, null,
+			'"Status" = \'Canceled\' AND "Time"."EventID" = ' . $this->ID,
+			null,
+			'INNER JOIN "CalendarDateTime" AS "Time" ON "Time"."ID" = "TimeID"'
 		);
 		$canceled->setTemplate('EventRegistrationComplexTableField');
 		$canceled->setPermissions(array('show', 'print', 'export'));
@@ -128,8 +136,11 @@ class RegisterableEvent extends CalendarEvent {
 
 		if ($this->RegEmailConfirm) {
 			$unconfirmed = new ComplexTableField(
-				$this, 'UnconfirmedRegistations', 'EventRegistration', null, null,
-				'"Status" = \'Unconfirmed\''
+				$this, 'UnconfirmedRegistations', 'EventRegistration',
+				null, null,
+				'"Status" = \'Unconfirmed\' AND "Time"."EventID" = ' . $this->ID,
+				null,
+				'INNER JOIN "CalendarDateTime" AS "Time" ON "Time"."ID" = "TimeID"'
 			);
 			$unconfirmed->setPermissions(array('show', 'print', 'export'));
 			$unconfirmed->setTemplate('EventRegistrationComplexTableField');
