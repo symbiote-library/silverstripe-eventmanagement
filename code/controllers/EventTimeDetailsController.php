@@ -82,6 +82,13 @@ class EventTimeDetailsController extends Page_Controller {
 	}
 
 	/**
+	 * @return Form
+	 */
+	public function UnregisterForm() {
+		return $this->unregister()->UnregisterForm();
+	}
+
+	/**
 	 * @param  string $action
 	 * @return string
 	 */
