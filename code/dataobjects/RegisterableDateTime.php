@@ -7,7 +7,10 @@
 class RegisterableDateTime extends CalendarDateTime {
 
 	public static $db = array(
-		'Capacity' => 'Int'
+		'Capacity'      => 'Int',
+		'EmailReminder' => 'Boolean',
+		'RemindWeeks'   => 'Int',
+		'RemindDays'    => 'Int'
 	);
 
 	public static $has_many = array(
@@ -28,6 +31,11 @@ class RegisterableDateTime extends CalendarDateTime {
 		$fields->removeByName('Capacity');
 		$fields->removeByName('Registrations');
 		$fields->removeByName('Tickets');
+		$fields->removeByName('EmailReminder');
+		$fields->removeByName('RemindWeeks');
+		$fields->removeByName('RemindDays');
+		$fields->removeByName('PaymentID');
+		$fields->removeByName('ReminderJobID');
 
 		if (!$this->isInDB()) {
 			$fields->addFieldToTab('Root.Registration', new LiteralField(
@@ -48,7 +56,38 @@ class RegisterableDateTime extends CalendarDateTime {
 			new NumericField('Capacity', 'Overall event capacity (0 for unlimited)')
 		));
 
+		if (class_exists('AbstractQueuedJob')) {
+			if ($this->ReminderJobID && $this->ReminderJob()->StepsProcessed) {
+				$fields->addFieldToTab('Root.Reminder', new LiteralField(
+					'RemindersAlreadySent',
+					'<p>Reminder emails have already been sent out.</p>'
+				));
+			} else {
+				$fields->addFieldsToTab('Root.Reminder', array(
+					new CheckboxField(
+						'EmailReminder',
+						'Send registered atendeeds a reminder email?'),
+					new FieldGroup(
+						'Send the reminder email',
+						new NumericField('RemindWeeks', 'Weeks'),
+						new NumericField('RemindDays', 'Days'),
+						new LiteralField('', 'before the event starts'))
+				));
+			}
+		} else {
+			$fields->addFieldsToTab('Root.Reminder', new LiteralField(
+				'QueuedJobsReminderNote',
+				'<p>Please install the queued jobs module to send reminder emails.</p>'
+			));
+		}
+
 		return $fields;
+	}
+
+	public function getRequirementsForPopup() {
+		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
+		Requirements::javascript('eventmanagement/javascript/RegisterableDateTimeCms.js');
+		Requirements::css('eventmanagement/css/RegisterableDateTimeCms.css');
 	}
 
 	public function getDateTimeTable($eventID) {
@@ -61,6 +100,14 @@ class RegisterableDateTime extends CalendarDateTime {
 		$result   = parent::validate();
 		$currency = null;
 
+		// Ensure that if we are sending a reminder email it has an interval
+		// to send at.
+		if ($this->EmailReminder && !$this->RemindWeeks && !$this->RemindDays) {
+			$result->error('You must enter an interval to send the reminder email at.');
+		}
+
+		// Ensure that we only have tickets in one currency, since you can't
+		// make a payment across currencies.
 		foreach ($this->Tickets() as $ticket) {
 			if ($ticket->Type == 'Price') {
 				$ticketCurr = $ticket->Price->getCurrency();
@@ -81,11 +128,43 @@ class RegisterableDateTime extends CalendarDateTime {
 	}
 
 	/**
+	 * If an email reminder is set, then this registers it in the queue.
+	 */
+	protected function onBeforeWrite() {
+		parent::onBeforeWrite();
+
+		// If an email reminder has been set then register it with the queued
+		// jobs module.
+		if (class_exists('AbstractQueuedJob') && $this->EmailReminder) {
+			$hasJob       = $this->ReminderJobID;
+			$changedStart = $this->isChanged('RemindWeeks') || $this->isChanged('RemindDays');
+
+			if ($hasJob) {
+				if (!$changedStart) {
+					return;
+				} else {
+					$this->ReminderJob()->delete();
+				}
+			}
+
+			$start = $this->getStartTimestamp();
+			$start = sfTime::subtract($start, $this->RemindWeeks, sfTime::WEEK);
+			$start = sfTime::subtract($start, $this->RemindDays, sfTime::DAY);
+
+			$job = new EventReminderEmailJob($this);
+			$srv = singleton('QueuedJobService');
+			$this->ReminderJobID = $srv->queueJob($job, date('Y-m-d H:i:s', $start));
+		}
+	}
+
+	/**
 	 * Notifies the users of any changes made to the event.
 	 */
 	protected function onAfterWrite() {
 		parent::onAfterWrite();
 
+		// If any details have changed and the system is configured to send out
+		// a notification email then do so.
 		$email   = $this->Event()->EmailNotifyChanges;
 		$changed = $this->getChangedFields(false, 2);
 		$notify  = explode(',', $this->Event()->NotifyChangeFields);

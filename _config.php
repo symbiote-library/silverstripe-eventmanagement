@@ -20,3 +20,7 @@ if (!class_exists('ItemSetField')) {
 if (class_exists('Payment')) {
 	Object::add_extension('EventRegistration', 'EventRegistrationPaymentExtension');
 }
+
+if (class_exists('AbstractQueuedJob')) {
+	Object::add_extension('RegisterableDateTime', 'RegisterableDateTimeReminderExtension');
+}

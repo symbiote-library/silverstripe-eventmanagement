@@ -1,9 +1,10 @@
 ;(function ($) {
-	$("input[name='LimitedPlaces']").live("click", function() {
-		$("#NumPlaces").toggle($(this).is(":checked"));
+	var send = $("input[name='EmailReminder']");
+	var time = $("#Sendthereminderemail");
+	
+	send.live("click", function() {
+		time.toggle(send.is(":checked"));
 	});
-
-	$("input[name='LimitedPlaces']").livequery(function() {
-		$("#NumPlaces").toggle($(this).is(":checked"));
-	});
+	
+	time.toggle(send.is(":checked"));
 })(jQuery);
