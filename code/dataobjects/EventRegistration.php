@@ -15,9 +15,8 @@ class EventRegistration extends DataObject {
 	);
 
 	public static $has_one = array(
-		'Time'    => 'RegisterableDateTime',
-		'Member'  => 'Member',
-		'Payment' => 'Payment'
+		'Time'   => 'RegisterableDateTime',
+		'Member' => 'Member'
 	);
 
 	public static $many_many = array(
@@ -53,15 +52,21 @@ class EventRegistration extends DataObject {
 		$fields->removeByName('Token');
 		$fields->removeByName('TimeID');
 
-		$fields->addFieldsToTab('Root.Tickets', array(
-			$tickets = new TableListField('Tickets', 'EventTicket', array(
+		$fields->addFieldToTab('Root.Tickets', $tickets = new TableListField(
+			'Tickets',
+			'EventTicket',
+			array(
 				'Title'        => 'Ticket Title',
 				'PriceSummary' => 'Price',
 				'Quantity'     => 'Quantity'
-			)),
-			new ReadonlyField('TotalNice', 'Total', $this->Total->Nice())
-		));
+			)));
 		$tickets->setCustomSourceItems($this->Tickets());
+
+		if (class_exists('Payment')) {
+			$fields->addFieldToTab('Root.Tickets', new ReadonlyField(
+				'TotalNice', 'Total', $this->Total->Nice()
+			));
+		}
 
 		return $fields;
 	}

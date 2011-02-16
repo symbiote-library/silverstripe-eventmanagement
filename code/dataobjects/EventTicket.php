@@ -59,11 +59,16 @@ class EventTicket extends DataObject {
 		$fields->removeByName('EndHours');
 		$fields->removeByName('EndMins');
 
-		$fields->dataFieldByName('Price')->setTitle('');
-		$fields->insertBefore(new OptionSetField('Type', '', array(
-			'Free'  => 'Free ticket',
-			'Price' => 'Fixed price ticket'
-		)), 'Price');
+		if (class_exists('Payment')) {
+			$fields->dataFieldByName('Price')->setTitle('');
+			$fields->insertBefore(new OptionSetField('Type', '', array(
+				'Free'  => 'Free ticket',
+				'Price' => 'Fixed price ticket'
+			)), 'Price');
+		} else {
+			$fields->removeByName('Type');
+			$fields->removeByName('Price');
+		}
 
 		foreach (array('Start', 'End') as $type) {
 			$fields->addFieldsToTab('Root.Main', array(
@@ -128,6 +133,14 @@ class EventTicket extends DataObject {
 		}
 
 		return $result;
+	}
+
+	protected function onBeforeWrite() {
+		if (!class_exists('Payment')) {
+			$this->Type = 'Free';
+		}
+
+		parent::onBeforeWrite();
 	}
 
 	/**
