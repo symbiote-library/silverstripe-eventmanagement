@@ -31,7 +31,7 @@ from within the CMS. Some features include:
 
 ## Installation
 
-See docs/en/installation.md
+See [Installation](https://github.com/ajshort/silverstripe-eventmanagement/wiki/Installation).
 
 ## Project Links
 *   [GitHub Project Page](https://github.com/ajshort/silverstripe-eventmanagement)
