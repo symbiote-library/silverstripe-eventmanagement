@@ -31,7 +31,12 @@ class EventTicket extends DataObject {
 	);
 
 	public static $defaults = array(
-		'MinTickets' => 1
+		'MinTickets' => 1,
+		'StartType'  => 'Date',
+		'EndType'    => 'TimeBefore',
+		'EndDays'    => 0,
+		'EndHours'   => 0,
+		'EndMins'    => 0
 	);
 
 	public static $summary_fields = array(
@@ -129,6 +134,11 @@ class EventTicket extends DataObject {
 		}
 
 		return $result;
+	}
+
+	public function populateDefaults() {
+		$this->StartDate = date('Y-m-d H:i:s');
+		parent::populateDefaults();
 	}
 
 	protected function onBeforeWrite() {
