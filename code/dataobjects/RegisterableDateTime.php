@@ -51,7 +51,8 @@ class RegisterableDateTime extends CalendarDateTime {
 					'ShowPickedInSearch' => false,
 					'ExtraFields'        => 'getCMSExtraFields',
 					'ExtraFilter'        => '"EventID" = ' . $this->EventID,
-					'Sortable'           => true
+					'Sortable'           => true,
+					'PopupHeight'        => 350
 				)),
 			new NumericField('Capacity', 'Overall event capacity (0 for unlimited)')
 		));
@@ -88,12 +89,6 @@ class RegisterableDateTime extends CalendarDateTime {
 		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
 		Requirements::javascript('eventmanagement/javascript/RegisterableDateTimeCms.js');
 		Requirements::css('eventmanagement/css/RegisterableDateTimeCms.css');
-	}
-
-	public function getDateTimeTable($eventID) {
-		$table = parent::getDateTimeTable($eventID);
-		$table->setPopupSize(560, 650);
-		return $table;
 	}
 
 	public function validate() {
