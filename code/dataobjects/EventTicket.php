@@ -124,12 +124,8 @@ class EventTicket extends DataObject {
 			}
 		}
 
-		if ($this->EndType == 'Date') {
-			if (!$this->EndDate) $result->error('You must enter an end date');
-		} else {
-			if (!$this->EndDays && !$this->EndHours && !$this->EndMins) {
-				$result->error('You must enter a time before the event to end ticket sales');
-			}
+		if ($this->EndType == 'Date' && !$this->EndDate) {
+			$result->error('You must enter an end date');
 		}
 
 		return $result;
