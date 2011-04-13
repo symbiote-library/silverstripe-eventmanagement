@@ -25,7 +25,7 @@ class EventUnregisterController extends Page_Controller {
 		$this->parent = $parent;
 		$this->time   = $time;
 
-		parent::__construct();
+		parent::__construct($parent->data());
 	}
 
 	/**

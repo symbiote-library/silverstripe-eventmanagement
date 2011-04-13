@@ -23,7 +23,9 @@ class EventRegistrationDetailsController extends Page_Controller {
 		$this->parent       = $parent;
 		$this->registration = $registration;
 
-		parent::__construct();
+		parent::__construct($parent->data()->customise(array(
+			'Title' => $this->Title()
+		)));
 	}
 
 	public function init() {

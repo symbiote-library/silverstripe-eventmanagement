@@ -29,7 +29,7 @@ class EventRegisterController extends Page_Controller {
 		$this->parent   = $parent;
 		$this->datetime = $datetime;
 
-		parent::__construct();
+		parent::__construct($parent->data());
 	}
 
 	public function init() {

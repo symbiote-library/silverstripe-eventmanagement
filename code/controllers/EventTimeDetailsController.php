@@ -20,10 +20,12 @@ class EventTimeDetailsController extends Page_Controller {
 	protected $time;
 
 	public function __construct($parent, $time) {
-		$this->parent = $parent;
-		$this->time   = $time;
+		$this->parent     = $parent;
+		$this->time       = $time;
 
-		parent::__construct();
+		parent::__construct($parent->data()->customise(array(
+			'Title' => $this->Title()
+		)));
 	}
 
 	public function index() {
