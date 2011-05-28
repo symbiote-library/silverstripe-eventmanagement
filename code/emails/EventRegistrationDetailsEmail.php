@@ -41,6 +41,7 @@ class EventRegistrationDetailsEmail extends Email {
 			}
 		}
 
+		singleton(get_class())->extend('updateEmail', $email, $registration);
 		return $email;
 	}
 
