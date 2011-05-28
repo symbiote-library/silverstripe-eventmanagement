@@ -42,11 +42,20 @@ class EventRegisterFreeConfirmationStep extends MultiFormStep {
 		$table->setForceTotalRow(true);
 		$table->setTotal($total);
 
-		return new FieldSet(
+		$fields = new FieldSet(
 			new LiteralField('ConfirmTicketsNote',
 				'<p>Please confirm the tickets you wish to register for:</p>'),
 			$table
 		);
+
+		$this->extend('updateFields', $fields);
+		return $fields;
+	}
+
+	public function getValidator() {
+		$validator = new RequiredFields();
+		$this->extend('updateValidator', $validator);
+		return $validator;
 	}
 
 	/**

@@ -47,16 +47,21 @@ class EventRegisterPaymentStep extends MultiFormStep {
 		Requirements::customScript(Payment::combined_form_requirements());
 		$payment = Payment::combined_form_fields($total->Nice());
 
-		return new FieldSet(
+		$fields = new FieldSet(
 			new LiteralField('ConfirmTicketsNote',
 				'<p>Please confirm the tickets you wish to purchase:</p>'),
 			$table,
 			new FieldGroup($payment)
 		);
+
+		$this->extend('updateFields', $fields);
+		return $fields;
 	}
 
 	public function getValidator() {
-		return new RequiredFields('PaymentMethod');
+		$validator = new RequiredFields('PaymentMethod');
+		$this->extend('updateValidator', $validator);
+		return $validator;
 	}
 
 	public function validateStep($data, $form) {
