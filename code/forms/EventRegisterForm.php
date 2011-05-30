@@ -120,6 +120,8 @@ class EventRegisterForm extends MultiForm {
 			EventRegistrationDetailsEmail::factory($registration)->send();
 		}
 
+		$this->extend('onRegistrationComplete', $registration);
+
 		return Director::redirect(Controller::join_links(
 			$datetime->Event()->Link(),
 			'registration',
