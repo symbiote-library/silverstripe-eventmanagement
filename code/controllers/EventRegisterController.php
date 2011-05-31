@@ -42,7 +42,7 @@ class EventRegisterController extends Page_Controller {
 		}
 
 		$form   = $this->RegisterForm();
-		$expiry = $this->RegisterForm()->getExpiryDateTime();
+		$expiry = $form->getExpiryDateTime();
 
 		if ($expiry && $expiry->InPast()) {
 			$form->getSession()->Registration()->delete();
