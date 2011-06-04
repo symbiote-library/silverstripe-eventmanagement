@@ -72,6 +72,13 @@ class EventRegistration extends DataObject {
 	}
 
 	/**
+	 * @see EventRegistration::EventTitle()
+	 */
+	public function getTitle() {
+		return $this->EventTitle();
+	}
+
+	/**
 	 * @return string
 	 */
 	public function EventTitle() {
