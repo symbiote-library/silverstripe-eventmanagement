@@ -71,12 +71,17 @@ class EventRegisterPaymentStep extends MultiFormStep {
 		$tickets = $this->getForm()->getSavedStepByClass('EventRegisterTicketsStep');
 		$total   = $tickets->getTotal();
 
+		$registration = $this->form->getSession()->getRegistration();
+
 		if (!is_subclass_of($payment, 'Payment')) {
 			return false;
 		}
 
 		$payment = new $payment();
-		$payment->Amount = $total;
+		$payment->Amount       = $total;
+		$payment->PaidForClass = 'EventRegistration';
+		$payment->PaidForID    = $registration->ID;
+		$payment->PaidBy       = Member::currentUserID();
 		$payment->write();
 
 		$result = $payment->processPayment($data, $form);
@@ -88,15 +93,9 @@ class EventRegisterPaymentStep extends MultiFormStep {
 
 		// Write an empty registration object so we have an ID to reference the
 		// payment against. This will be populated in the form's finish() method.
-		$registration = $this->form->getSession()->getRegistration();
 		$registration->PaymentID = $payment->ID;
 		$registration->Status    = 'Valid';
 		$registration->write();
-
-		$payment->PaidForClass = 'EventRegistration';
-		$payment->PaidForID    = $registration->ID;
-		$payment->PaidBy       = Member::currentUserID();
-		$payment->write();
 
 		Session::set(
 			"EventRegistration.{$registration->ID}.message",

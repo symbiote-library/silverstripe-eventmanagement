@@ -125,6 +125,10 @@ class EventRegisterTicketsStep extends MultiFormStep {
 		$registration->Total->setCurrency($total->getCurrency());
 		$registration->Total->setAmount($total->getAmount());
 
+		$registration->Name  = $data['Name'];
+		$registration->Email = $data['Email'];
+		$registration->write();
+
 		$registration->Tickets()->removeAll();
 
 		foreach ($data['Tickets'] as $id => $quantity) {
