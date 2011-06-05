@@ -84,7 +84,14 @@ class EventRegisterPaymentStep extends MultiFormStep {
 		$payment->PaidBy       = Member::currentUserID();
 		$payment->write();
 
+		$registration->PaymentID = $payment->ID;
+		$registration->write();
+
 		$result = $payment->processPayment($data, $form);
+
+		if ($result->isProcessing()) {
+			throw new SS_HTTPResponse_Exception($result->getValue());
+		}
 
 		if (!$result->isSuccess()) {
 			$form->sessionMessage($result->getValue(), 'required');
@@ -93,8 +100,7 @@ class EventRegisterPaymentStep extends MultiFormStep {
 
 		// Write an empty registration object so we have an ID to reference the
 		// payment against. This will be populated in the form's finish() method.
-		$registration->PaymentID = $payment->ID;
-		$registration->Status    = 'Valid';
+		$registration->Status = 'Valid';
 		$registration->write();
 
 		Session::set(
