@@ -21,13 +21,13 @@ from within the CMS. Some features include:
 
 ## Requirements
 *   SilverStripe 2.4+
-*   The Event Calendar module.
-*   The MultiForm module.
-*   The ItemSetField module.
-*   Optionally requires the Payment module for collecting payments with
-    registration.
-*   Optionally requires the Queued Jobs module for sending out event reminder
-    emails.
+*   The [Event Calendar](https://github.com/unclecheese/EventCalendar) module.
+*   The [MultiForm](https://github.com/silverstripe/silverstripe-multiform) module.
+*   The [ItemSetField](https://github.com/ajshort/silverstripe-itemsetfield) module.
+*   Optionally requires the [Payment](https://github.com/silverstripe-labs/silverstripe-payment)
+    module for collecting payments with registration.
+*   Optionally requires the [Queued Jobs](https://github.com/nyeholt/silverstripe-queuedjobs)
+    module for sending out event reminder emails.
 
 ## Installation
 
