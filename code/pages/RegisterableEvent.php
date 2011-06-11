@@ -29,9 +29,8 @@ class RegisterableEvent extends CalendarEvent {
 	);
 
 	public static $has_many = array(
-		'Tickets'       => 'EventTicket',
-		'DateTimes'     => 'RegisterableDateTime',
-		'Registrations' => 'EventRegistration'
+		'Tickets'   => 'EventTicket',
+		'DateTimes' => 'RegisterableDateTime'
 	);
 
 	public static $defaults = array(
