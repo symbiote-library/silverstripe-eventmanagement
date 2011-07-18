@@ -282,4 +282,16 @@ class EventTicket extends DataObject {
 		return $summary . ($this->Available ? " ($this->Available available)" : '');
 	}
 
+	public function canEdit($member = null) {
+		return $this->Event()->canEdit($member);
+	}
+	public function canCreate($member = null) {
+		return $this->Event()->canCreate($member);
+	}
+	public function canDelete($member = null) {
+		return $this->Event()->canDelete($member);
+	}
+	public function canView($member = null) {
+		return $this->Event()->canView($member);
+	}
 }
