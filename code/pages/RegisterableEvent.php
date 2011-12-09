@@ -114,7 +114,7 @@ class RegisterableEvent extends CalendarEvent {
 			'INNER JOIN "CalendarDateTime" AS "Time" ON "Time"."ID" = "TimeID"'
 		);
 		$registrations->setTemplate('EventRegistrationComplexTableField');
-		$registrations->setPermissions(array('show', 'print', 'export'));
+		$registrations->setPermissions(array('show', 'delete', 'print', 'export'));
 
 		$canceled = new ComplexTableField(
 			$this, 'Registations', 'EventRegistration',
