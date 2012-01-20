@@ -85,34 +85,6 @@ class EventRegisterForm extends MultiForm {
 			return false;
 		}
 
-		// Reload the first step fields into a form, then save it into the
-		// registration object.
-		$ticketsStep->setForm($form);
-		$fields = $ticketsStep->getFields();
-
-		$form = new Form($this, '', $fields, new FieldSet());
-		$form->loadDataFrom($tickets);
-		$form->saveInto($registration);
-
-		if ($member = Member::currentUser()) {
-			$registration->Name  = $member->getName();
-			$registration->Email = $member->Email;
-		}
-
-		$registration->TimeID   = $datetime->ID;
-		$registration->MemberID = Member::currentUserID();
-
-		$total = $ticketsStep->getTotal();
-		$registration->Total->setCurrency($total->getCurrency());
-		$registration->Total->setAmount($total->getAmount());
-
-		foreach ($tickets['Tickets'] as $id => $quantity) {
-			if ($quantity) {
-				$registration->Tickets()->add($id, array('Quantity' => $quantity));
-			}
-		}
-
-		$registration->write();
 		$this->session->delete();
 
 		// If the registrations is already valid, then send a details email.

@@ -115,18 +115,22 @@ class EventRegisterTicketsStep extends MultiFormStep {
 
 		// Finally add the tickets to the actual registration.
 		$registration = $this->form->getSession()->getRegistration();
-		$hasLimit     = (bool) $this->form->getController()->getDateTime()->Event()->RegistrationTimeLimit;
+		$form->saveInto($registration);
 
-		if ($hasLimit && !$registration->isInDB()) {
-			$registration->write();
+		if ($member = Member::currentUser()) {
+			$registration->Name  = $member->getName();
+			$registration->Email = $member->Email;
+		} else {
+			$registration->Name  = $data['Name'];
+			$registration->Email = $data['Email'];
 		}
+
+		$registration->TimeID   = $datetime->ID;
+		$registration->MemberID = Member::currentUserID();
 
 		$total = $this->getTotal();
 		$registration->Total->setCurrency($total->getCurrency());
 		$registration->Total->setAmount($total->getAmount());
-
-		$registration->Name  = $data['Name'];
-		$registration->Email = $data['Email'];
 		$registration->write();
 
 		$registration->Tickets()->removeAll();
