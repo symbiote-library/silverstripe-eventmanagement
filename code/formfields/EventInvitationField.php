@@ -216,6 +216,8 @@ class EventInvitationField extends FormField {
 			);
 		}
 
+		Requirements::clear();
+
 		$response = new SS_HTTPResponse(Convert::array2json($result));
 		$response->addHeader('Content-Type', 'application/json');
 		return $response;
@@ -238,6 +240,8 @@ class EventInvitationField extends FormField {
 				'email' => $registration->Email
 			);
 		}
+
+		Requirements::clear();
 
 		$response = new SS_HTTPResponse(Convert::array2json($result));
 		$response->addHeader('Content-Type', 'application/json');
