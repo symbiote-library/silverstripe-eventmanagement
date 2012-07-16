@@ -25,7 +25,13 @@ class EventReminderEmailJob extends AbstractQueuedJob {
 	public function getDatetime() {
 		return DataObject::get_by_id('RegisterableDateTime', $this->datetimeID);
 	}
-
+  	public function setup() {
+	        parent::setup();
+	        $datetime         =  $this->getDatetime();
+	        $registrations    = $datetime->Registrations('"Status" = \'Valid\'');
+	        $this->emails     = $registrations->map('Email', 'Name');
+	        $this->totalSteps = count($this->emails);
+	}
 	public function process() {
 		$config   = SiteConfig::current_site_config();
 		$datetime = $this->getDatetime();
