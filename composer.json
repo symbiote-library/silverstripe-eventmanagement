@@ -12,7 +12,12 @@
 	],
 	"require": {
 		"silverstripe/framework": ">=3.1",
-		"silverstripe/cms": ">=3.1"
+		"silverstripe/cms": ">=3.1",
+		"silverstripe/multiform": "dev-master",
+		"unclecheese/eventcalendar": "dev-master"
+	},
+	"suggest": {
+		"silverstripe/queuedjobs": "Allows sending out event reminder emails"
 	},
 	"extra": {
 		"installer-name": "eventmanagement"
