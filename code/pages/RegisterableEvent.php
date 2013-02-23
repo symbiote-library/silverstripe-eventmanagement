@@ -1,8 +1,6 @@
 <?php
 /**
  * A calendar event that can people can register to attend.
- *
- * @package silverstripe-eventmanagement
  */
 class RegisterableEvent extends CalendarEvent {
 
@@ -19,7 +17,6 @@ class RegisterableEvent extends CalendarEvent {
 		'UnRegEmailConfirm'     => 'Boolean',
 		'AfterConfUnregTitle'   => 'Varchar(255)',
 		'AfterConfUnregContent' => 'HTMLText',
-		'AfterConfirmContent'   => 'HTMLText',
 		'EmailNotifyChanges'    => 'Boolean',
 		'NotifyChangeFields'    => 'Text',
 		'AfterRegTitle'         => 'Varchar(255)',
@@ -29,8 +26,10 @@ class RegisterableEvent extends CalendarEvent {
 	);
 
 	public static $has_many = array(
-		'Tickets'   => 'EventTicket',
-		'DateTimes' => 'RegisterableDateTime'
+		'Tickets'       => 'EventTicket',
+		'DateTimes'     => 'RegisterableDateTime',
+		'Registrations' => 'EventRegistration',
+		'Invitations'   => 'EventInvitation'
 	);
 
 	public static $defaults = array(
@@ -49,152 +48,201 @@ class RegisterableEvent extends CalendarEvent {
 	);
 
 	public function getCMSFields() {
-		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
-		Requirements::javascript(THIRDPARTY_DIR . '/jquery-livequery/jquery.livequery.js');
-		Requirements::javascript('eventmanagement/javascript/RegisterableEventCms.js');
-
 		$fields = parent::getCMSFields();
 
-		$fields->addFieldsToTab('Root.Content.Tickets', array(
-			new HeaderField('TicketTypesHeader', $this->fieldLabel('TicketTypesHeader')),
-			new ComplexTableField($this, 'Tickets', 'EventTicket')
+		$title = $fields->dataFieldByName('Title');
+		$content = $fields->dataFieldByName('Content');
+
+		$fields->removeByName('Title', true);
+		$fields->removeByName('Content', true);
+
+		$fields->addFieldsToTab('Root.Main', array(
+			new ToggleCompositeField(
+				'PageContent',
+				_t('EventRegistration.PAGE_CONTENT', 'Page Content'),
+				array($title, $content)
+			),
+			new ToggleCompositeField(
+				'AfterRegistrationContent',
+				_t('EventRegistration.AFTER_REG_CONTENT', 'After Registration Content'),
+				array(
+					new TextField('AfterRegTitle', _t('EventRegistration.TITLE', 'Title')),
+					new HtmlEditorField('AfterRegContent', _t('EventRegistration.CONTENT', 'Content'))
+				)
+			),
+			new ToggleCompositeField(
+				'AfterUnRegistrationContent',
+				_t('EventRegistration.AFTER_UNREG_CONTENT', 'After Un-Registration Content'),
+				array(
+					new TextField('AfterUnregTitle', _t('EventRegistration.TITLE', 'Title')),
+					new HtmlEditorField('AfterUnregContent', _t('EventRegistration.CONTENT', 'Content'))
+				)
+			)
+		));
+
+		if ($this->RegEmailConfirm) {
+			$fields->addFieldToTab('Root.Main', new ToggleCompositeField(
+				'AfterRegistrationConfirmation',
+				_t('EventRegistration.AFTER_REG_CONFIRM_CONTENT', 'After Registration Confirmation Content'),
+				array(
+					new TextField('AfterConfirmTitle', _t('EventRegistration.TITLE', 'Title')),
+					new HtmlEditorField('AfterConfirmContent', _t('EventRegistration.CONTENT', 'Content'))
+				)
+			));
+		}
+
+		if ($this->UnRegEmailConfirm) {
+			$fields->addFieldToTab('Root.Main', new ToggleCompositeField(
+				'AfterUnRegistrationConfirmation',
+				_t('EventRegistration.AFTER_UNREG_CONFIRM_CONTENT', 'After Un-Registration Confirmation Content'),
+				array(
+					new TextField('AfterConfUnregTitle', _t('EventRegistration.TITLE', 'Title')),
+					new HtmlEditorField('AfterConfUnregContent', _t('EventRegistration.CONTENT', 'Content'))
+				)
+			));
+		}
+
+		$fields->addFieldToTab('Root.Tickets', new GridField(
+			'Tickets',
+			'Ticket Types',
+			$this->Tickets(),
+			GridFieldConfig_RecordEditor::create()
 		));
 
 		$generators = ClassInfo::implementorsOf('EventRegistrationTicketGenerator');
+
 		if ($generators) {
 			foreach ($generators as $generator) {
 				$instance = new $generator();
 				$generators[$generator] = $instance->getGeneratorTitle();
 			}
 
-			$fields->addFieldsToTab('Root.Content.Tickets', array(
-				new HeaderField('TicketGeneratorHeader', 'Ticket Generator'),
-				new LiteralField('TicketGeneratorNone', '<p>The ticket '
-					. 'generator is used to generate a ticket file for the '
-					. 'user to download and print to bring to the event.</p>'),
-				new DropdownField(
-					'TicketGenerator', '', $generators, null, null, '(none)')
+			$generator = new DropdownField(
+				'TicketGenerator',
+				_t('EventRegistration.TICKET_GENERATOR', 'Ticket generator'),
+				$generators
+			);
+
+			$generator->setEmptyString(_t('EventManagement.NONE', '(None)'));
+			$generator->setDescription(_t(
+				'EventManagement.TICKET_GENERATOR_NOTE',
+				'The ticket generator is used to generate a ticket file for the user to download.'
 			));
+
+			$fields->addFieldToTab('Root.Tickets', $generator);
 		}
 
-		$changeFields = singleton('RegisterableDateTime')->fieldLabels(false);
-		$fields->addFieldsToTab('Root.Content.Registration', array(
-			new HeaderField('RegistrationSettingsHeader', $this->fieldLabel('RegistrationSettingsHeader')),
-			new CheckboxField('OneRegPerEmail', $this->fieldLabel('OneRegPerEmail')),
-			new CheckboxField('RequireLoggedIn', $this->fieldLabel('RequireLoggedIn')),
-			new NumericField('RegistrationTimeLimit', $this->fieldLabel('RegistrationTimeLimit')),
-			new HeaderField('EmailSettingsHeader', $this->fieldLabel('EmailSettingsHeader')),
-			new CheckboxField('RegEmailConfirm', $this->fieldLabel('RegEmailConfirm')),
-			new TextField('EmailConfirmMessage', $this->fieldLabel('EmailConfirmMessage')),
-			new NumericField('ConfirmTimeLimit', $this->fieldLabel('ConfirmTimeLimit')),
-			new TextField('AfterConfirmTitle', $this->fieldLabel('AfterConfirmTitle')),
-			new HtmlEditorField('AfterConfirmContent', $this->fieldLabel('AfterConfirmContent'), 5),
-			new CheckboxField('UnRegEmailConfirm', $this->fieldLabel('UnRegEmailConfirm')),
-			new TextField('AfterConfUnregTitle', $this->fieldLabel('AfterConfUnregTitle')),
-			new HtmlEditorField('AfterConfUnregContent', $this->fieldLabel('AfterConfUnregContent'), 5),
-			new CheckboxField('EmailNotifyChanges', $this->fieldLabel('EmailNotifyChanges')),
-			new CheckboxSetField('NotifyChangeFields', $this->fieldLabel('NotifyChangeFields'), $changeFields)
-		));
-
-		$fields->addFieldsToTab('Root.Content.AfterRegistration', array(
-			new TextField('AfterRegTitle', $this->fieldLabel('AfterRegTitle')),
-			new HtmlEditorField('AfterRegContent', $this->fieldLabel('AfterRegContent'))
-		));
-
-		$fields->addFieldsToTab('Root.Content.AfterUnregistration', array(
-			new TextField('AfterUnregTitle', $this->fieldLabel('AfterUnregTitle')),
-			new HtmlEditorField('AfterUnregContent', $this->fieldLabel('AfterUnregContent'))
-		));
-
-		$registrations = new ComplexTableField(
-			$this, 'Registrations', 'EventRegistration',
-			null, null,
-			'"Status" = \'Valid\' AND "Time"."EventID" = ' . $this->ID,
-			null,
-			'INNER JOIN "CalendarDateTime" AS "Time" ON "Time"."ID" = "TimeID"'
-		);
-		$registrations->setTemplate('EventRegistrationComplexTableField');
-		$registrations->setPermissions(array('show', 'delete', 'print', 'export'));
-
-		$canceled = new ComplexTableField(
-			$this, 'Registations', 'EventRegistration',
-			null, null,
-			'"Status" = \'Canceled\' AND "Time"."EventID" = ' . $this->ID,
-			null,
-			'INNER JOIN "CalendarDateTime" AS "Time" ON "Time"."ID" = "TimeID"'
-		);
-		$canceled->setTemplate('EventRegistrationComplexTableField');
-		$canceled->setPermissions(array('show', 'print', 'export'));
-
-		$fields->addFieldToTab('Root', new Tab('Registrations'), 'Behaviour');
 		$fields->addFieldsToTab('Root.Registrations', array(
-			new HeaderField('RegistrationsHeader', $this->fieldLabel('Registrations')),
-			$registrations,
-			new ToggleCompositeField('CanceledRegistrations', 'Canceled Registrations', $canceled)
+			new GridField(
+				'Registrations',
+				_t('EventManagement.REGISTRATIONS', 'Registrations'),
+				$this->Registrations()->filter('Status', 'Valid')
+			),
+			new ToggleCompositeField(
+				'CanceledRegistrations',
+				_t('EventManagement.CANCELED_REGISTRATIONS', 'Canceled Registrations'),
+				array(
+					new GridField(
+						'CanceledRegistrations',
+						'',
+						$this->Registrations()->filter('Status', 'Canceled')
+					)
+				)
+			)
 		));
 
 		if ($this->RegEmailConfirm) {
-			$unconfirmed = new ComplexTableField(
-				$this, 'UnconfirmedRegistations', 'EventRegistration',
-				null, null,
-				'"Status" = \'Unconfirmed\' AND "Time"."EventID" = ' . $this->ID,
-				null,
-				'INNER JOIN "CalendarDateTime" AS "Time" ON "Time"."ID" = "TimeID"'
-			);
-			$unconfirmed->setPermissions(array('show', 'print', 'export'));
-			$unconfirmed->setTemplate('EventRegistrationComplexTableField');
-
 			$fields->addFieldToTab('Root.Registrations', new ToggleCompositeField(
-				'UnconfirmedRegistrations', 'Unconfirmed Registrations', $unconfirmed
+				'UnconfirmedRegistrations',
+				_t('EventManagement.UNCONFIRMED_REGISTRATIONS', 'Unconfirmed Registrations'),
+				array(
+					new GridField(
+						'UnconfirmedRegistrations',
+						'',
+						$this->Registrations()->filter('Status', 'Unconfirmed')
+					)
+				)
 			));
 		}
 
-		// Add a tab allowing admins to invite people from, as well as view
-		// people who have been invited.
-		$fields->addFieldToTab('Root', new Tab('Invitations'), 'Behaviour');
-		$fields->addFieldsToTab('Root.Invitations', array(
-			new HeaderField('InvitationsHeader', $this->fieldLabel('InvitationsHeader')),
-			new EventInvitationField($this, 'Invitations')
+		$fields->addFieldToTab('Root.Invitations', new GridField(
+			'Invitations',
+			_t('EventManagement.INVITATIONS', 'Invitations'),
+			$this->Invitations(),
+			GridFieldConfig_RecordViewer::create()
 		));
 
 		return $fields;
 	}
 
-	public function fieldLabels() {
-		return array_merge(parent::fieldLabels(), array(
-			'TicketTypesHeader' => _t('EventManagement.TICKETTYPES', 'Ticket Types'),
-			'Registrations' => _t('EventManagement.REGISTATIONS', 'Registrations'),
-			'RegistrationSettingsHeader' => _t('EventManagement.REGISTATIONSETTINGS', 'Registration Settings'),
-			'RegistrationTimeLimit' => _t('EventManagement.REGTIMELIMIT',
-				'Time limit to complete registration within (in seconds, 0 to disable place holding during registration)'),
-			'EmailSettingsHeader' => _t('EventManagement.EMAILSETTINGS', 'Email Settings'),
-			'OneRegPerEmail' => _t('EventManagement.ONEREGPEREMAIL', 'Limit to one registration per email address?'),
-			'RegEmailConfirm' => _t('EventManagement.REQEMAILCONFIRM',
-				'Require email confirmation to complete free registrations?'),
-			'EmailConfirmMessage' => _t('EventManagement.EMAILCONFIRMINFOMSG', 'Email confirmation information message'),
-			'ConfirmTimeLimit' => _t('EventManagement.CONFIRMTIMELIMIT',
-				'Time limit to confirm registration within (in seconds, 0 for unlimited)'),
-			'AfterConfirmTitle' => _t('EventManagement.AFTERCONFIRMTITLE', 'After confirmation title'),
-			'AfterConfirmContent' => _t('EventManagement.AFTERCONFIRMCONTENT', 'After confirmation content'),
-			'UnRegEmailConfirm' => _t('EventManagement.REQEMAILUNREGCONFIRM', 'Require email confirmation to un-register?'),
-			'AfterConfUnregTitle' => _t('EventManagement.AFTERUNREGCONFTITLE', 'After un-registration confirmation title'),
-			'AfterConfUnregContent' => _t('EventManagement.AFTERUNREGCONFCONTENT', 'After un-registration confirmation content'),
-			'EmailNotifyChanges' => _t('EventManagement.EMAILNOTIFYCHANGES', 'Notify registered users of event changes via email?'),
-			'NotifyChangeFields' => _t('EventManagement.NOTIFYWHENTHESECHANGE', 'Notify users when these fields change'),
-			'RequireLoggedIn' => _t('EventManagement.REQUIREDLOGGEDIN', 'Require users to be logged in to register?'),
-			'AfterRegTitle' => _t('EventManagement.AFTERREGTITLE', 'After registration title'),
-			'AfterRegContent' => _t('EventManagement.AFTERREGCONTENT', 'After registration content'),
-			'AfterUnregTitle' => _t('EventManagement.AFTERUNREGTITLE', 'After un-registration title'),
-			'AfterUnregContent' => _t('EventManagement.AFTERUNREGCONTENT', 'After un-registration content'),
-			'InvitationsHeader' => _t('EventManagement.EVENTINVITES', 'Event Invitations')
+	public function getSettingsFields() {
+		$fields = parent::getSettingsFields();
+
+		Requirements::javascript('eventmanagement/javascript/cms.js');
+
+		$fields->addFieldsToTab('Root.Registration', array(
+			new CheckboxField(
+				'OneRegPerEmail',
+				_t('EventManagement.ONE_REG_PER_EMAIL', 'Limit to one registration per email address?')
+			),
+			new CheckboxField(
+				'RequireLoggedIn',
+				_t('EventManagement.REQUIRE_LOGGED_IN', 'Require users to be logged in to register?')
+			),
+			$limit = new NumericField(
+				'RegistrationTimeLimit',
+				_t('EventManagement.REG_TIME_LIMIT', 'Registration time limit')
+			),
 		));
+
+		$limit->setDescription(_t(
+			'EventManagement.REG_TIME_LIMIT_NOTE',
+			'The time limit to complete registration, in seconds. Set to 0 to disable place holding.'
+		));
+
+		$fields->addFieldsToTab('Root.Email', array(
+			new CheckboxField(
+				'RegEmailConfirm',
+				_t('EventManagement.REQ_EMAIL_CONFIRM', 'Require email confirmation to complete free registrations?')
+			),
+			$info = new TextField(
+				'EmailConfirmMessage',
+				_t('EventManagement.EMAIL_CONFIRM_INFO', 'Email confirmation information')
+			),
+			$limit = new NumericField(
+				'ConfirmTimeLimit',
+				_t('EventManagement.EMAIL_CONFIRM_TIME_LIMIT', 'Email confirmation time limit')
+			),
+			new CheckboxField(
+				'UnRegEmailConfirm',
+				_t('EventManagement.REQ_UN_REG_EMAIL_CONFIRM', 'Require email confirmation to un-register?')
+			),
+			new CheckboxField(
+				'EmailNotifyChanges',
+				_t('EventManagement.EMAIL_NOTIFY_CHANGES', 'Notify registered users of event changes via email?')
+			),
+			new CheckboxSetField(
+				'NotifyChangeFields',
+				_t('EventManagement.NOTIFY_CHANGE_IN', 'Notify of changes in'),
+				singleton('RegisterableDateTime')->fieldLabels(false)
+			)
+		));
+
+		$info->setDescription(_t(
+			'EventManagement.EMAIL_CONFIRM_INFO_NOTE',
+			'This message is displayed to users to let them know they need to confirm their registration.'
+		));
+
+		$limit->setDescription(_t(
+			'EventManagement.CONFIRM_TIME_LIMIT_NOTE',
+			'The time limit to conform registration, in seconds. Set to 0 for no limit.'
+		));
+
+		return $fields;
 	}
 
 }
 
-/**
- * @package silverstripe-eventmanagement
- */
 class RegisterableEvent_Controller extends CalendarEvent_Controller {
 
 	public static $allowed_actions = array(
@@ -204,14 +252,19 @@ class RegisterableEvent_Controller extends CalendarEvent_Controller {
 
 	/**
 	 * Shows details for an individual event date time, as well as forms for
-	 * registering and unregistering.
+	 * registering and un-registering.
 	 *
-	 * @param  SS_HTTPRequest $request
+	 * @param SS_HTTPRequest $request
 	 * @return array
 	 */
 	public function details($request) {
-		$id   = $request->param('ID');
-		$time = DataObject::get_by_id('RegisterableDateTime', (int) $id);
+		$id = $request->param('ID');
+
+		if (!ctype_digit($id)) {
+			$this->httpError(404);
+		}
+
+		$time = RegisterableDateTime::get()->byID($id);
 
 		if (!$time || $time->EventID != $this->ID) {
 			$this->httpError(404);
@@ -226,12 +279,17 @@ class RegisterableEvent_Controller extends CalendarEvent_Controller {
 	/**
 	 * Allows a user to view the details of their registration.
 	 *
-	 * @param  SS_HTTPRequest $request
+	 * @param SS_HTTPRequest $request
 	 * @return EventRegistrationDetailsController
 	 */
 	public function registration($request) {
-		$id   = $request->param('ID');
-		$rego = DataObject::get_by_id('EventRegistration', (int) $id);
+		$id = $request->param('ID');
+
+		if (!ctype_digit($id)) {
+			$this->httpError(404);
+		}
+
+		$rego = EventRegistration::get()->byID($id);
 
 		if (!$rego || $rego->Time()->EventID != $this->ID) {
 			$this->httpError(404);
