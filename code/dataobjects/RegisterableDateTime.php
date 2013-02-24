@@ -1,15 +1,12 @@
 <?php
 /**
  * An instance of an event that a person can register to attend.
- *
- * @package silverstripe-eventmanagement
  */
 class RegisterableDateTime extends CalendarDateTime {
 
 	public static $db = array(
 		'Capacity'      => 'Int',
 		'EmailReminder' => 'Boolean',
-		'RemindWeeks'   => 'Int',
 		'RemindDays'    => 'Int'
 	);
 
@@ -25,14 +22,15 @@ class RegisterableDateTime extends CalendarDateTime {
 		'Tickets' => array('Available' => 'Int', 'Sort' => 'Int')
 	);
 
-	public function getDateTimeCMSFields() {
-		$fields = parent::getDateTimeCMSFields();
+	public function getCMSFields() {
+		$fields = parent::getCMSFields();
+
+		Requirements::javascript('eventmanagement/javascript/cms.js');
 
 		$fields->removeByName('Capacity');
 		$fields->removeByName('Registrations');
 		$fields->removeByName('Tickets');
 		$fields->removeByName('EmailReminder');
-		$fields->removeByName('RemindWeeks');
 		$fields->removeByName('RemindDays');
 		$fields->removeByName('PaymentID');
 		$fields->removeByName('ReminderJobID');
@@ -42,20 +40,36 @@ class RegisterableDateTime extends CalendarDateTime {
 				'RegistrationNote', '<p>You can configure registration once ' .
 				'you save for the first time.</p>'
 			));
+
 			return $fields;
 		}
 
 		$fields->addFieldsToTab('Root.Registration', array(
-			new ManyManyPickerField(
-				$this, 'Tickets', 'Available Tickets', array(
-					'ShowPickedInSearch' => false,
-					'ExtraFields'        => 'getCMSExtraFields',
-					'ExtraFilter'        => '"EventID" = ' . $this->EventID,
-					'Sortable'           => true,
-					'PopupHeight'        => 350
-				)),
-			new NumericField('Capacity', 'Overall event capacity (0 for unlimited)')
+			new GridField(
+				'Tickets',
+				_t('EventManagement.AVAILABLE_TICKETS', 'Available Tickets'),
+				$this->Tickets(),
+				GridFieldConfig::create()
+					->addComponent(new GridFieldButtonRow('before'))
+					->addComponent(new GridFieldToolbarHeader())
+					->addComponent($add = new GridFieldAddExistingSearchButton())
+					->addComponent(new GridFieldTitleHeader())
+					->addComponent(new GridFieldOrderableRows('Sort'))
+					->addComponent($editable = new GridFieldEditableColumns())
+					->addComponent(new GridFieldDeleteAction(true))
+			),
+			$capacity = new NumericField('Capacity', _t('EventManagement.CAPACITY', 'Capacity'))
 		));
+
+		$editable->setDisplayFields(array(
+			'Title'        => array('title' => 'Title', 'field' => 'ReadonlyField'),
+			'StartSummary' => 'Sales Start',
+			'PriceSummary' => 'Price',
+			'Available'    => array('field' => 'NumericField')
+		));
+
+		$add->setTitle(_t('EventManagement.ADD_TICKET_TYPE', 'Add Ticket Type'));
+		$capacity->setDescription('Set to 0 for unlimited capacity.');
 
 		if (class_exists('AbstractQueuedJob')) {
 			if ($this->ReminderJobID && $this->ReminderJob()->StepsProcessed) {
@@ -67,28 +81,18 @@ class RegisterableDateTime extends CalendarDateTime {
 				$fields->addFieldsToTab('Root.Reminder', array(
 					new CheckboxField(
 						'EmailReminder',
-						'Send registered atendeeds a reminder email?'),
-					new FieldGroup(
-						'Send the reminder email',
-						new NumericField('RemindWeeks', 'Weeks'),
-						new NumericField('RemindDays', 'Days'),
-						new LiteralField('', 'before the event starts'))
+						_t('EventManagement.SEND_REMINDER_EMAIL', 'Send the registered attendees a reminder email?')
+					),
+					$remindDays = new NumericField(
+						'RemindDays',
+						_t('EventManagement.SEND_REMINDER', 'Send reminder')
+					)
 				));
+				$remindDays->setDescription(_t('EventManagement.DAYS_BEFORE_EVENT', 'Days before the event starts.'));
 			}
-		} else {
-			$fields->addFieldsToTab('Root.Reminder', new LiteralField(
-				'QueuedJobsReminderNote',
-				'<p>Please install the queued jobs module to send reminder emails.</p>'
-			));
 		}
 
 		return $fields;
-	}
-
-	public function getRequirementsForPopup() {
-		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
-		Requirements::javascript('eventmanagement/javascript/RegisterableDateTimeCms.js');
-		Requirements::css('eventmanagement/css/RegisterableDateTimeCms.css');
 	}
 
 	public function validate() {
@@ -97,8 +101,8 @@ class RegisterableDateTime extends CalendarDateTime {
 
 		// Ensure that if we are sending a reminder email it has an interval
 		// to send at.
-		if ($this->EmailReminder && !$this->RemindWeeks && !$this->RemindDays) {
-			$result->error('You must enter an interval to send the reminder email at.');
+		if ($this->EmailReminder && !$this->RemindDays) {
+			$result->error('You must enter a time to send the reminder at.');
 		}
 
 		// Ensure that we only have tickets in one currency, since you can't
@@ -131,8 +135,8 @@ class RegisterableDateTime extends CalendarDateTime {
 		// If an email reminder has been set then register it with the queued
 		// jobs module.
 		if (class_exists('AbstractQueuedJob') && $this->EmailReminder) {
-			$hasJob       = $this->ReminderJobID;
-			$changedStart = $this->isChanged('RemindWeeks') || $this->isChanged('RemindDays');
+			$hasJob = $this->ReminderJobID;
+			$changedStart = $this->isChanged('RemindDays');
 
 			if ($hasJob) {
 				if (!$changedStart) {
@@ -143,7 +147,6 @@ class RegisterableDateTime extends CalendarDateTime {
 			}
 
 			$start = $this->getStartTimestamp();
-			$start = sfTime::subtract($start, $this->RemindWeeks, sfTime::WEEK);
 			$start = sfTime::subtract($start, $this->RemindDays, sfTime::DAY);
 
 			$job = new EventReminderEmailJob($this);
@@ -241,7 +244,7 @@ class RegisterableDateTime extends CalendarDateTime {
 	public function Summary() {
 		$date = implode(' ', CalendarUtil::getDateString($this->StartDate, $this->EndDate));
 
-		if ($this->is_all_day) {
+		if ($this->AllDay) {
 			return sprintf(_t('EventManagement.DATEALLDAY', '%s (all day)'), $date);
 		}
 

@@ -2,15 +2,11 @@
 /**
  * Adds a relationship between an event date/time and the job that is used to
  * send out reminder emails.
- *
- * @package silverstripe-eventmanagement
  */
-class RegisterableDateTimeReminderExtension extends DataObjectDecorator {
+class RegisterableDateTimeReminderExtension extends DataExtension {
 
-	public function extraStatics() {
-		return array('has_one' => array(
-			'ReminderJob' => 'QueuedJobDescriptor'
-		));
-	}
+	public static $has_one = array(
+		'ReminderJob' => 'QueuedJobDescriptor'
+	);
 
 }
