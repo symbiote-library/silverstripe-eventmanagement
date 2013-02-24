@@ -29,7 +29,7 @@ class EventInvitationField extends FormField {
 		$this->table->setPermissions(array('show', 'export', 'print'));
 	}
 
-	public function FieldHolder() {
+	public function FieldHolder($properties = array()) {
 		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
 		Requirements::javascript('eventmanagement/javascript/EventInvitationField.js');
 
