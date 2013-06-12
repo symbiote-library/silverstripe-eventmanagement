@@ -57,23 +57,14 @@ class EventTimeDetailsController extends Page_Controller {
 	 * @return string
 	 */
 	public function Title() {
-		return $this->DateTime()->EventTitle();
-	}
-
-	/**
-	 * @return string
-	 */
-	public function ExtraSidebarContent() {
-		$content = '';
-		$this->extend('augmentSidebarContent', $content);
-		return $content;
+		return $this->DateTime()->Event()->Title;
 	}
 
 	/**
 	 * @return bool
 	 */
 	public function EventInFuture() {
-		return time() < $this->DateTime()->getStartTimestamp();
+		return time() < $this->DateTime()->getStartDateTime()->getTimestamp();
 	}
 
 	/**

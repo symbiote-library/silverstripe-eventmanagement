@@ -54,7 +54,7 @@ class EventRegisterForm extends MultiForm {
 			$created = strtotime($this->getSession()->Registration()->Created);
 			$limit   = $this->controller->getDateTime()->Event()->RegistrationTimeLimit;
 
-			if ($limit) return DBField::create('SS_Datetime', $created + $limit);
+			if ($limit) return DBField::create_field('SS_Datetime', $created + $limit);
 		}
 	}
 
@@ -74,14 +74,14 @@ class EventRegisterForm extends MultiForm {
 		// Check that the requested tickets are still available.
 		if (!$this->validateTickets($tickets['Tickets'], $form)) {
 			Session::set("FormInfo.{$form->FormName()}.data", $form->getData());
-			Director::redirectBack();
+			$this->controller->redirectBack();
 			return false;
 		}
 
 		// Validate the final step.
 		if (!$step->validateStep($data, $form)) {
 			Session::set("FormInfo.{$form->FormName()}.data", $form->getData());
-			Director::redirectBack();
+			$this->controller->redirectBack();
 			return false;
 		}
 
@@ -94,11 +94,12 @@ class EventRegisterForm extends MultiForm {
 
 		$this->extend('onRegistrationComplete', $registration);
 
-		return Director::redirect(Controller::join_links(
+		$this->controller->redirect(Controller::join_links(
 			$datetime->Event()->Link(),
 			'registration',
 			$registration->ID,
-			'?token=' . $registration->Token));
+			'?token=' . $registration->Token
+		));
 	}
 
 	/**

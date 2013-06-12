@@ -4,7 +4,7 @@
  */
 class RegisterableEvent extends CalendarEvent {
 
-	public static $db = array(
+	private static $db = array(
 		'TicketGenerator'       => 'Varchar(255)',
 		'OneRegPerEmail'        => 'Boolean',
 		'RequireLoggedIn'       => 'Boolean',
@@ -25,14 +25,13 @@ class RegisterableEvent extends CalendarEvent {
 		'AfterUnregContent'     => 'HTMLText'
 	);
 
-	public static $has_many = array(
-		'Tickets'       => 'EventTicket',
-		'DateTimes'     => 'RegisterableDateTime',
-		'Registrations' => 'EventRegistration',
-		'Invitations'   => 'EventInvitation'
+	private static $has_many = array(
+		'Tickets'     => 'EventTicket',
+		'DateTimes'   => 'RegisterableDateTime',
+		'Invitations' => 'EventInvitation'
 	);
 
-	public static $defaults = array(
+	private static $defaults = array(
 		'RegistrationTimeLimit' => 900,
 		'AfterRegTitle'         => 'Thanks For Registering',
 		'AfterRegContent'       => '<p>Thanks for registering! We look forward to seeing you.</p>',
@@ -136,7 +135,7 @@ class RegisterableEvent extends CalendarEvent {
 			new GridField(
 				'Registrations',
 				_t('EventManagement.REGISTRATIONS', 'Registrations'),
-				$this->Registrations()->filter('Status', 'Valid')
+				$this->DateTimes()->relation('Registrations')->filter('Status', 'Valid')
 			),
 			new ToggleCompositeField(
 				'CanceledRegistrations',
@@ -145,7 +144,7 @@ class RegisterableEvent extends CalendarEvent {
 					new GridField(
 						'CanceledRegistrations',
 						'',
-						$this->Registrations()->filter('Status', 'Canceled')
+						$this->DateTimes()->relation('Registrations')->filter('Status', 'Canceled')
 					)
 				)
 			)
@@ -159,7 +158,7 @@ class RegisterableEvent extends CalendarEvent {
 					new GridField(
 						'UnconfirmedRegistrations',
 						'',
-						$this->Registrations()->filter('Status', 'Unconfirmed')
+						$this->DateTimes()->relation('Registrations')->filter('Status', 'Unconfirmed')
 					)
 				)
 			));

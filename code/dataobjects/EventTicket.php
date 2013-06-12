@@ -7,7 +7,7 @@
  */
 class EventTicket extends DataObject {
 
-	public static $db = array(
+	private static $db = array(
 		'Title'       => 'Varchar(255)',
 		'Type'        => 'Enum("Free, Price")',
 		'Price'       => 'Money',
@@ -26,11 +26,11 @@ class EventTicket extends DataObject {
 		'MaxTickets'  => 'Int'
 	);
 
-	public static $has_one = array(
+	private static $has_one = array(
 		'Event' => 'RegisterableEvent'
 	);
 
-	public static $defaults = array(
+	private static $defaults = array(
 		'MinTickets' => 1,
 		'StartType'  => 'Date',
 		'EndType'    => 'TimeBefore',
@@ -39,13 +39,13 @@ class EventTicket extends DataObject {
 		'EndMins'    => 0
 	);
 
-	public static $summary_fields = array(
+	private static $summary_fields = array(
 		'Title'        => 'Title',
 		'StartSummary' => 'Sales Start',
 		'PriceSummary' => 'Price'
 	);
 
-	public static $searchable_fields = array(
+	private static $searchable_fields = array(
 		'Title',
 		'Type'
 	);
@@ -53,6 +53,7 @@ class EventTicket extends DataObject {
 	public function getCMSFields() {
 		$fields = parent::getCMSFields();
 
+		$fields->removeByName('EventID');
 		$fields->removeByName('StartType');
 		$fields->removeByName('StartDate');
 		$fields->removeByName('StartDays');
@@ -117,7 +118,7 @@ class EventTicket extends DataObject {
 	public function validate() {
 		$result = parent::validate();
 
-		if ($this->Type == 'Price' && !$this->Price->hasValue()) {
+		if ($this->Type == 'Price' && !$this->Price->exists()) {
 			$result->error('You must enter a currency and price for fixed price tickets');
 		}
 
@@ -173,7 +174,7 @@ class EventTicket extends DataObject {
 		if ($this->StartType == 'Date') {
 			$start = strtotime($this->StartDate);
 		} else {
-			$start = $time->getStartTimestamp();
+			$start = $time->getStartDateTime()->getTimestamp();
 			$start = sfTime::subtract($start, $this->StartDays, sfTime::DAY);
 			$start = sfTime::subtract($start, $this->StartHours, sfTime::HOUR);
 			$start = sfTime::subtract($start, $this->StartMins, sfTime::MINUTE);
@@ -189,7 +190,7 @@ class EventTicket extends DataObject {
 		if ($this->EndType == 'Date') {
 			$end = strtotime($this->EndDate);
 		} else {
-			$end = $time->getStartTimestamp();
+			$end = $time->getStartDateTime()->getTimestamp();
 			$end = sfTime::subtract($end, $this->EndDays, sfTime::DAY);
 			$end = sfTime::subtract($end, $this->EndHours, sfTime::HOUR);
 			$end = sfTime::subtract($end, $this->EndMins, sfTime::MINUTE);
@@ -241,7 +242,7 @@ class EventTicket extends DataObject {
 			return strtotime($this->EndDate);
 		}
 
-		$time = $datetime->getStartTimestamp();
+		$time = $datetime->getStartDateTime()->getTimestamp();
 		$time = sfTime::subtract($time, $this->EndDays, sfTime::DAY);
 		$time = sfTime::subtract($time, $this->EndHours, sfTime::HOUR);
 		$time = sfTime::subtract($time, $this->EndMins, sfTime::MINUTE);

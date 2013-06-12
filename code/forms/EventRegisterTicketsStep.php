@@ -46,7 +46,7 @@ class EventRegisterTicketsStep extends MultiFormStep {
 			}
 		}
 
-		return DBField::create('Money', array(
+		return DBField::create_field('Money', array(
 			'Amount'   => $amount,
 			'Currency' => $currency
 		));
@@ -56,7 +56,7 @@ class EventRegisterTicketsStep extends MultiFormStep {
 		$datetime = $this->getForm()->getController()->getDateTime();
 		$session  = $this->getForm()->getSession();
 
-		$fields = new FieldSet(
+		$fields = new FieldList(
 			$tickets = new EventRegistrationTicketsTableField('Tickets', $datetime)
 		);
 		$tickets->setExcludedRegistrationId($session->RegistrationID);
@@ -83,9 +83,7 @@ class EventRegisterTicketsStep extends MultiFormStep {
 		Session::set("FormInfo.{$form->FormName()}.data", $form->getData());
 
 		$datetime = $this->getForm()->getController()->getDateTime();
-		$session  = $this->getForm()->getSession();
 		$data     = $form->getData();
-		$has      = false;
 
 		if ($datetime->Event()->OneRegPerEmail) {
 			if (Member::currentUserID()) {

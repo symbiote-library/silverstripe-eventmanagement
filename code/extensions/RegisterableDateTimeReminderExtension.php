@@ -5,7 +5,7 @@
  */
 class RegisterableDateTimeReminderExtension extends DataExtension {
 
-	public static $has_one = array(
+	private static $has_one = array(
 		'ReminderJob' => 'QueuedJobDescriptor'
 	);
 

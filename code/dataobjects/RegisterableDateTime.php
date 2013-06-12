@@ -4,21 +4,21 @@
  */
 class RegisterableDateTime extends CalendarDateTime {
 
-	public static $db = array(
+	private static $db = array(
 		'Capacity'      => 'Int',
 		'EmailReminder' => 'Boolean',
 		'RemindDays'    => 'Int'
 	);
 
-	public static $has_many = array(
+	private static $has_many = array(
 		'Registrations' => 'EventRegistration'
 	);
 
-	public static $many_many = array(
+	private static $many_many = array(
 		'Tickets' => 'EventTicket'
 	);
 
-	public static $many_many_extraFields = array(
+	private static $many_many_extraFields = array(
 		'Tickets' => array('Available' => 'Int', 'Sort' => 'Int')
 	);
 
@@ -146,7 +146,7 @@ class RegisterableDateTime extends CalendarDateTime {
 				}
 			}
 
-			$start = $this->getStartTimestamp();
+			$start = $this->getStartDateTime()->getTimestamp();
 			$start = sfTime::subtract($start, $this->RemindDays, sfTime::DAY);
 
 			$job = new EventReminderEmailJob($this);
@@ -241,8 +241,8 @@ class RegisterableDateTime extends CalendarDateTime {
 	/**
 	 * @return string
 	 */
-	public function Summary() {
-		$date = implode(' ', CalendarUtil::getDateString($this->StartDate, $this->EndDate));
+	public function getTitle() {
+		$date = implode(' ', CalendarUtil::get_date_string($this->StartDate, $this->EndDate));
 
 		if ($this->AllDay) {
 			return sprintf(_t('EventManagement.DATEALLDAY', '%s (all day)'), $date);

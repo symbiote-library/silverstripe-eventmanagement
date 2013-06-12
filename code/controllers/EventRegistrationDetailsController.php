@@ -90,7 +90,7 @@ class EventRegistrationDetailsController extends Page_Controller {
 	 * @return string
 	 */
 	public function Title() {
-		return 'Registration Details for ' . $this->registration->Time()->EventTitle();
+		return 'Registration Details for ' . $this->registration->Time()->Event()->Title;
 	}
 
 	/**

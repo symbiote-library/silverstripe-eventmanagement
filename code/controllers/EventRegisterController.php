@@ -22,7 +22,7 @@ class EventRegisterController extends Page_Controller {
 	/**
 	 * Constructs a new controller for creating a registration.
 	 *
-	 * @param Controller $parent
+	 * @param ContentController $parent
 	 * @param RegisterableDateTime $datetime
 	 */
 	public function __construct($parent, $datetime) {
@@ -67,19 +67,19 @@ class EventRegisterController extends Page_Controller {
 			$exclude = $this->RegisterForm()->getSession()->RegistrationID;
 		}
 
-		if ($datetime->getStartTimestamp() < time()) {
+		if ($datetime->getStartDateTime()->getTimestamp() < time()) {
 			$data = array(
-				'Title'   => $datetime->EventTitle() . ' Has Already Happened',
+				'Title'   => $datetime->Event()->Title . ' Has Already Happened',
 				'Content' => '<p>You can no longer register for this event.</p>'
 			);
 		} elseif ($datetime->getRemainingCapacity($exclude)) {
 			$data = array(
-				'Title' => 'Register For ' . $datetime->EventTitle(),
+				'Title' => 'Register For ' . $datetime->Event()->Title,
 				'Form'  => $this->RegisterForm()
 			);
 		} else {
 			$data = array(
-				'Title'   => $datetime->EventTitle() . ' Is Full',
+				'Title'   => $datetime->Event()->Title . ' Is Full',
 				'Content' => '<p>There are no more places available at this event.</p>'
 			);
 		}
@@ -132,7 +132,7 @@ class EventRegisterController extends Page_Controller {
 	}
 
 	/**
-	 * @return Form
+	 * @return EventRegisterForm
 	 */
 	public function RegisterForm() {
 		return new EventRegisterForm($this, 'RegisterForm');

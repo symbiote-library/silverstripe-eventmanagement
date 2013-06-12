@@ -35,11 +35,14 @@ class EventUnregisterController extends Page_Controller {
 		return new Form(
 			$this,
 			'UnregisterForm',
-			new FieldSet(new EmailField(
-				'Email', _t('EventManagement.EMAILADDR', 'Email address'))),
-			new FieldSet(new FormAction(
-				'doUnregister', _t('EventManagement.UNREGISTER', 'Un-register'))),
-			new RequiredFields('Email'));
+			new FieldList(new EmailField(
+				'Email', _t('EventManagement.EMAIL_ADDRESS', 'Email address')
+			)),
+			new FieldList(new FormAction(
+				'doUnregister', _t('EventManagement.UN_REGISTER', 'Un-register')
+			)),
+			new RequiredFields('Email')
+		);
 	}
 
 	/**
@@ -47,9 +50,7 @@ class EventUnregisterController extends Page_Controller {
 	 * @param Form  $form
 	 */
 	public function doUnregister($data, $form) {
-		$regos = $this->time->Registrations(sprintf(
-			'"Email" = \'%s\'', Convert::raw2sql($data['Email'])
-		));
+		$regos = $this->time->Registrations()->filter('Email', $data['Email']);
 
 		if (!$regos || !count($regos)) {
 			$form->sessionMessage(_t(
@@ -87,7 +88,7 @@ class EventUnregisterController extends Page_Controller {
 			}
 		}
 
-		return $this->redirect($this->Link('afterunregistration'));
+		$this->redirect($this->Link('afterunregistration'));
 	}
 
 	/**

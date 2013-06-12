@@ -6,17 +6,17 @@
  */
 class EventInvitation extends DataObject {
 
-	public static $db = array(
+	private static $db = array(
 		'Name'  => 'Varchar(255)',
 		'Email' => 'Varchar(255)'
 	);
 
-	public static $has_one = array(
+	private static $has_one = array(
 		'Event' => 'RegisterableEvent',
 		'Time'  => 'RegisterableDateTime'
 	);
 
-	public static $summary_fields = array(
+	private static $summary_fields = array(
 		'Name'        => 'Name',
 		'Email'       => 'Email',
 		'Registered'  => 'Registered',

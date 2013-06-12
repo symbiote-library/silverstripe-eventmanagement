@@ -15,7 +15,6 @@
 		"silverstripe/cms": ">=3.1",
 		"silverstripe/framework": ">=3.1",
 		"silverstripe/multiform": "dev-master",
-		"silverstripe/timepickerfield": "dev-master",
 		"unclecheese/eventcalendar": "dev-master"
 	},
 	"suggest": {

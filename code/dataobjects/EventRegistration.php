@@ -6,39 +6,38 @@
  */
 class EventRegistration extends DataObject {
 
-	public static $db = array(
+	private static $db = array(
 		'Name'   => 'Varchar(255)',
 		'Email'  => 'Varchar(255)',
 		'Status' => 'Enum("Unsubmitted, Unconfirmed, Valid, Canceled")',
 		'Total'  => 'Money',
-		'Token'  => 'Varchar(48)'
+		'Token'  => 'Varchar(40)'
 	);
 
-	public static $has_one = array(
+	private static $has_one = array(
 		'Time'   => 'RegisterableDateTime',
 		'Member' => 'Member'
 	);
 
-	public static $many_many = array(
+	private static $many_many = array(
 		'Tickets' => 'EventTicket'
 	);
 
-	public static $many_many_extraFields = array(
+	private static $many_many_extraFields = array(
 		'Tickets' => array('Quantity' => 'Int')
 	);
 
-	public static $summary_fields = array(
-		'Name'            => 'Name',
-		'Email'           => 'Email',
-		'EventTitle'      => 'Event',
-		'DateTimeSummary' => 'Dates And Times',
-		'TotalQuantity'   => 'Places'
+	private static $summary_fields = array(
+		'Name'          => 'Name',
+		'Email'         => 'Email',
+		'Time.Title'    => 'Event',
+		'TotalQuantity' => 'Places'
 	);
 
 	protected function onBeforeWrite() {
 		if (!$this->isInDB()) {
 			$generator = new RandomGenerator();
-			$this->Token = $generator->generateHash('sha1');
+			$this->Token = $generator->randomToken();
 		}
 
 		parent::onBeforeWrite();
@@ -75,28 +74,14 @@ class EventRegistration extends DataObject {
 	 * @see EventRegistration::EventTitle()
 	 */
 	public function getTitle() {
-		return $this->EventTitle();
-	}
-
-	/**
-	 * @return string
-	 */
-	public function EventTitle() {
-		return $this->Time()->EventTitle();
-	}
-
-	/**
-	 * @return string
-	 */
-	public function DateTimeSummary() {
-		return $this->Time()->Summary();
+		return $this->Time()->Title;
 	}
 
 	/**
 	 * @return int
 	 */
 	public function TotalQuantity() {
-		return array_sum($this->Tickets()->map('ID', 'Quantity'));
+		return $this->Tickets()->sum('Quantity');
 	}
 
 	/**
@@ -107,7 +92,7 @@ class EventRegistration extends DataObject {
 		$limit       = $this->Time()->Event()->ConfirmTimeLimit;
 
 		if ($unconfirmed && $limit) {
-			return DBField::create('SS_Datetime', strtotime($this->Created) + $limit);
+			return DBField::create_field('SS_Datetime', strtotime($this->Created) + $limit);
 		}
 	}
 

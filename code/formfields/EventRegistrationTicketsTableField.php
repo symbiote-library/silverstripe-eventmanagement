@@ -19,8 +19,8 @@ class EventRegistrationTicketsTableField extends FormField {
 		parent::__construct($name, '', $value);
 	}
 
-	public function Field() {
-		return $this->renderWith('EventRegistrationTicketsTableField');
+	public function Field($properties = array()) {
+		return $this->renderWith('EventRegistrationTicketsTableField', $properties);
 	}
 
 	/**
@@ -87,11 +87,8 @@ class EventRegistrationTicketsTableField extends FormField {
 		return $table;
 	}
 
-	/**
-	 * @return DataObjectSet
-	 */
 	public function Tickets() {
-		$result  = new DataObjectSet();
+		$result  = new ArrayList();
 		$tickets = $this->datetime->Tickets('', '"RegisterableDateTime_Tickets"."Sort"');
 
 		foreach ($tickets as $ticket) {
@@ -128,14 +125,14 @@ class EventRegistrationTicketsTableField extends FormField {
 					'Description' => $ticket->Description,
 					'Available'   => $avail === true ? 'Unlimited' : $avail,
 					'Price'       => $ticket->PriceSummary(),
-					'End'         => DBField::create('SS_Datetime', $endTime),
+					'End'         => DBField::create_field('SS_Datetime', $endTime),
 					'Quantity'    => $field
 				)));
 			} elseif ($this->showUnavailableTickets) {
 				$availableAt = null;
 
 				if (array_key_exists('available_at', $available)) {
-					$availableAt = DBField::create('SS_Datetime', $available['available_at']);
+					$availableAt = DBField::create_field('SS_Datetime', $available['available_at']);
 				}
 
 				$result->push(new ArrayData(array(

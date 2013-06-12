@@ -4,12 +4,10 @@
  *
  * @package silverstripe-eventmanagement
  */
-class EventRegistrationPaymentExtension extends DataObjectDecorator {
+class EventRegistrationPaymentExtension extends DataExtension {
 
-	public function extraStatics() {
-		return array('has_one' => array(
-			'Payment' => 'Payment'
-		));
-	}
+	private static $has_one = array(
+		'Payment' => 'Payment'
+	);
 
 }
