@@ -47,7 +47,7 @@ class EventTimeDetailsController extends Page_Controller {
 	}
 
 	/**
-	 * @return RegisterableDateTime
+	 * @return RegistrableDateTime
 	 */
 	public function DateTime() {
 		return $this->time;

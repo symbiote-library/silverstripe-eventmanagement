@@ -12,8 +12,8 @@ class EventInvitation extends DataObject {
 	);
 
 	private static $has_one = array(
-		'Event' => 'RegisterableEvent',
-		'Time'  => 'RegisterableDateTime'
+		'Event' => 'RegistrableEvent',
+		'Time'  => 'RegistrableDateTime'
 	);
 
 	private static $summary_fields = array(

@@ -12,7 +12,7 @@ class EventTicketTest extends SapphireTest {
 	 */
 	public function testGetAvailableForDatetimeWithDates() {
 		$ticket = new EventTicket();
-		$time   = new RegisterableDateTime();
+		$time   = new RegistrableDateTime();
 
 		// First test making the ticket unavailable with a fixed start date in
 		// the past.
@@ -69,7 +69,7 @@ class EventTicketTest extends SapphireTest {
 		$ticket->EndDate   = date('Y-m-d', time() + 3600 * 24);
 		$ticket->write();
 
-		$time = new RegisterableDateTime();
+		$time = new RegistrableDateTime();
 		$time->write();
 
 		$ticket->Available = 50;
@@ -103,7 +103,7 @@ class EventTicketTest extends SapphireTest {
 	 */
 	public function testGetSaleEndForDateTime() {
 		$ticket = new EventTicket();
-		$time   = new RegisterableDateTime();
+		$time   = new RegistrableDateTime();
 		$now    = time();
 
 		$ticket->EndType = 'Date';

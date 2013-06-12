@@ -23,7 +23,7 @@ class EventRegisterController extends Page_Controller {
 	 * Constructs a new controller for creating a registration.
 	 *
 	 * @param ContentController $parent
-	 * @param RegisterableDateTime $datetime
+	 * @param RegistrableDateTime $datetime
 	 */
 	public function __construct($parent, $datetime) {
 		$this->parent   = $parent;
@@ -125,7 +125,7 @@ class EventRegisterController extends Page_Controller {
 	}
 
 	/**
-	 * @return RegisterableDateTime
+	 * @return RegistrableDateTime
 	 */
 	public function getDateTime() {
 		return $this->datetime;

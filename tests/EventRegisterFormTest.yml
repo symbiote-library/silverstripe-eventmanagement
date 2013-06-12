@@ -1,4 +1,4 @@
-RegisterableEvent:
+RegistrableEvent:
   event:
     Title: Event
 
@@ -28,10 +28,10 @@ EventTicket:
     EndType: Date
     EndDate: 9999-01-01
 
-RegisterableDateTime:
+RegistrableDateTime:
   datetime:
     StartDate: 2011-01-01
     EndDate: 2011-01-01
-    Event: =>RegisterableEvent.event
+    Event: =>RegistrableEvent.event
     Capacity: 1000
     Tickets: =>EventTicket.ended,=>EventTicket.minmax,=>EventTicket.unlimited

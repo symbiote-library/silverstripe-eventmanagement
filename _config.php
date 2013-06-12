@@ -10,5 +10,5 @@ if (class_exists('Payment')) {
 }
 
 if (class_exists('AbstractQueuedJob')) {
-	Object::add_extension('RegisterableDateTime', 'RegisterableDateTimeReminderExtension');
+	Object::add_extension('RegistrableDateTime', 'RegistrableDateTimeReminderExtension');
 }

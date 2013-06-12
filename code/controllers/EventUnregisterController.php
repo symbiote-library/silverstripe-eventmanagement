@@ -19,7 +19,7 @@ class EventUnregisterController extends Page_Controller {
 	 * Constructs a new controller for deleting a registration.
 	 *
 	 * @param Controller $parent
-	 * @param RegisterableDateTiem $time
+	 * @param RegistrableDateTiem $time
 	 */
 	public function __construct($parent, $time) {
 		$this->parent = $parent;

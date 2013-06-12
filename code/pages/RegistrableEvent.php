@@ -2,7 +2,7 @@
 /**
  * A calendar event that can people can register to attend.
  */
-class RegisterableEvent extends CalendarEvent {
+class RegistrableEvent extends CalendarEvent {
 
 	private static $db = array(
 		'TicketGenerator'       => 'Varchar(255)',
@@ -27,7 +27,7 @@ class RegisterableEvent extends CalendarEvent {
 
 	private static $has_many = array(
 		'Tickets'     => 'EventTicket',
-		'DateTimes'   => 'RegisterableDateTime',
+		'DateTimes'   => 'RegistrableDateTime',
 		'Invitations' => 'EventInvitation'
 	);
 
@@ -169,6 +169,8 @@ class RegisterableEvent extends CalendarEvent {
 			_t('EventManagement.INVITATIONS', 'Invitations'),
 			$this->Invitations(),
 			GridFieldConfig_RecordViewer::create()
+				->addComponent(new GridFieldButtonRow('before'))
+				->addComponent(new EventSendInvitationsButton($this))
 		));
 
 		return $fields;
@@ -223,7 +225,7 @@ class RegisterableEvent extends CalendarEvent {
 			new CheckboxSetField(
 				'NotifyChangeFields',
 				_t('EventManagement.NOTIFY_CHANGE_IN', 'Notify of changes in'),
-				singleton('RegisterableDateTime')->fieldLabels(false)
+				singleton('RegistrableDateTime')->fieldLabels(false)
 			)
 		));
 
@@ -242,7 +244,7 @@ class RegisterableEvent extends CalendarEvent {
 
 }
 
-class RegisterableEvent_Controller extends CalendarEvent_Controller {
+class RegistrableEvent_Controller extends CalendarEvent_Controller {
 
 	public static $allowed_actions = array(
 		'details',
@@ -263,7 +265,7 @@ class RegisterableEvent_Controller extends CalendarEvent_Controller {
 			$this->httpError(404);
 		}
 
-		$time = RegisterableDateTime::get()->byID($id);
+		$time = RegistrableDateTime::get()->byID($id);
 
 		if (!$time || $time->EventID != $this->ID) {
 			$this->httpError(404);

@@ -11,7 +11,7 @@ class EventRegisterFormTest extends SapphireTest {
 
 	public function testValidateTickets() {
 		$controller = new EventRegisterFormTest_Controller();
-		$datetime = $this->objFromFixture('RegisterableDateTime', 'datetime');
+		$datetime = $this->objFromFixture('RegistrableDateTime', 'datetime');
 		$controller->datetime = $datetime;
 
 		$form      = new EventRegisterForm($controller, 'Form');

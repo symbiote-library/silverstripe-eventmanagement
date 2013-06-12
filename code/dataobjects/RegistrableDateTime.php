@@ -2,7 +2,7 @@
 /**
  * An instance of an event that a person can register to attend.
  */
-class RegisterableDateTime extends CalendarDateTime {
+class RegistrableDateTime extends CalendarDateTime {
 
 	private static $db = array(
 		'Capacity'      => 'Int',

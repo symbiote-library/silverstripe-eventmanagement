@@ -1,20 +1,20 @@
 <?php
 /**
- * Tests for the {@link RegisterableDateTime} class.
+ * Tests for the {@link RegistrableDateTime} class.
  *
  * @package    silverstripe-eventmanagement
  * @subpackage tests
  */
-class RegisterableDateTimeTest extends SapphireTest {
+class RegistrableDateTimeTest extends SapphireTest {
 
-	public static $fixture_file = 'eventmanagement/tests/RegisterableDateTimeTest.yml';
+	public static $fixture_file = 'eventmanagement/tests/RegistrableDateTimeTest.yml';
 
 	/**
-	 * @covers RegisterableDateTime::onBeforeWrite()
+	 * @covers RegistrableDateTime::onBeforeWrite()
 	 */
 	public function testEventDetailsChangedNotificationEmail() {
-		$event    = $this->objFromFixture('RegisterableEvent', 'event');
-		$datetime = $this->objFromFixture('RegisterableDateTime', 'datetime');
+		$event    = $this->objFromFixture('RegistrableEvent', 'event');
+		$datetime = $this->objFromFixture('RegistrableDateTime', 'datetime');
 
 		// First test that no emails are sent out for trivial changes.
 		$datetime->StartTime = 0;
@@ -44,7 +44,7 @@ class RegisterableDateTimeTest extends SapphireTest {
 		$datetime->StartDate = '2011-01-03';
 		$datetime->flushCache();
 
-		$datetime = DataObject::get_by_id('RegisterableDateTime', $datetime->ID);
+		$datetime = DataObject::get_by_id('RegistrableDateTime', $datetime->ID);
 		$datetime->write();
 
 		$this->assertNull($this->findEmail('test@example.com'));
@@ -52,11 +52,11 @@ class RegisterableDateTimeTest extends SapphireTest {
 	}
 
 	/**
-	 * @covers RegisterableDateTime::getRemainingCapacity()
+	 * @covers RegistrableDateTime::getRemainingCapacity()
 	 */
 	public function testGetRemainingCapacity() {
-		$event    = $this->objFromFixture('RegisterableEvent', 'event');
-		$datetime = $this->objFromFixture('RegisterableDateTime', 'datetime');
+		$event    = $this->objFromFixture('RegistrableEvent', 'event');
+		$datetime = $this->objFromFixture('RegistrableDateTime', 'datetime');
 		$ticket   = $this->objFromFixture('EventTicket', 'ticket');
 
 		$datetime->Capacity = 0;

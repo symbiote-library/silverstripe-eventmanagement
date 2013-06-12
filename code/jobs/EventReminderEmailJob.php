@@ -20,10 +20,10 @@ class EventReminderEmailJob extends AbstractQueuedJob {
 	}
 
 	/**
-	 * @return RegisterableDateTime
+	 * @return RegistrableDateTime
 	 */
 	public function getDatetime() {
-		return DataObject::get_by_id('RegisterableDateTime', $this->datetimeID);
+		return DataObject::get_by_id('RegisterbleDateTime', $this->datetimeID);
 	}
   	public function setup() {
 	        parent::setup();

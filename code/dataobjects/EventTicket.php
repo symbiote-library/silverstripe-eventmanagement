@@ -1,6 +1,6 @@
 <?php
 /**
- * A ticket type that can be attached to a registerable event. Each ticket can
+ * A ticket type that can be attached to a registrable event. Each ticket can
  * have a specific quantity available for each event time.
  *
  * @package silverstripe-eventmanagement
@@ -27,7 +27,7 @@ class EventTicket extends DataObject {
 	);
 
 	private static $has_one = array(
-		'Event' => 'RegisterableEvent'
+		'Event' => 'RegistrableEvent'
 	);
 
 	private static $defaults = array(
@@ -166,11 +166,11 @@ class EventTicket extends DataObject {
 	/**
 	 * Returns the number of tickets available for an event time.
 	 *
-	 * @param  RegisterableDateTime $time
+	 * @param  RegistrableDateTime $time
 	 * @param  int $excludeId A registration ID to exclude from calculations.
 	 * @return array
 	 */
-	public function getAvailableForDateTime(RegisterableDateTime $time, $excludeId = null) {
+	public function getAvailableForDateTime(RegistrableDateTime $time, $excludeId = null) {
 		if ($this->StartType == 'Date') {
 			$start = strtotime($this->StartDate);
 		} else {
@@ -234,10 +234,10 @@ class EventTicket extends DataObject {
 	 * Calculates the timestamp for when this ticket stops going on sale for an
 	 * event date time.
 	 *
-	 * @param  RegisterableDateTime $datetime
+	 * @param  RegistrableDateTime $datetime
 	 * @return int
 	 */
-	public function getSaleEndForDateTime(RegisterableDateTime $datetime) {
+	public function getSaleEndForDateTime(RegistrableDateTime $datetime) {
 		if ($this->EndType == 'Date') {
 			return strtotime($this->EndDate);
 		}

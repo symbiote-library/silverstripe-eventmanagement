@@ -28,11 +28,11 @@ class EventRegistrationPurgeTask extends BuildTask {
 		$items = DataObject::get(
 			'EventRegistration',
 			'"Status" = \'Unsubmitted\''
-			. " AND $created + \"Registerable\".\"RegistrationTimeLimit\" < " . time(),
+			. " AND $created + \"Registrable\".\"RegistrationTimeLimit\" < " . time(),
 			null,
 			'INNER JOIN "CalendarDateTime" AS "DateTime" ON "TimeID" = "DateTime"."ID"'
 			. ' INNER JOIN "CalendarEvent" AS "Event" ON "DateTime"."EventID" = "Event"."ID"'
-			. ' INNER JOIN "RegisterableEvent" AS "Registerable" ON "Event"."ID" = "Registerable"."ID"'
+			. ' INNER JOIN "RegistrableEvent" AS "Registrable" ON "Event"."ID" = "Registrable"."ID"'
 		);
 
 		if ($items) {
@@ -57,14 +57,14 @@ class EventRegistrationPurgeTask extends BuildTask {
 
 		$query->innerJoin('CalendarDateTime', '"TimeID" = "DateTime"."ID"', 'DateTime');
 		$query->innerJoin('CalendarEvent', '"DateTime"."EventID" = "Event"."ID"', 'Event');
-		$query->innerJoin('RegisterableEvent', '"Event"."ID" = "Registerable"."ID"', 'Registerable');
+		$query->innerJoin('RegistrableEvent', '"Event"."ID" = "Registrable"."ID"', 'Registrable');
 
-		$query->where('"Registerable"."ConfirmTimeLimit" > 0');
+		$query->where('"Registrable"."ConfirmTimeLimit" > 0');
 		$query->where('"Status"', 'Unconfirmed');
 
 		$created = $conn->formattedDatetimeClause('"EventRegistration"."Created"', '%U');
 		$query->where(sprintf(
-			'%s < %s', $created . ' + "Registerable"."ConfirmTimeLimit"', time()
+			'%s < %s', $created . ' + "Registrable"."ConfirmTimeLimit"', time()
 		));
 
 		if ($ids = $query->execute()->column()) {

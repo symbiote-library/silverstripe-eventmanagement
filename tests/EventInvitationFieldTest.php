@@ -13,10 +13,10 @@ class EventInvitationFieldTest extends SapphireTest {
 	 * @covers EventInvitationField::doInvite()
 	 */
 	public function testDoInvite() {
-		$event = new RegisterableEvent();
+		$event = new RegistrableEvent();
 		$event->write();
 
-		$datetime = new RegisterableDateTime();
+		$datetime = new RegistrableDateTime();
 		$datetime->StartDate = date('Y-m-d');
 		$datetime->EventID   = $event->ID;
 		$datetime->write();
@@ -61,7 +61,7 @@ class EventInvitationFieldTest extends SapphireTest {
 			'GroupID' => $this->idFromFixture('Group', 'group')
 		));
 
-		$field    = new EventInvitationField(new RegisterableEvent(), 'Invitations');
+		$field    = new EventInvitationField(new RegistrableEvent(), 'Invitations');
 		$response = $field->loadfromgroup($request);
 		$data     = Convert::json2array($response->getBody());
 
@@ -82,7 +82,7 @@ class EventInvitationFieldTest extends SapphireTest {
 			'PastTimeID' => $this->idFromFixture('Group', 'group')
 		));
 
-		$field    = new EventInvitationField(new RegisterableEvent(), 'Invitations');
+		$field    = new EventInvitationField(new RegistrableEvent(), 'Invitations');
 		$response = $field->loadfromtime($request);
 		$data     = Convert::json2array($response->getBody());
 

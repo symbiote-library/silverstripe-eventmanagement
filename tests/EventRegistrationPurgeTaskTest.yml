@@ -1,34 +1,34 @@
-RegisterableEvent:
+RegistrableEvent:
   event:
     Title: Test Event
     ConfirmTimeLimit: 21600
     RegistrationTimeLimit: 900
 
-RegisterableDateTime:
+RegistrableDateTime:
   time:
     Title: Test Time
     StartDate: 2011-01-01
     EndDate: 2011-01-01
-    Event: =>RegisterableEvent.event
+    Event: =>RegistrableEvent.event
 
 EventRegistration:
   unconfirmed_1:
     Name: First Registration
     Status: Unconfirmed
-    Time: =>RegisterableDateTime.time
+    Time: =>RegistrableDateTime.time
   unconfirmed_2:
     Name: Second Registration
     Status: Unconfirmed
-    Time: =>RegisterableDateTime.time
+    Time: =>RegistrableDateTime.time
   confirmed:
     Name: Third Registration
     Status: Confirmed
-    Time: =>RegisterableDateTime.time
+    Time: =>RegistrableDateTime.time
   unsubmitted_1:
     Name: Fourth Registration
     Status: Unsubmitted
-    Time: =>RegisterableDateTime.time
+    Time: =>RegistrableDateTime.time
   unsubmitted_2:
     Name: Fifth Registration
     Status: Unsubmitted
-    Time: =>RegisterableDateTime.time
+    Time: =>RegistrableDateTime.time

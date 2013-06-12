@@ -89,7 +89,7 @@ class EventRegistrationTicketsTableField extends FormField {
 
 	public function Tickets() {
 		$result  = new ArrayList();
-		$tickets = $this->datetime->Tickets('', '"RegisterableDateTime_Tickets"."Sort"');
+		$tickets = $this->datetime->Tickets('', '"RegistrableDateTime_Tickets"."Sort"');
 
 		foreach ($tickets as $ticket) {
 			$available = $ticket->getAvailableForDateTime(
@@ -170,7 +170,7 @@ class EventRegistrationTicketsTableField extends FormField {
 	}
 
 	/**
-	 * @return RegisterableDateTime
+	 * @return RegistrableDateTime
 	 */
 	public function DateTime() {
 		return $this->datetime;
