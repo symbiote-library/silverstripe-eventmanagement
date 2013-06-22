@@ -1,7 +1,3 @@
-
-<% require javascript(sapphire/thirdparty/jquery/jquery.js) %>
-<% require javascript(eventmanagement/javascript/EventRegistrationTicketsTableField.js) %>
-
 <table id="$ID" class="$CSSClasses event-tickets field">
 	<thead>
 		<tr>
@@ -17,7 +13,7 @@
 			<tr>
 				<td colspan="3"></td>
 				<td>Total</td>
-				<td><% if Total %>$Total.Nice<% else %>Free<% end_if %></td>
+				<td><% if $Total %>$Total.Nice<% else %>Free<% end_if %></td>
 			</tr>
 		</tfoot>
 	<% else_if $DateTime.Capacity %>
@@ -35,9 +31,6 @@
 				<tr class="$EvenOdd $FirstLast <% if $Last %>last <% end_if %> <% if $Available %><% else %>event-tickets-unavailable<% end_if %>">
 					<td class="title">
 						$Title
-						<% if $Description %>
-							<a href="#" class="event-tickets-toggle-description">Description</a>
-						<% end_if %>
 					</td>
 					<% if $Available %>
 						<td class="available">$Available</td>
