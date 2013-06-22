@@ -257,6 +257,19 @@ class RegistrableDateTime extends CalendarDateTime {
 	}
 
 	/**
+	 * @return DateTime
+	 */
+	public function getStartDateTime() {
+		$dt = new DateTime($this->StartDate);
+
+		if(!$this->AllDay) {
+			$dt->modify($this->StartTime);
+		}
+
+		return $dt;
+	}
+
+	/**
 	 * @return string
 	 */
 	public function Link() {
