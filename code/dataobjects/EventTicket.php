@@ -53,6 +53,9 @@ class EventTicket extends DataObject {
 	public function getCMSFields() {
 		$fields = parent::getCMSFields();
 
+		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
+		Requirements::javascript('eventmanagement/javascript/event-ticket-cms.js');
+
 		$fields->removeByName('EventID');
 		$fields->removeByName('StartType');
 		$fields->removeByName('StartDate');
@@ -66,11 +69,13 @@ class EventTicket extends DataObject {
 		$fields->removeByName('EndMins');
 
 		if (class_exists('Payment')) {
-			$fields->dataFieldByName('Price')->setTitle('');
-			$fields->insertBefore(new OptionSetField('Type', '', array(
-				'Free'  => 'Free ticket',
-				'Price' => 'Fixed price ticket'
-			)), 'Price');
+			$fields->insertBefore(
+				new OptionSetField('Type', 'Ticket type', array(
+					'Free'  => 'Free ticket',
+					'Price' => 'Fixed price ticket'
+				)),
+				'Price'
+			);
 		} else {
 			$fields->removeByName('Type');
 			$fields->removeByName('Price');
@@ -82,18 +87,20 @@ class EventTicket extends DataObject {
 					'Date'       => 'A specific date and time',
 					'TimeBefore' => 'A time before the event starts'
 				)),
-				$datetime = new DatetimeField("{$type}Date", ''),
+				$dateTime = new DatetimeField("{$type}Date", ''),
 				$before = new FieldGroup(
-					'',
+					"{$type}Offset",
 					new NumericField("{$type}Days", 'Days'),
 					new NumericField("{$type}Hours", 'Hours'),
 					new NumericField("{$type}Mins", 'Minutes')
 				)
 			));
 
-			$before->setTitle('');
-			$datetime->getDateField()->setConfig('showcalendar', true);
-			$datetime->getTimeField()->setConfig('showdropdown', true);
+			$before->setName("{$type}Offset");
+			$before->setTitle(' ');
+
+			$dateTime->getDateField()->setConfig('showcalendar', true);
+			$dateTime->getTimeField()->setConfig('showdropdown', true);
 		}
 
 		$fields->addFieldsToTab('Root.Advanced', array(
@@ -103,16 +110,6 @@ class EventTicket extends DataObject {
 		));
 
 		return $fields;
-	}
-
-	/**
-	 * @return FieldSet
-	 */
-	public function getCMSExtraFields() {
-		return new FieldSet(
-			new ReadonlyField('Title', 'Title'),
-			new NumericField('Available', 'Tickets available')
-		);
 	}
 
 	public function validate() {
@@ -155,12 +152,6 @@ class EventTicket extends DataObject {
 	 */
 	public function getValidator() {
 		return new RequiredFields('Title', 'Type', 'StartType', 'EndType');
-	}
-
-	public function getRequirementsForPopup() {
-		Requirements::javascript(THIRDPARTY_DIR . '/jquery/jquery.js');
-		Requirements::javascript('eventmanagement/javascript/EventTicketCms.js');
-		Requirements::css('eventmanagement/css/EventTicketCms.css');
 	}
 
 	/**
@@ -286,12 +277,15 @@ class EventTicket extends DataObject {
 	public function canEdit($member = null) {
 		return $this->Event()->canEdit($member);
 	}
+
 	public function canCreate($member = null) {
 		return $this->Event()->canCreate($member);
 	}
+
 	public function canDelete($member = null) {
 		return $this->Event()->canDelete($member);
 	}
+
 	public function canView($member = null) {
 		return $this->Event()->canView($member);
 	}
