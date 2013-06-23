@@ -159,7 +159,7 @@ class EventRegistrationTicketsTableField extends FormField {
 	 * @return bool
 	 */
 	public function ShowTotalRow() {
-		return $this->forceTotalRow || ($this->readonly && $this->Total() && $this->Total()->hasValue());
+		return $this->forceTotalRow || ($this->readonly && $this->Total() && $this->Total()->exists());
 	}
 
 	/**
