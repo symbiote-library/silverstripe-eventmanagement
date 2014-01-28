@@ -7,7 +7,7 @@
 	details of the event and your registration:
 </p>
 
-<% control Registration %>
+<% with Registration %>
 	<h2>Registration Details</h2>
 	<dl>
 		<dt>Name:</dt>
@@ -30,13 +30,13 @@
 			</tr>
 		</thead>
 		<tbody>
-			<% control Tickets %>
+			<% loop Tickets %>
 				<tr>
 					<td>$Title</td>
 					<td>$PriceSummary</td>
 					<td>$Quantity</td>
 				</tr>
-			<% end_control %>
+			<% end_loop %>
 		</tbody>
 	</table>
 	
@@ -45,7 +45,7 @@
 	</p>
 	
 	<% if Payment %>
-		<% control Payment %>
+		<% with Payment %>
 			<h2>Payment Details</h2>
 			<dl>
 				<dt>Method:</dt>
@@ -55,11 +55,11 @@
 				<dt>Status:</dt>
 				<dd>$Status</dd>
 			</dl>
-		<% end_control %>
+		<% end_with %>
 	<% end_if %>
 	
 	<ul>
 		<li><a href="$Link">Registration details</a></li>
 		<li><a href="$Time.Link">Event details</a></li>
 	</ul>
-<% end_control %>
+<% end_with %>

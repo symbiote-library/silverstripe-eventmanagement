@@ -228,19 +228,26 @@ class RegistrableDateTime extends CalendarDateTime {
 		if (!$this->Capacity) return true;
 
 		$taken = new SQLQuery();
-		$taken->select('SUM("Quantity")');
-		$taken->from('EventRegistration_Tickets');
-		$taken->leftJoin('EventRegistration', '"EventRegistration"."ID" = "EventRegistrationID"');
+		$taken->setSelect('SUM("Quantity")');
+		$taken->setFrom('EventRegistration_Tickets');
+		$taken->addLeftJoin('EventRegistration', '"EventRegistration"."ID" = "EventRegistrationID"');
 
 		if ($excludeId) {
-			$taken->where('"EventRegistration"."ID"', '<>', $excludeId);
+			$taken->addWhere('"EventRegistration"."ID"', '<>', $excludeId);
 		}
 
-		$taken->where('"Status"', '<>', 'Canceled');
-		$taken->where('"EventRegistration"."TimeID"', $this->ID);
+		$taken->addWhere('"Status"', '<>', 'Canceled');
+		$taken->addWhere('"EventRegistration"."TimeID"', $this->ID);
 		$taken = $taken->execute()->value();
 
 		return ($this->Capacity >= $taken) ? $this->Capacity - $taken : false;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function isSoldOut() {
+		return (!$this->getRemainingCapacity());
 	}
 
 	/**
@@ -268,7 +275,9 @@ class RegistrableDateTime extends CalendarDateTime {
 		$dt = new DateTime($this->StartDate);
 
 		if(!$this->AllDay) {
-			$dt->modify($this->StartTime);
+			if($this->StartTime) {
+				$dt->modify($this->StartTime);
+			}
 		}
 
 		return $dt;
