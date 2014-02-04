@@ -51,9 +51,13 @@ class EventRegisterController extends Page_Controller {
 			$message = _t('EventManagement.REGSESSIONEXPIRED', 'Your'
 				. ' registration expired before it was completed. Please'
 				. ' try ordering your tickets again.');
+
 			$form->sessionMessage($message, 'bad');
 
 			$this->redirect($this->Link());
+		}
+		else {
+			$form->clearMessage();
 		}
 	}
 

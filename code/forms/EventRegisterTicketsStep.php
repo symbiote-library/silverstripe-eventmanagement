@@ -69,13 +69,21 @@ class EventRegisterTicketsStep extends MultiFormStep {
 			$fields->push(new EmailField('Email', 'Email address'));
 		}
 
+
 		$this->extend('updateFields', $fields);
+
 		return $fields;
 	}
 
 	public function getValidator() {
-		$validator = new RequiredFields('Name', 'Email');
+		if ($member = Member::currentUser()) {
+			$validator = new RequiredFields();
+		} else {
+			$validator = new RequiredFields('Name', 'Email');
+		}
+
 		$this->extend('updateValidator', $validator);
+		
 		return $validator;
 	}
 

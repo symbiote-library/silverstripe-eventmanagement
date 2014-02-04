@@ -25,8 +25,6 @@ class RegistrableDateTime extends CalendarDateTime {
 	public function getCMSFields() {
 		$fields = parent::getCMSFields();
 
-		Requirements::javascript('eventmanagement/javascript/cms.js');
-
 		$fields->removeByName('Capacity');
 		$fields->removeByName('Registrations');
 		$fields->removeByName('Tickets');
@@ -36,7 +34,7 @@ class RegistrableDateTime extends CalendarDateTime {
 		$fields->removeByName('ReminderJobID');
 
 		if (!$this->isInDB()) {
-			$fields->addFieldToTab('Root.Registration', new LiteralField(
+			$fields->push(new LiteralField(
 				'RegistrationNote', '<p>You can configure registration once ' .
 				'you save for the first time.</p>'
 			));
@@ -44,7 +42,8 @@ class RegistrableDateTime extends CalendarDateTime {
 			return $fields;
 		}
 
-		$fields->addFieldsToTab('Root.Registration', array(
+
+		$fields->push(
 			new GridField(
 				'Tickets',
 				_t('EventManagement.AVAILABLE_TICKETS', 'Available Tickets'),
@@ -57,9 +56,12 @@ class RegistrableDateTime extends CalendarDateTime {
 					->addComponent(new GridFieldOrderableRows('Sort'))
 					->addComponent($editable = new GridFieldEditableColumns())
 					->addComponent(new GridFieldDeleteAction(true))
-			),
+			)
+		);
+
+		$fields->push(
 			$capacity = new NumericField('Capacity', _t('EventManagement.CAPACITY', 'Capacity'))
-		));
+		);
 
 		$editable->setDisplayFields(array(
 			'Title'        => array('title' => 'Title', 'field' => 'ReadonlyField'),
@@ -73,21 +75,24 @@ class RegistrableDateTime extends CalendarDateTime {
 
 		if (class_exists('AbstractQueuedJob')) {
 			if ($this->ReminderJobID && $this->ReminderJob()->StepsProcessed) {
-				$fields->addFieldToTab('Root.Reminder', new LiteralField(
+				$fields->push(new LiteralField(
 					'RemindersAlreadySent',
 					'<p>Reminder emails have already been sent out.</p>'
 				));
 			} else {
-				$fields->addFieldsToTab('Root.Reminder', array(
-					new CheckboxField(
+				$fields->push(new CheckboxField(
 						'EmailReminder',
 						_t('EventManagement.SEND_REMINDER_EMAIL', 'Send the registered attendees a reminder email?')
-					),
+					)
+				);
+
+				$fields->push(
 					$remindDays = new NumericField(
 						'RemindDays',
 						_t('EventManagement.SEND_REMINDER', 'Send reminder')
 					)
-				));
+				);
+
 				$remindDays->setDescription(_t('EventManagement.DAYS_BEFORE_EVENT', 'Days before the event starts.'));
 			}
 		}
@@ -223,19 +228,26 @@ class RegistrableDateTime extends CalendarDateTime {
 		if (!$this->Capacity) return true;
 
 		$taken = new SQLQuery();
-		$taken->select('SUM("Quantity")');
-		$taken->from('EventRegistration_Tickets');
-		$taken->leftJoin('EventRegistration', '"EventRegistration"."ID" = "EventRegistrationID"');
+		$taken->setSelect('SUM("Quantity")');
+		$taken->setFrom('EventRegistration_Tickets');
+		$taken->addLeftJoin('EventRegistration', '"EventRegistration"."ID" = "EventRegistrationID"');
 
 		if ($excludeId) {
-			$taken->where('"EventRegistration"."ID"', '<>', $excludeId);
+			$taken->addWhere('"EventRegistration"."ID"', '<>', $excludeId);
 		}
 
-		$taken->where('"Status"', '<>', 'Canceled');
-		$taken->where('"EventRegistration"."TimeID"', $this->ID);
+		$taken->addWhere('"Status"', '<>', 'Canceled');
+		$taken->addWhere('"EventRegistration"."TimeID"', $this->ID);
 		$taken = $taken->execute()->value();
 
 		return ($this->Capacity >= $taken) ? $this->Capacity - $taken : false;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function isSoldOut() {
+		return (!$this->getRemainingCapacity());
 	}
 
 	/**
@@ -263,7 +275,9 @@ class RegistrableDateTime extends CalendarDateTime {
 		$dt = new DateTime($this->StartDate);
 
 		if(!$this->AllDay) {
-			$dt->modify($this->StartTime);
+			if($this->StartTime) {
+				$dt->modify($this->StartTime);
+			}
 		}
 
 		return $dt;

@@ -8,10 +8,10 @@
 </p>
 
 <dl>
-	<% control Changed %>
+	<% with Changed %>
 		<dt>$Label</dt>
 		<dd>$After <% if Before %>(was $Before)<% end_if %></dd>
-	<% end_control %>
+	<% end_with %>
 </dl>
 
 <p>
