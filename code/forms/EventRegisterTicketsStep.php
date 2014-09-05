@@ -22,6 +22,16 @@ class EventRegisterTicketsStep extends MultiFormStep {
 		}
 	}
 
+	public function loadData() {
+		$data = parent::loadData();
+		if ($member = Member::currentUser()) {
+			$data['Name'] = $member->Name;
+			$data['Email'] = $member->Email;
+		}
+
+		return $data;
+	}
+
 	/**
 	 * Returns the total sum of all the tickets the user is purchasing.
 	 *
@@ -62,8 +72,8 @@ class EventRegisterTicketsStep extends MultiFormStep {
 		$tickets->setExcludedRegistrationId($session->RegistrationID);
 
 		if ($member = Member::currentUser()) {
-			$fields->push(new ReadonlyField('Name', 'Your name', $member->getName()));
-			$fields->push(new ReadonlyField('Email', 'Email address', $member->Email));
+			$fields->push(new ReadonlyField('Name', 'Your name'));
+			$fields->push(new ReadonlyField('Email', 'Email address'));
 		} else {
 			$fields->push(new TextField('Name', 'Your name'));
 			$fields->push(new EmailField('Email', 'Email address'));
