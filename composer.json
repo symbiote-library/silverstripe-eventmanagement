@@ -1,5 +1,5 @@
 {
-	"name": "ajshort/silverstripe-eventmanagement",
+	"name": "silverstripe-australia/eventmanagement",
 	"description": "SilverStripe event management and registration module",
 	"type": "silverstripe-module",
 	"keywords": ["silverstripe", "event"],
@@ -8,6 +8,10 @@
 		{
 			"name": "Andrew Short",
 			"email": "andrewjshort@gmail.com"
+		},
+		{
+			"name": "Marcus Nyeholt",
+			"email": "marcus@silverstripe.com.au"
 		}
 	],
 	"require": {
@@ -22,5 +26,8 @@
 	},
 	"extra": {
 		"installer-name": "eventmanagement"
+	},
+	"replace": {
+		"ajshort/silverstripe-eventmanagement": "self.version"
 	}
 }
