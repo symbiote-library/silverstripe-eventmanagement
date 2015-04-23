@@ -46,6 +46,10 @@ class RegistrableEvent extends CalendarEvent {
 		'NotifyChangeFields'    => 'StartDate,EndDate,StartTime,EndTime'
 	);
 
+	private static $icon = "eventmanagement/images/date_edit.png";
+
+	private static $description = "An event that can be registered for.";
+
 	public function getCMSFields() {
 		$fields = parent::getCMSFields();
 
