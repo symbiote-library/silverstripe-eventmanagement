@@ -19,7 +19,7 @@
 		"silverstripe/cms": ">=3.1",
 		"silverstripe/framework": ">=3.1",
 		"silverstripe/multiform": "1.1.*@dev",
-		"unclecheese/eventcalendar": "dev-master"
+		"unclecheese/eventcalendar": "~1.0"
 	},
 	"suggest": {
 		"silverstripe/queuedjobs": "Allows sending out event reminder emails"
