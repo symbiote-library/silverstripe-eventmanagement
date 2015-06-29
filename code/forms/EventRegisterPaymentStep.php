@@ -47,7 +47,7 @@ class EventRegisterPaymentStep extends MultiFormStep {
 		Requirements::customScript(Payment::combined_form_requirements());
 		$payment = Payment::combined_form_fields($total->Nice());
 
-		$fields = new FieldSet(
+		$fields = new FieldList(
 			new LiteralField('ConfirmTicketsNote',
 				'<p>Please confirm the tickets you wish to purchase:</p>'),
 			$table,

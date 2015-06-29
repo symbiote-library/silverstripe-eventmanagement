@@ -25,8 +25,8 @@ class EventInvitationFieldTest extends SapphireTest {
 		$form = new Form(
 			new EventInvitationFieldTest_Controller(),
 			'Form',
-			new FieldSet($field),
-			new FieldSet());
+			new FieldList($field),
+			new FieldList());
 		$form->loadDataFrom($event);
 
 		$invite = $field->InviteForm();
