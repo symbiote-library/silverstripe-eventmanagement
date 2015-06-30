@@ -44,14 +44,18 @@ class EventRegisterPaymentStep extends MultiFormStep {
 		$table->setShowUnselectedTickets(false);
 		$table->setTotal($total);
 
-		Requirements::customScript(Payment::combined_form_requirements());
-		$payment = Payment::combined_form_fields($total->Nice());
+		// the following 2 methods are not in the updated payment module
+		// so ignore them as we will be handling this in the extension anyway
+		//Requirements::customScript(Payment::combined_form_requirements());
 
+		// add the payment field via the extension
+		//$payment = Payment::combined_form_fields($total->Nice());
+		
+		// we will replace this field in the extension
 		$fields = new FieldList(
 			new LiteralField('ConfirmTicketsNote',
 				'<p>Please confirm the tickets you wish to purchase:</p>'),
-			$table,
-			new FieldGroup($payment)
+			$table
 		);
 
 		$this->extend('updateFields', $fields);
@@ -89,7 +93,7 @@ class EventRegisterPaymentStep extends MultiFormStep {
 
 		$result = $payment->processPayment($data, $form);
 
-		if ($result->isProcessing()) {
+		if ($result->status == 'Pending') {
 			throw new SS_HTTPResponse_Exception($result->getValue());
 		}
 
