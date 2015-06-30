@@ -93,7 +93,7 @@ class EventRegisterPaymentStep extends MultiFormStep {
 
 		$result = $payment->processPayment($data, $form);
 
-		if ($result->status == 'Pending') {
+		if ($result->getStatus() == 'Pending') {
 			throw new SS_HTTPResponse_Exception($result->getValue());
 		}
 
