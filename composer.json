@@ -22,12 +22,13 @@
 		"unclecheese/eventcalendar": "~1.0"
 	},
 	"suggest": {
-		"silverstripe/queuedjobs": "Allows sending out event reminder emails"
+		"silverstripe/queuedjobs": "Allows sending out event reminder emails",
+		"silverstripe/payment": "Payment module. Note: Only use the 1.0.x branch line, others are incompatible!" 
 	},
 	"extra": {
 		"installer-name": "eventmanagement",
 		"branch-alias": {
-			"dev-master": "1.1.x-dev"
+			"dev-master": "1.2.x-dev"
 		}
 	},
 	"replace": {

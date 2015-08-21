@@ -20,10 +20,25 @@ class EventRegisterPaymentStep extends MultiFormStep {
 	 */
 	public function loadData() {
 		$data    = parent::loadData();
+		
+		
 		$tickets = $this->getForm()->getSavedStepByClass('EventRegisterTicketsStep');
 		$tickets = $tickets->loadData();
 
 		$data['Tickets'] = $tickets['Tickets'];
+		
+		// let's see if we're loading immediately after a payment, in which 
+		// case we want to redirect straight out. 
+		$registration = $this->form->getSession()->getRegistration();
+		$paymentID = Session::get('PaymentID');
+		
+		if ($registration && $paymentID) {
+			$payment = Payment::get()->byID($paymentID);
+			if ($this->checkPayment($registration, $payment)) {
+				Controller::curr()->redirect($registration->Link());
+			}
+		}
+
 		return $data;
 	}
 
@@ -74,34 +89,39 @@ class EventRegisterPaymentStep extends MultiFormStep {
 		$payment = $data['PaymentMethod'];
 		$tickets = $this->getForm()->getSavedStepByClass('EventRegisterTicketsStep');
 		$total   = $tickets->getTotal();
-
+		
 		$registration = $this->form->getSession()->getRegistration();
 
-		if (!is_subclass_of($payment, 'Payment')) {
+		$data['Currency'] = $total->Currency;
+		$data['Amount'] = $total->Amount;
+		
+		$processor = PaymentFactory::factory($payment);
+		
+		try {
+			$link = $registration->Link();
+			$link = $this->Link();
+			// Set the url to redirect to after the payment is completed, e.g.
+			$processor->setRedirectURL(Director::absoluteURL($link));
+			// Process the payment 
+			$processor->capture($data);
+		} catch (Exception $e) {
+			// Most likely due to connection cannot be extablished or validation fails
 			return false;
 		}
 
-		$payment = new $payment();
-		$payment->Amount       = $total;
-		$payment->PaidForClass = 'EventRegistration';
-		$payment->PaidForID    = $registration->ID;
-		$payment->PaidBy       = Member::currentUserID();
-		$payment->write();
-
-		$registration->PaymentID = $payment->ID;
-		$registration->write();
-
-		$result = $payment->processPayment($data, $form);
-
-		if ($result->getStatus() == 'Pending') {
-			throw new SS_HTTPResponse_Exception($result->getValue());
+		$result = $processor->gateway->getValidationResult();
+		$controller = Controller::curr();
+		/* @var $controller Controller */
+		if ($controller->redirectedTo()) {
+			return true;
 		}
 
-		if (!$result->isSuccess()) {
-			$form->sessionMessage($result->getValue(), 'required');
+		if (!$result->valid()) {
+			$form->sessionMessage($result->message(), 'required');
 			return false;
 		}
 
+		$this->checkPayment($registration);
 		// Write an empty registration object so we have an ID to reference the
 		// payment against. This will be populated in the form's finish() method.
 		$registration->Status = 'Valid';
@@ -114,5 +134,35 @@ class EventRegisterPaymentStep extends MultiFormStep {
 
 		return true;
 	}
+	
+	/**
+	 * Check whether payment for the given registration succeeded. Returns true if so
+	 * 
+	 * @param type $registration
+	 */
+	public function checkPayment($registration, $payment = null) {
+		if (!$payment) {
+			$paymentID = Session::get('PaymentID');
+			if ($paymentID) {
+				$payment = Payment::get()->byID($paymentID);
+			}
+		}
 
+		$paid = false;
+		if ($payment) {
+			$payment->PaidForClass = 'EventRegistration';
+			$payment->PaidForID    = $registration->ID;
+			$payment->PaidBy       = Member::currentUserID();
+			$payment->write();
+
+			$registration->PaymentID = $payment->ID;
+			if ($payment->Status == PaymentGateway_Result::SUCCESS) {
+				$registration->Status = 'Valid';
+				$paid = true;
+			}
+			$registration->write();
+		}
+		
+		return $paid;
+	}
 }

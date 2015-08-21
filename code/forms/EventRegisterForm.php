@@ -76,7 +76,17 @@ class EventRegisterForm extends MultiForm {
 			return false;
 		}
 
-		parent::finish($data, $form);
+		$success = parent::finish($data, $form);
+		if ($success === false) {
+			return false;
+		}
+		
+		// see whether we've been redirected by the step (most typically with Payment steps)
+		$controller = Controller::curr();
+		/* @var $controller Controller */
+		if ($controller->redirectedTo()) {
+			return;
+		}
 
 		$this->session->delete();
 
