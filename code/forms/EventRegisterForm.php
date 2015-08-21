@@ -63,8 +63,6 @@ class EventRegisterForm extends MultiForm {
 	 * registration object.
 	 */
 	public function finish($data, $form) {
-		parent::finish($data, $form);
-
 		$step         = $this->getCurrentStep();
 		$datetime     = $this->getController()->getDateTime();
 		$registration = $this->session->getRegistration();
@@ -78,12 +76,7 @@ class EventRegisterForm extends MultiForm {
 			return false;
 		}
 
-		// Validate the final step.
-		if (!$step->validateStep($data, $form)) {
-			Session::set("FormInfo.{$form->FormName()}.data", $form->getData());
-			$this->controller->redirectBack();
-			return false;
-		}
+		parent::finish($data, $form);
 
 		$this->session->delete();
 
