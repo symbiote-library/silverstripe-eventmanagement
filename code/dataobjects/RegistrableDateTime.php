@@ -254,8 +254,13 @@ class RegistrableDateTime extends CalendarDateTime {
 	 * @return string
 	 */
 	public function getTitle() {
-		$date = implode(' ', CalendarUtil::get_date_string($this->StartDate, $this->EndDate));
-
+		$parts = CalendarUtil::get_date_string($this->StartDate, $this->EndDate);
+		if ($parts) {
+			$date = implode(' ', $parts);	
+		}else {
+			$date = 'No date';
+		}
+		
 		if ($this->AllDay) {
 			return sprintf(_t('EventManagement.DATEALLDAY', '%s (all day)'), $date);
 		}
