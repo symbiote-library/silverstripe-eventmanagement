@@ -159,6 +159,8 @@ class EventRegisterPaymentStep extends MultiFormStep {
 			if ($payment->Status == PaymentGateway_Result::SUCCESS) {
 				$registration->Status = 'Valid';
 				$paid = true;
+				$registration->extend('onPaymentConfirmed', $payment->Status);
+				Session::clear('PaymentID');
 			}
 			$registration->write();
 		}
