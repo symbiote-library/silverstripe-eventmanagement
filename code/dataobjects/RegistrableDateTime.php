@@ -233,11 +233,11 @@ class RegistrableDateTime extends CalendarDateTime {
 		$taken->addLeftJoin('EventRegistration', '"EventRegistration"."ID" = "EventRegistrationID"');
 
 		if ($excludeId) {
-			$taken->addWhere('"EventRegistration"."ID"', '<>', $excludeId);
+			$taken->addWhere('"EventRegistration"."ID" <>'. (int)$excludeId);
 		}
 
-		$taken->addWhere('"Status"', '<>', 'Canceled');
-		$taken->addWhere('"EventRegistration"."TimeID"', $this->ID);
+		$taken->addWhere('"Status" <> \'Canceled\'');
+		$taken->addWhere('"EventRegistration"."TimeID" ='. (int)$this->ID);
 		$taken = $taken->execute()->value();
 
 		return ($this->Capacity >= $taken) ? $this->Capacity - $taken : false;
