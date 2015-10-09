@@ -203,12 +203,12 @@ class EventTicket extends DataObject {
 		$booked->addLeftJoin('EventRegistration', '"EventRegistration"."ID" = "EventRegistrationID"');
 
 		if ($excludeId) {
-			$booked->addWhere('"EventRegistration"."ID"', '<>', $excludeId);
+			$booked->addWhere('"EventRegistration"."ID" <>' . (int)$excludeId);
 		}
 
-		$booked->addWhere('"Status"', '<>', 'Canceled');
-		$booked->addWhere('"EventTicketID"', $this->ID);
-		$booked->addWhere('"EventRegistration"."TimeID"', $time->ID);
+		$booked->addWhere('"Status" <> \'Canceled\'');
+		$booked->addWhere('"EventTicketID" = ' . (int)$this->ID);
+		$booked->addWhere('"EventRegistration"."TimeID" =' . (int)$time->ID);
 
 		$booked = $booked->execute()->value();
 
