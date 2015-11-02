@@ -109,4 +109,24 @@ class EventRegistration extends DataObject {
 		);
 	}
 
+	public function canView($member = null) {
+		return $this->Time()->canView($member)
+			 && Permission::check("CMS_ACCESS_CMSMain", $member);
+	}
+
+	public function canEdit($member = null) {
+		return $this->Time()->canEdit($member)
+			 && Permission::check("CMS_ACCESS_CMSMain", $member);
+	}
+
+	public function canDelete($member = null) {
+		return $this->Time()->canDelete($member)
+			 && Permission::check("CMS_ACCESS_CMSMain", $member);
+	}
+
+	public function canCreate($member = null) {
+		return $this->Time()->canCreate($member)
+			 && Permission::check("CMS_ACCESS_CMSMain", $member);
+	}
+
 }
