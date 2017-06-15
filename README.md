@@ -1,3 +1,7 @@
+> ## **IMPORTANT**
+
+> This module is no longer actively maintained, however, if you're interested in adopting it, please let us know!
+
 # SilverStripe Event Management Module
 The event management module allows you to manage event details and registrations
 from within the CMS. Some features include:
