@@ -1,5 +1,5 @@
 {
-	"name": "silverstripe-australia/eventmanagement",
+	"name": "symbiote-library/silverstripe-eventmanagement",
 	"description": "SilverStripe event management and registration module",
 	"type": "silverstripe-module",
 	"keywords": ["silverstripe", "event"],
@@ -28,7 +28,7 @@
 	"extra": {
 		"installer-name": "eventmanagement",
 		"branch-alias": {
-			"dev-master": "1.2.x-dev"
+			"dev-master": "2.0.x-dev"
 		}
 	},
 	"replace": {
