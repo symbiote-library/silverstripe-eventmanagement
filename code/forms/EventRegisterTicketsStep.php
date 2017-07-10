@@ -5,159 +5,166 @@
  *
  * @package silverstripe-eventmanagement
  */
-class EventRegisterTicketsStep extends MultiFormStep {
+class EventRegisterTicketsStep extends MultiFormStep
+{
 
-	public function getTitle() {
-		return 'Event Tickets';
-	}
+    public function getTitle()
+    {
+        return 'Event Tickets';
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getNextStep() {
-		if ($this->getTotal()->getAmount() > 0) {
-			return 'EventRegisterPaymentStep';
-		} else {
-			return 'EventRegisterFreeConfirmationStep';
-		}
-	}
+    /**
+     * @return string
+     */
+    public function getNextStep()
+    {
+        if ($this->getTotal()->getAmount() > 0) {
+            return 'EventRegisterPaymentStep';
+        } else {
+            return 'EventRegisterFreeConfirmationStep';
+        }
+    }
 
-	public function loadData() {
-		$data = parent::loadData();
-		if ($member = Member::currentUser()) {
-			$data['Name'] = $member->Name;
-			$data['Email'] = $member->Email;
-		}
+    public function loadData()
+    {
+        $data = parent::loadData();
+        if ($member = Member::currentUser()) {
+            $data['Name'] = $member->Name;
+            $data['Email'] = $member->Email;
+        }
 
-		return $data;
-	}
+        return $data;
+    }
 
-	/**
-	 * Returns the total sum of all the tickets the user is purchasing.
-	 *
-	 * @return Money
-	 */
-	public function getTotal() {
-		$amount   = 0;
-		$currency = null;
-		$data     = $this->loadData();
+    /**
+     * Returns the total sum of all the tickets the user is purchasing.
+     *
+     * @return Money
+     */
+    public function getTotal()
+    {
+        $amount   = 0;
+        $currency = null;
+        $data     = $this->loadData();
 
-		if (isset($data['Tickets'])) {
-			foreach ($data['Tickets'] as $id => $quantity) {
-				$ticket = DataObject::get_by_id('EventTicket', $id);
-				$price  = $ticket->obj('Price');
+        if (isset($data['Tickets'])) {
+            foreach ($data['Tickets'] as $id => $quantity) {
+                $ticket = DataObject::get_by_id('EventTicket', $id);
+                $price  = $ticket->obj('Price');
 
-				if ($ticket->Type == 'Free' || !$quantity) {
-					continue;
-				}
+                if ($ticket->Type == 'Free' || !$quantity) {
+                    continue;
+                }
 
-				$amount  += $price->getAmount() * $quantity;
-				$currency = $price->getCurrency();
-			}
-		}
+                $amount  += $price->getAmount() * $quantity;
+                $currency = $price->getCurrency();
+            }
+        }
 
-		return DBField::create_field('Money', array(
-			'Amount'   => $amount,
-			'Currency' => $currency
-		));
-	}
+        return DBField::create_field('Money', array(
+            'Amount'   => $amount,
+            'Currency' => $currency
+        ));
+    }
 
-	public function getFields() {
-		$datetime = $this->getForm()->getController()->getDateTime();
-		$session  = $this->getForm()->getSession();
+    public function getFields()
+    {
+        $datetime = $this->getForm()->getController()->getDateTime();
+        $session  = $this->getForm()->getSession();
 
-		$fields = new FieldList(
-			$tickets = new EventRegistrationTicketsTableField('Tickets', $datetime)
-		);
-		$tickets->setExcludedRegistrationId($session->RegistrationID);
+        $fields = new FieldList(
+            $tickets = new EventRegistrationTicketsTableField('Tickets', $datetime)
+        );
+        $tickets->setExcludedRegistrationId($session->RegistrationID);
 
-		if ($member = Member::currentUser()) {
-			$fields->push(new ReadonlyField('Name', 'Your name'));
-			$fields->push(new ReadonlyField('Email', 'Email address'));
-		} else {
-			$fields->push(new TextField('Name', 'Your name'));
-			$fields->push(new EmailField('Email', 'Email address'));
-		}
+        if ($member = Member::currentUser()) {
+            $fields->push(new ReadonlyField('Name', 'Your name'));
+            $fields->push(new ReadonlyField('Email', 'Email address'));
+        } else {
+            $fields->push(new TextField('Name', 'Your name'));
+            $fields->push(new EmailField('Email', 'Email address'));
+        }
 
 
-		$this->extend('updateFields', $fields);
+        $this->extend('updateFields', $fields);
 
-		return $fields;
-	}
+        return $fields;
+    }
 
-	public function getValidator() {
-		if ($member = Member::currentUser()) {
-			$validator = new RequiredFields();
-		} else {
-			$validator = new RequiredFields('Name', 'Email');
-		}
+    public function getValidator()
+    {
+        if ($member = Member::currentUser()) {
+            $validator = new RequiredFields();
+        } else {
+            $validator = new RequiredFields('Name', 'Email');
+        }
 
-		$this->extend('updateValidator', $validator);
-		
-		return $validator;
-	}
+        $this->extend('updateValidator', $validator);
+        
+        return $validator;
+    }
 
-	public function validateStep($data, $form) {
-		Session::set("FormInfo.{$form->FormName()}.data", $form->getData());
+    public function validateStep($data, $form)
+    {
+        Session::set("FormInfo.{$form->FormName()}.data", $form->getData());
 
-		$datetime = $this->getForm()->getController()->getDateTime();
-		$data     = $form->getData();
+        $datetime = $this->getForm()->getController()->getDateTime();
+        $data     = $form->getData();
 
-		if ($datetime->Event()->OneRegPerEmail) {
-			if (Member::currentUserID()) {
-				$email = Member::currentUser()->Email;
-			} else {
-				$email = $data['Email'];
-			}
+        if ($datetime->Event()->OneRegPerEmail) {
+            if (Member::currentUserID()) {
+                $email = Member::currentUser()->Email;
+            } else {
+                $email = $data['Email'];
+            }
 
-			$existing = DataObject::get_one('EventRegistration', sprintf(
-				'"Email" = \'%s\' AND "Status" <> \'Canceled\' AND "TimeID" = %d',
-				Convert::raw2sql($email), $datetime->ID
-			));
+            $existing = DataObject::get_one('EventRegistration', sprintf(
+                '"Email" = \'%s\' AND "Status" <> \'Canceled\' AND "TimeID" = %d',
+                Convert::raw2sql($email), $datetime->ID
+            ));
 
-			if ($existing) {
-				$form->addErrorMessage(
-					'Email',
-					'A registration for this email address already exists',
-					'required');
-				return false;
-			}
-		}
+            if ($existing) {
+                $form->addErrorMessage(
+                    'Email',
+                    'A registration for this email address already exists',
+                    'required');
+                return false;
+            }
+        }
 
-		// Ensure that the entered ticket data is valid.
-		if (!$this->form->validateTickets($data['Tickets'], $form)) {
-			return false;
-		}
+        // Ensure that the entered ticket data is valid.
+        if (!$this->form->validateTickets($data['Tickets'], $form)) {
+            return false;
+        }
 
-		// Finally add the tickets to the actual registration.
-		$registration = $this->form->getSession()->getRegistration();
-		$form->saveInto($registration);
+        // Finally add the tickets to the actual registration.
+        $registration = $this->form->getSession()->getRegistration();
+        $form->saveInto($registration);
 
-		if ($member = Member::currentUser()) {
-			$registration->Name  = $member->getName();
-			$registration->Email = $member->Email;
-		} else {
-			$registration->Name  = $data['Name'];
-			$registration->Email = $data['Email'];
-		}
+        if ($member = Member::currentUser()) {
+            $registration->Name  = $member->getName();
+            $registration->Email = $member->Email;
+        } else {
+            $registration->Name  = $data['Name'];
+            $registration->Email = $data['Email'];
+        }
 
-		$registration->TimeID   = $datetime->ID;
-		$registration->MemberID = Member::currentUserID();
+        $registration->TimeID   = $datetime->ID;
+        $registration->MemberID = Member::currentUserID();
 
-		$total = $this->getTotal();
-		$registration->Total->setCurrency($total->getCurrency());
-		$registration->Total->setAmount($total->getAmount());
-		$registration->write();
+        $total = $this->getTotal();
+        $registration->Total->setCurrency($total->getCurrency());
+        $registration->Total->setAmount($total->getAmount());
+        $registration->write();
 
-		$registration->Tickets()->removeAll();
+        $registration->Tickets()->removeAll();
 
-		foreach ($data['Tickets'] as $id => $quantity) {
-			if ($quantity) {
-				$registration->Tickets()->add($id, array('Quantity' => $quantity));
-			}
-		}
+        foreach ($data['Tickets'] as $id => $quantity) {
+            if ($quantity) {
+                $registration->Tickets()->add($id, array('Quantity' => $quantity));
+            }
+        }
 
-		return true;
-	}
-
+        return true;
+    }
 }

@@ -4,10 +4,10 @@
  *
  * @package silverstripe-eventmanagement
  */
-class EventRegistrationPaymentExtension extends DataExtension {
+class EventRegistrationPaymentExtension extends DataExtension
+{
 
-	private static $has_one = array(
-		'Payment' => 'Payment'
-	);
-
+    private static $has_one = array(
+        'Payment' => 'Payment'
+    );
 }

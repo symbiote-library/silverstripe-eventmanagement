@@ -4,51 +4,55 @@
  *
  * @package silverstripe-eventmanagement
  */
-class EventInvitation extends DataObject {
+class EventInvitation extends DataObject
+{
 
-	private static $db = array(
-		'Name'  => 'Varchar(255)',
-		'Email' => 'Varchar(255)'
-	);
+    private static $db = array(
+        'Name'  => 'Varchar(255)',
+        'Email' => 'Varchar(255)'
+    );
 
-	private static $has_one = array(
-		'Event' => 'RegistrableEvent',
-		'Time'  => 'RegistrableDateTime'
-	);
+    private static $has_one = array(
+        'Event' => 'RegistrableEvent',
+        'Time'  => 'RegistrableDateTime'
+    );
 
-	private static $summary_fields = array(
-		'Name'        => 'Name',
-		'Email'       => 'Email',
-		'Registered'  => 'Registered',
-		'EventTitle'  => 'Event',
-		'TimeSummary' => 'Time(s)'
-	);
+    private static $summary_fields = array(
+        'Name'        => 'Name',
+        'Email'       => 'Email',
+        'Registered'  => 'Registered',
+        'EventTitle'  => 'Event',
+        'TimeSummary' => 'Time(s)'
+    );
 
-	public function Registered() {
-		$rego = DataObject::get_one('EventRegistration', sprintf(
-			'"Email" = \'%s\' AND "TimeID" = %d',
-			Convert::raw2sql($this->Email), $this->TimeID
-		));
+    public function Registered()
+    {
+        $rego = DataObject::get_one('EventRegistration', sprintf(
+            '"Email" = \'%s\' AND "TimeID" = %d',
+            Convert::raw2sql($this->Email), $this->TimeID
+        ));
 
-		return $rego ? _t('EventRegistration.YES', 'Yes') : _t('EventRegistration.NO', 'No');
-	}
+        return $rego ? _t('EventRegistration.YES', 'Yes') : _t('EventRegistration.NO', 'No');
+    }
 
-	public function EventTitle() {
-		return $this->Time()->EventTitle();
-	}
+    public function EventTitle()
+    {
+        return $this->Time()->EventTitle();
+    }
 
-	public function TimeSummary() {
-		return $this->Time()->Summary();
-	}
+    public function TimeSummary()
+    {
+        return $this->Time()->Summary();
+    }
 
-	/**
-	 * @return string
-	 */
-	public function RegisterLink() {
-		return Director::absoluteURL(Controller::join_links(
-			$this->Event()->Link(), 'register', $this->TimeID,
-			'?name=' . urlencode($this->Name), '?email=' . urlencode($this->Email)
-		));
-	}
-
+    /**
+     * @return string
+     */
+    public function RegisterLink()
+    {
+        return Director::absoluteURL(Controller::join_links(
+            $this->Event()->Link(), 'register', $this->TimeID,
+            '?name=' . urlencode($this->Name), '?email=' . urlencode($this->Email)
+        ));
+    }
 }

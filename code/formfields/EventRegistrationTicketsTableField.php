@@ -5,176 +5,191 @@
  *
  * @package silverstripe-eventmanagement
  */
-class EventRegistrationTicketsTableField extends FormField {
+class EventRegistrationTicketsTableField extends FormField
+{
 
-	protected $datetime;
-	protected $excludedRegistrationId;
-	protected $showUnavailableTickets = true;
-	protected $showUnselectedTickets = true;
-	protected $forceTotalRow;
-	protected $total;
+    protected $datetime;
+    protected $excludedRegistrationId;
+    protected $showUnavailableTickets = true;
+    protected $showUnselectedTickets = true;
+    protected $forceTotalRow;
+    protected $total;
 
-	public function __construct($name, $datetime, $value = array()) {
-		$this->datetime = $datetime;
-		parent::__construct($name, '', $value);
-	}
+    public function __construct($name, $datetime, $value = array())
+    {
+        $this->datetime = $datetime;
+        parent::__construct($name, '', $value);
+    }
 
-	public function Field($properties = array()) {
-		return $this->renderWith('EventRegistrationTicketsTableField', $properties);
-	}
+    public function Field($properties = array())
+    {
+        return $this->renderWith('EventRegistrationTicketsTableField', $properties);
+    }
 
-	/**
-	 * @return array
-	 */
-	public function dataValue() {
-		return (array) $this->value;
-	}
+    /**
+     * @return array
+     */
+    public function dataValue()
+    {
+        return (array) $this->value;
+    }
 
-	/**
-	 * @param array|object $value
-	 */
-	public function setValue($value) {
-		if (is_object($value)) {
-			$value = $value->map('ID', 'Quantity');
-		}
+    /**
+     * @param array|object $value
+     */
+    public function setValue($value)
+    {
+        if (is_object($value)) {
+            $value = $value->map('ID', 'Quantity');
+        }
 
-		parent::setValue($value);
-	}
+        parent::setValue($value);
+    }
 
-	/**
-	 * Sets a registration ID to exclude from any availibility calculations.
-	 *
-	 * @param int $id
-	 */
-	public function setExcludedRegistrationId($id) {
-		$this->excludedRegistrationId = $id;
-	}
+    /**
+     * Sets a registration ID to exclude from any availibility calculations.
+     *
+     * @param int $id
+     */
+    public function setExcludedRegistrationId($id)
+    {
+        $this->excludedRegistrationId = $id;
+    }
 
-	/**
-	 * @param bool $bool
-	 */
-	public function setShowUnavailableTickets($bool) {
-		$this->showUnavailableTickets = $bool;
-	}
+    /**
+     * @param bool $bool
+     */
+    public function setShowUnavailableTickets($bool)
+    {
+        $this->showUnavailableTickets = $bool;
+    }
 
-	/**
-	 * @param bool $bool
-	 */
-	public function setShowUnselectedTickets($bool) {
-		$this->showUnselectedTickets = $bool;
-	}
+    /**
+     * @param bool $bool
+     */
+    public function setShowUnselectedTickets($bool)
+    {
+        $this->showUnselectedTickets = $bool;
+    }
 
-	/**
-	 * @param bool $bool
-	 */
-	public function setForceTotalRow($bool) {
-		$this->forceTotalRow = $bool;
-	}
+    /**
+     * @param bool $bool
+     */
+    public function setForceTotalRow($bool)
+    {
+        $this->forceTotalRow = $bool;
+    }
 
-	/**
-	 * @param Money $money
-	 */
-	public function setTotal(Money $money) {
-		$this->total = $money;
-	}
+    /**
+     * @param Money $money
+     */
+    public function setTotal(Money $money)
+    {
+        $this->total = $money;
+    }
 
-	/**
-	 * @return EventRegistrationTicketsTableField
-	 */
-	public function performReadonlyTransformation() {
-		$table = clone $this;
-		$table->setReadonly(true);
-		return $table;
-	}
+    /**
+     * @return EventRegistrationTicketsTableField
+     */
+    public function performReadonlyTransformation()
+    {
+        $table = clone $this;
+        $table->setReadonly(true);
+        return $table;
+    }
 
-	public function Tickets() {
-		$result  = new ArrayList();
-		$tickets = $this->datetime->Tickets('', '"RegistrableDateTime_Tickets"."Sort"');
+    public function Tickets()
+    {
+        $result  = new ArrayList();
+        $tickets = $this->datetime->Tickets('', '"RegistrableDateTime_Tickets"."Sort"');
 
-		foreach ($tickets as $ticket) {
-			$available = $ticket->getAvailableForDateTime(
-				$this->datetime, $this->excludedRegistrationId
-			);
-			$endTime = $ticket->getSaleEndForDateTime($this->datetime);
+        foreach ($tickets as $ticket) {
+            $available = $ticket->getAvailableForDateTime(
+                $this->datetime, $this->excludedRegistrationId
+            );
+            $endTime = $ticket->getSaleEndForDateTime($this->datetime);
 
-			if ($avail = $available['available']) {
-				$name = "{$this->name}[{$ticket->ID}]";
-				$min  = $ticket->MinTickets;
-				$max  = $ticket->MaxTickets;
+            if ($avail = $available['available']) {
+                $name = "{$this->name}[{$ticket->ID}]";
+                $min  = $ticket->MinTickets;
+                $max  = $ticket->MaxTickets;
 
-				$val = array_key_exists($ticket->ID, $this->value)
-					? $this->value[$ticket->ID] : null;
+                $val = array_key_exists($ticket->ID, $this->value)
+                    ? $this->value[$ticket->ID] : null;
 
-				if (!$val && !$this->showUnselectedTickets) {
-					continue;
-				}
+                if (!$val && !$this->showUnselectedTickets) {
+                    continue;
+                }
 
-				if ($this->readonly) {
-					$field = $val ? $val : '0';
-				} elseif ($max) {
-					$field = new DropdownField(
-						$name, '',
-						ArrayLib::valuekey(range($min, min($available, $max))),
-						$val, null);
-					$field->setHasEmptyDefault(true);
-				} else {
-					$field = new NumericField($name, '', $val);
-				}
+                if ($this->readonly) {
+                    $field = $val ? $val : '0';
+                } elseif ($max) {
+                    $field = new DropdownField(
+                        $name, '',
+                        ArrayLib::valuekey(range($min, min($available, $max))),
+                        $val, null);
+                    $field->setHasEmptyDefault(true);
+                } else {
+                    $field = new NumericField($name, '', $val);
+                }
 
-				$result->push(new ArrayData(array(
-					'Title'       => $ticket->Title,
-					'Description' => $ticket->Description,
-					'Available'   => $avail === true ? 'Unlimited' : $avail,
-					'Price'       => $ticket->PriceSummary(),
-					'End'         => DBField::create_field('SS_Datetime', $endTime),
-					'Quantity'    => $field
-				)));
-			} elseif ($this->showUnavailableTickets) {
-				$availableAt = null;
+                $result->push(new ArrayData(array(
+                    'Title'       => $ticket->Title,
+                    'Description' => $ticket->Description,
+                    'Available'   => $avail === true ? 'Unlimited' : $avail,
+                    'Price'       => $ticket->PriceSummary(),
+                    'End'         => DBField::create_field('SS_Datetime', $endTime),
+                    'Quantity'    => $field
+                )));
+            } elseif ($this->showUnavailableTickets) {
+                $availableAt = null;
 
-				if (array_key_exists('available_at', $available)) {
-					$availableAt = DBField::create_field('SS_Datetime', $available['available_at']);
-				}
+                if (array_key_exists('available_at', $available)) {
+                    $availableAt = DBField::create_field('SS_Datetime', $available['available_at']);
+                }
 
-				$result->push(new ArrayData(array(
-					'Title'       => $ticket->Title,
-					'Description' => $ticket->Description,
-					'Available'   => false,
-					'Reason'      => $available['reason'],
-					'AvailableAt' => $availableAt
-				)));
-			}
-		}
+                $result->push(new ArrayData(array(
+                    'Title'       => $ticket->Title,
+                    'Description' => $ticket->Description,
+                    'Available'   => false,
+                    'Reason'      => $available['reason'],
+                    'AvailableAt' => $availableAt
+                )));
+            }
+        }
 
-		return $result;
-	}
+        return $result;
+    }
 
-	/**
-	 * @return int
-	 */
-	public function RemainingCapacity() {
-		return $this->datetime->getRemainingCapacity($this->excludedRegistrationId);
-	}
+    /**
+     * @return int
+     */
+    public function RemainingCapacity()
+    {
+        return $this->datetime->getRemainingCapacity($this->excludedRegistrationId);
+    }
 
-	/**
-	 * @return bool
-	 */
-	public function ShowTotalRow() {
-		return $this->forceTotalRow || ($this->readonly && $this->Total() && $this->Total()->exists());
-	}
+    /**
+     * @return bool
+     */
+    public function ShowTotalRow()
+    {
+        return $this->forceTotalRow || ($this->readonly && $this->Total() && $this->Total()->exists());
+    }
 
-	/**
-	 * @return Money
-	 */
-	public function Total() {
-		return $this->total;
-	}
+    /**
+     * @return Money
+     */
+    public function Total()
+    {
+        return $this->total;
+    }
 
-	/**
-	 * @return RegistrableDateTime
-	 */
-	public function DateTime() {
-		return $this->datetime;
-	}
-
+    /**
+     * @return RegistrableDateTime
+     */
+    public function DateTime()
+    {
+        return $this->datetime;
+    }
 }

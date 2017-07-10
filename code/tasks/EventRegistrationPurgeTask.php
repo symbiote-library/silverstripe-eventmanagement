@@ -5,80 +5,85 @@
  *
  * @package silverstripe-eventmanagement
  */
-class EventRegistrationPurgeTask extends BuildTask {
+class EventRegistrationPurgeTask extends BuildTask
+{
 
-	public function getTitle() {
-		return 'Event Registration Purge Task';
-	}
+    public function getTitle()
+    {
+        return 'Event Registration Purge Task';
+    }
 
-	public function getDescription() {
-		return 'Cancels unconfirmed and unsubmitted registrations older than '
-			.  'the cut-off date to free up the places.';
-	}
+    public function getDescription()
+    {
+        return 'Cancels unconfirmed and unsubmitted registrations older than '
+            .  'the cut-off date to free up the places.';
+    }
 
-	public function run($request) {
-		$this->purgeUnsubmittedRegistrations();
-		$this->purgeUnconfirmedRegistrations();
-	}
+    public function run($request)
+    {
+        $this->purgeUnsubmittedRegistrations();
+        $this->purgeUnconfirmedRegistrations();
+    }
 
-	protected function purgeUnsubmittedRegistrations() {
-		$conn    = DB::getConn();
-		$created = $conn->formattedDatetimeClause('"EventRegistration"."Created"', '%U');
+    protected function purgeUnsubmittedRegistrations()
+    {
+        $conn    = DB::getConn();
+        $created = $conn->formattedDatetimeClause('"EventRegistration"."Created"', '%U');
 
-		$items = DataObject::get(
-			'EventRegistration',
-			'"Status" = \'Unsubmitted\''
-			. " AND $created + \"Registrable\".\"RegistrationTimeLimit\" < " . time(),
-			null,
-			'INNER JOIN "CalendarDateTime" AS "DateTime" ON "TimeID" = "DateTime"."ID"'
-			. ' INNER JOIN "CalendarEvent" AS "Event" ON "DateTime"."EventID" = "Event"."ID"'
-			. ' INNER JOIN "RegistrableEvent" AS "Registrable" ON "Event"."ID" = "Registrable"."ID"'
-		);
+        $items = DataObject::get(
+            'EventRegistration',
+            '"Status" = \'Unsubmitted\''
+            . " AND $created + \"Registrable\".\"RegistrationTimeLimit\" < " . time(),
+            null,
+            'INNER JOIN "CalendarDateTime" AS "DateTime" ON "TimeID" = "DateTime"."ID"'
+            . ' INNER JOIN "CalendarEvent" AS "Event" ON "DateTime"."EventID" = "Event"."ID"'
+            . ' INNER JOIN "RegistrableEvent" AS "Registrable" ON "Event"."ID" = "Registrable"."ID"'
+        );
 
-		if ($items) {
-			$count = count($items);
+        if ($items) {
+            $count = count($items);
 
-			foreach ($items as $registration) {
-				$registration->delete();
-			}
-		} else {
-			$count = 0;
-		}
+            foreach ($items as $registration) {
+                $registration->delete();
+            }
+        } else {
+            $count = 0;
+        }
 
-		echo "$count unsubmitted registrations were permantently deleted.\n";
-	}
+        echo "$count unsubmitted registrations were permantently deleted.\n";
+    }
 
-	protected function purgeUnconfirmedRegistrations() {
-		$query = new SQLQuery();
-		$conn    = DB::getConn();
+    protected function purgeUnconfirmedRegistrations()
+    {
+        $query = new SQLQuery();
+        $conn    = DB::getConn();
 
-		$query->select('"EventRegistration"."ID"');
-		$query->from('"EventRegistration"');
+        $query->select('"EventRegistration"."ID"');
+        $query->from('"EventRegistration"');
 
-		$query->innerJoin('CalendarDateTime', '"TimeID" = "DateTime"."ID"', 'DateTime');
-		$query->innerJoin('CalendarEvent', '"DateTime"."EventID" = "Event"."ID"', 'Event');
-		$query->innerJoin('RegistrableEvent', '"Event"."ID" = "Registrable"."ID"', 'Registrable');
+        $query->innerJoin('CalendarDateTime', '"TimeID" = "DateTime"."ID"', 'DateTime');
+        $query->innerJoin('CalendarEvent', '"DateTime"."EventID" = "Event"."ID"', 'Event');
+        $query->innerJoin('RegistrableEvent', '"Event"."ID" = "Registrable"."ID"', 'Registrable');
 
-		$query->where('"Registrable"."ConfirmTimeLimit" > 0');
-		$query->where('"Status"', 'Unconfirmed');
+        $query->where('"Registrable"."ConfirmTimeLimit" > 0');
+        $query->where('"Status"', 'Unconfirmed');
 
-		$created = $conn->formattedDatetimeClause('"EventRegistration"."Created"', '%U');
-		$query->where(sprintf(
-			'%s < %s', $created . ' + "Registrable"."ConfirmTimeLimit"', time()
-		));
+        $created = $conn->formattedDatetimeClause('"EventRegistration"."Created"', '%U');
+        $query->where(sprintf(
+            '%s < %s', $created . ' + "Registrable"."ConfirmTimeLimit"', time()
+        ));
 
-		if ($ids = $query->execute()->column()) {
-			$count = count($ids);
+        if ($ids = $query->execute()->column()) {
+            $count = count($ids);
 
-			DB::query(sprintf(
-				'UPDATE "EventRegistration" SET "Status" = \'Canceled\' WHERE "ID" IN (%s)',
-				implode(', ', $ids)
-			));
-		} else {
-			$count = 0;
-		}
+            DB::query(sprintf(
+                'UPDATE "EventRegistration" SET "Status" = \'Canceled\' WHERE "ID" IN (%s)',
+                implode(', ', $ids)
+            ));
+        } else {
+            $count = 0;
+        }
 
-		echo "$count unconfirmed registrations were canceled.\n";
-	}
-
+        echo "$count unconfirmed registrations were canceled.\n";
+    }
 }
