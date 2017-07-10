@@ -18,7 +18,7 @@
 		"symbiote/silverstripe-gridfieldextensions": "~1.1",
 		"silverstripe/cms": ">=3.1",
 		"silverstripe/framework": ">=3.1",
-		"silverstripe/multiform": "1.1.*@dev",
+		"silverstripe/multiform": ">=1.1",
 		"unclecheese/eventcalendar": "~1.0"
 	},
 	"suggest": {
